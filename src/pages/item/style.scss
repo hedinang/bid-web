@@ -1,0 +1,49 @@
+.bid-list {
+  padding-left: 10px;
+  padding-right: 10px;
+  .bid {
+    border-width: 2px;
+    border-color: #c3a8a8;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .slide-item {
+    border-width: 2px;
+    border-color: #c3a8a8;
+    border-style: solid;
+  }
+
+  // .xyz {
+  //   display: none;
+  // }
+
+  // .a:hover .xyz {
+  //   display: inline;
+  //   transform: scale(1.2); /* Zoom the image by 20% on hover */
+  // }
+
+  .a {
+    position: relative; /* Ensures child element can be positioned relative to the parent */
+  }
+  
+  .xyz {
+    display: block; /* Make the container a block-level element */
+    opacity: 0; /* Initially hidden */
+    transform: scale(1); /* Default scale */
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    position: absolute; /* Allows you to position it over the parent, if needed */
+    top: 100%; /* Position below the `.a` element */
+    left: 0;
+  }
+  
+  .a:hover .xyz {
+    opacity: 1; /* Make visible on hover */
+    transform: scale(1.2); /* Zoom the image by 20% */
+  }
+}
