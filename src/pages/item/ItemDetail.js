@@ -35,11 +35,7 @@ const ItemDetail = () => {
 
   const generateActiveImage2 = () => {
     const activeImg = itemDetail?.imgs?.find((img) => img?.status);
-    return (
-      <img src={activeImg?.url} className="xyz">
-        <div>{generateActiveImage2()}</div>
-      </img>
-    );
+    return <img src={activeImg?.url} className="xyz"></img>;
   };
 
   const generateImage = (img) => {
@@ -96,6 +92,7 @@ const ItemDetail = () => {
               <div>0</div>
             </div>
           </div>
+          <div><img src='https://assets.ecoauc.com/images/item/20241212/247206132-1-higupdxjvaywfcqksnbotzmrle.jpg' className="xyz"></img></div>
         </div>
       </div>
     </div>

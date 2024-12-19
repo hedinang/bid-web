@@ -1,5 +1,5 @@
 import { Button, Col, Row } from "antd";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MdOutlineAccessTime } from "react-icons/md";
 import "./style.scss";
 
@@ -64,9 +64,22 @@ const ItemList = () => {
     return "#94b3e1";
   };
 
+  const imageListRef = useRef(null); // Ref to access the image list
+
+  const scroll = (direction) => {
+    const { current } = imageListRef;
+    if (current) {
+      const scrollAmount = 150; // Adjust scroll amount as needed
+      current.scrollBy({
+        left: direction === "next" ? scrollAmount : -scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const generateItem = (item) => {
     return (
-      <Col span={6} className="p-[10px]">
+      <Col span={8} className="p-[10px]">
         <div
           className="bid"
           //   style={{ backgroundColor: `${getBidBgColor(item)}` }}
@@ -105,10 +118,21 @@ const ItemList = () => {
               </div>
             ))}
           </div> */}
+          <div class="scroll-container">
+            <button class="scroll-btn prev-btn" onClick={() => scroll("prev")}>&lt;</button>
+            <div class="image-list" ref={imageListRef}>
+              {item?.itemImgs?.map((itemImg) => (
+                <img src={itemImg} className="" />
+              ))}
+            </div>
+            <button class="scroll-btn next-btn" onClick={() => scroll("next")}>&gt;</button>
+          </div>
         </div>
       </Col>
     );
   };
+
+  
 
   return (
     <div className="bid-list">

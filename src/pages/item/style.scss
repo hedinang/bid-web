@@ -29,21 +29,83 @@
   // }
 
   .a {
-    position: relative; /* Ensures child element can be positioned relative to the parent */
+    // width: 100px;
+    // height: 50px;
+    // background-color: lightblue;
+    // text-align: center;
+    // line-height: 50px;
+    // cursor: pointer;
   }
   
   .xyz {
-    display: block; /* Make the container a block-level element */
-    opacity: 0; /* Initially hidden */
+    width: 300px;
+    height: 200px;
+    overflow: hidden;
+    // opacity: 0; /* Hidden by default */
     transform: scale(1); /* Default scale */
-    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition */
-    position: absolute; /* Allows you to position it over the parent, if needed */
-    top: 100%; /* Position below the `.a` element */
-    left: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transitions */
   }
-  
-  .a:hover .xyz {
+
+  .a:hover + .xyz {
     opacity: 1; /* Make visible on hover */
     transform: scale(1.2); /* Zoom the image by 20% */
   }
+}
+
+
+// .image-list {
+//   display: flex; /* Align items horizontally */
+//   overflow-x: auto; /* Enable horizontal scrolling */
+//   scroll-behavior: smooth; /* Smooth scrolling effect */
+//   gap: 10px; /* Space between images */
+//   padding: 10px; /* Optional padding around the images */
+//   white-space: nowrap; /* Prevent wrapping of items */
+// }
+
+// .image-list img {
+//   height: 150px; /* Set desired image height */
+//   object-fit: cover; /* Ensure the image maintains aspect ratio */
+//   border-radius: 5px; /* Optional: Rounded corners */
+//   cursor: pointer; /* Optional: Pointer cursor on hover */
+// }
+
+.scroll-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%; /* Adjust container width */
+  overflow: hidden; /* Hide overflowing content */
+}
+
+.image-list {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+.image-list img {
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.scroll-btn {
+  background-color: lightgray;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.prev-btn {
+  left: 0; /* Position the previous button on the left */
+}
+
+.next-btn {
+  right: 0; /* Position the next button on the right */
 }
