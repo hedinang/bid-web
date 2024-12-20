@@ -1,9 +1,11 @@
-import { Button, Col, Row } from "antd";
-import { useRef, useState } from "react";
+import { Button, Col, Image, Row } from "antd";
+import { useEffect, useRef, useState } from "react";
 import { MdOutlineAccessTime } from "react-icons/md";
 import "./style.scss";
+import ZoomImage from "../../components/img/ZoomImage";
 
 const ItemList = () => {
+  const { bidId } = useParams();
   const [itemList, setItemList] = useState([
     {
       id: 1,
@@ -37,12 +39,14 @@ const ItemList = () => {
       price: "3000",
       availableStatus: "Chưa có hàng",
       itemImgs: [
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
-        "https://resize.ecoauc.com/images/item/20241209/247516678-1-zmcrnbqwxitkoheuvadsgljpfy.jpg?w=220&h=160",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
+        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
       ],
     },
     {
@@ -90,7 +94,8 @@ const ItemList = () => {
             <div>{item?.endTime}</div>
           </div>
           <div className="flex justify-center">
-            <img src={item?.itemImgs[0]} />
+            {/* <img src={item?.itemImgs[0]} className="image"/> */}
+            <ZoomImage url={item?.itemImgs[0]} />
           </div>
           <Row>
             <Col span={8}>
@@ -105,6 +110,19 @@ const ItemList = () => {
               <div>{item?.availableStatus}</div>
             </Col>
           </Row>
+          <Row>
+            {item?.itemImgs?.map((itemImg) => (
+              <Col span={6} className="p-[5px]" key={itemImg}>
+                <Image
+                  className="slide-item"
+                  src={itemImg}
+                  preview={false}
+                  key={itemImg}
+                />
+                {/* <ZoomImage url={itemImg}/> */}
+              </Col>
+            ))}
+          </Row>
           {/* <div className="flex ">
             {item?.itemImgs?.map((itemImg) => (
               <div
@@ -118,21 +136,34 @@ const ItemList = () => {
               </div>
             ))}
           </div> */}
-          <div class="scroll-container">
-            <button class="scroll-btn prev-btn" onClick={() => scroll("prev")}>&lt;</button>
+          {/* <div class="scroll-container">
+            <button class="scroll-btn prev-btn" onClick={() => scroll("prev")}>
+              &lt;
+            </button>
             <div class="image-list" ref={imageListRef}>
               {item?.itemImgs?.map((itemImg) => (
-                <img src={itemImg} className="" />
+                <Image
+                  // width={200}
+                  className="!w-[150px]"
+                  src={itemImg}
+                  preview={false}
+                  key={itemImg}
+                />
               ))}
             </div>
-            <button class="scroll-btn next-btn" onClick={() => scroll("next")}>&gt;</button>
-          </div>
+            <button class="scroll-btn next-btn" onClick={() => scroll("next")}>
+              &gt;
+            </button>
+          </div> */}
         </div>
       </Col>
     );
   };
 
-  
+  useEffect(() => {
+    
+
+  }, [bidId]);
 
   return (
     <div className="bid-list">

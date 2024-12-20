@@ -25,12 +25,12 @@ const router = createBrowserRouter([
     element: <BidList />,
   },
   {
-    path: "item-list",
+    path: "item-list/:bidId",
     element: <ItemList />,
   },
-  {
-    path: "item-detail",
-    element: <ItemDetail />,
-  },
+  // {
+  //   path: "item-detail",
+  //   element: <ItemDetail />,
+  // },
 ]);
 export default router;
