@@ -1,9 +1,13 @@
-import { Button, Col, Row } from "antd";
-import { useState } from "react";
+import { Button, Card, Col, Row } from "antd";
+import { useEffect, useState } from "react";
 import { MdOutlineAccessTime } from "react-icons/md";
 import "./style.scss";
+import { useNavigate } from "react-router-dom";
+import apiFactory from "../../api";
+import { toast } from "react-toastify";
 
 const BidList = () => {
+  const navigate = useNavigate();
   const [bidList, setBidList] = useState([
     {
       id: 1,
@@ -60,51 +64,86 @@ const BidList = () => {
     },
   ]);
 
-  const getBidBgColor = (bid) => {
-    if (bid?.status === "preview posible") return "#e7c5a3";
-    return "#94b3e1";
+  const getBidStatusButotn = (bidStatus) => {
+    switch (bidStatus) {
+      case "Preview possible":
+        return (
+          <Button
+            className="text-[#2d7717] text-[18px]"
+            onClick={() => navigate("/item-list/1")}
+          >
+            Xem trước
+          </Button>
+        );
+
+      case "In session":
+        return (
+          <Button
+            className="bg-[#2d7717] text-[white] text-[18px]"
+            onClick={() => navigate("/item-list/1")}
+          >
+            Tham gia
+          </Button>
+        );
+
+      default:
+        return (
+          <Button
+            className="text-[#2d7717] text-[18px]"
+            onClick={() => navigate("/item-list/1")}
+          >
+            Chuẩn bị
+          </Button>
+        );
+    }
   };
 
   const generateBid = (bid) => {
     return (
       <Col span={6} className="p-[10px]">
-        <div
-          className="bid"
-          style={{ backgroundColor: `${getBidBgColor(bid)}` }}
-        >
-          <div className="text-[20px]">Thời gian đấu giá</div>
-          <div className="flex justify-center gap-[10px] items-center">
-            <MdOutlineAccessTime size={25} />
-            <div>{bid?.openTime}</div>
-          </div>
-          <div className="flex justify-center">
-            <img src={bid?.headerIcon} width={150} />
-          </div>
-          {bid?.status === "preview posible" ? (
-            <div className="flex gap-[30px] justify-center">
-              <div className="flex items-center">Xem trước: </div>
-              <div>
-                <div>{bid?.startPreviewTime}</div>
-                <div>~</div>
-                <div>{bid?.endPreviewTime}</div>
-              </div>
+        <Card hoverable>
+          <div className="bid">
+            <div className="text-[20px] font-semibold">Thời gian đấu giá</div>
+            <div className="flex justify-center gap-[10px] items-center">
+              <MdOutlineAccessTime size={25} />
+              <div>{bid?.openTime}</div>
             </div>
-          ) : (
-            <div className="h-[62px]"></div>
-          )}
-          <div>
-            {bid?.status === "preview posible" ? (
-              <Button className="text-[#2d7717] text-[18px]">Xem trước</Button>
+            <div className="flex justify-center">
+              <img src={bid?.headerIcon} className="h-[40px]" />
+            </div>
+            {bid?.bidStatus !== "In session" ? (
+              <div className="flex gap-[30px] justify-center">
+                <div className="flex items-center">Xem trước: </div>
+                <div>
+                  <div>{bid?.startPreviewTime}</div>
+                  <div>~</div>
+                  <div>{bid?.endPreviewTime}</div>
+                </div>
+              </div>
             ) : (
-              <Button className="bg-[#2d7717] text-[white] text-[18px]">
-                Tham gia
-              </Button>
+              <div className="h-[62px]"></div>
             )}
+            <div>{getBidStatusButotn(bid?.bidStatus)}</div>
           </div>
-        </div>
+        </Card>
       </Col>
     );
   };
+
+  const fetchData = async () => {
+    const result = await apiFactory.bidApi.list();
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setBidList(result?.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="bid-list">

@@ -1,11 +1,11 @@
-.bid-list {
+.item-list {
   padding-left: 10px;
   padding-right: 10px;
-  .bid {
-    border-width: 2px;
-    border-color: #c3a8a8;
-    border-style: solid;
-    border-radius: 5px;
+  padding-bottom: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .item {
     padding: 10px;
     text-align: center;
     display: flex;
@@ -15,8 +15,29 @@
 
   .slide-item {
     border-width: 2px;
-    border-color: #c3a8a8;
+    border-color: #cfd7e6;
     border-style: solid;
+    border-radius: 5px;
+  }
+
+  .paging a {
+    color: white;
+  }
+
+  .paging .ant-pagination-item-active a {
+    color: black;
+  }
+
+  .paging .ant-pagination-item-link {
+    color: white;
+  }
+
+  .paging-bottom {
+    position: fixed;
+    bottom: 20px;
+    padding: 5px;
+    background-color: #5984db;
+    border-radius: 5px;
   }
 
   // .xyz {
@@ -36,14 +57,16 @@
     // line-height: 50px;
     // cursor: pointer;
   }
-  
+
   .xyz {
     width: 300px;
     height: 200px;
     overflow: hidden;
     // opacity: 0; /* Hidden by default */
     transform: scale(1); /* Default scale */
-    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease; /* Smooth transitions */
   }
 
   .a:hover + .xyz {
@@ -51,7 +74,6 @@
     transform: scale(1.2); /* Zoom the image by 20% */
   }
 }
-
 
 // .image-list {
 //   display: flex; /* Align items horizontally */
