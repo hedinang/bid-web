@@ -8,69 +8,15 @@ import { toast } from "react-toastify";
 
 const BidList = () => {
   const navigate = useNavigate();
-  const [bidList, setBidList] = useState([
-    {
-      id: 1,
-      status: "preview posible",
-      auctionType: "Realtime",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-    {
-      id: 1,
-      status: "preview posible",
-      auctionType: "Realtime",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-    {
-      id: 1,
-      status: "preview posible",
-      auctionType: "Realtime",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-    {
-      id: 1,
-      status: "in session",
-      auctionType: "Realtime",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-    {
-      id: 1,
-      status: "preview posible",
-      auctionType: "Realtime",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-    {
-      id: 1,
-      status: "in session",
-      headerIcon: "https://www.ecoauc.com/images/ecotra_header.png",
-      startPreviewTime: "20/12/2024 09:00:00",
-      endPreviewTime: "20/12/2024 09:00:00",
-      openTime: "20/12/2024 09:00:00",
-    },
-  ]);
+  const [bidList, setBidList] = useState([]);
 
-  const getBidStatusButotn = (bidStatus) => {
-    switch (bidStatus) {
+  const getBidStatusButotn = (bid) => {
+    switch (bid?.bidStatus) {
       case "Preview possible":
         return (
           <Button
             className="text-[#2d7717] text-[18px]"
-            onClick={() => navigate("/item-list/1")}
+            onClick={() => navigate("/item-list/" + bid?.bidId)}
           >
             Xem trước
           </Button>
@@ -80,7 +26,7 @@ const BidList = () => {
         return (
           <Button
             className="bg-[#2d7717] text-[white] text-[18px]"
-            onClick={() => navigate("/item-list/1")}
+            onClick={() => navigate("/item-list/" + bid?.bidId)}
           >
             Tham gia
           </Button>
@@ -88,10 +34,7 @@ const BidList = () => {
 
       default:
         return (
-          <Button
-            className="text-[#2d7717] text-[18px]"
-            onClick={() => navigate("/item-list/1")}
-          >
+          <Button className="text-[#2d7717] text-[18px]" disabled>
             Chuẩn bị
           </Button>
         );
@@ -123,7 +66,7 @@ const BidList = () => {
             ) : (
               <div className="h-[62px]"></div>
             )}
-            <div>{getBidStatusButotn(bid?.bidStatus)}</div>
+            <div>{getBidStatusButotn(bid)}</div>
           </div>
         </Card>
       </Col>

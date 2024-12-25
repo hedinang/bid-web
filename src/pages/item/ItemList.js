@@ -1,113 +1,69 @@
-import { Button, Card, Col, Image, Pagination, Row } from "antd";
+import { Card, Col, Image, Pagination, Row } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { MdOutlineAccessTime } from "react-icons/md";
 import { IoArrowBackOutline } from "react-icons/io5";
-import "./style.scss";
-import ZoomImage from "../../components/img/ZoomImage";
+import { MdOutlineAccessTime } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import apiFactory from "../../api";
+import ZoomImage from "../../components/img/ZoomImage";
+import "./style.scss";
+
+const ItemDetail = ({ item }) => {
+  const [activeImg, setActiveImg] = useState(item?.detailUrls[0]);
+
+  return (
+    <Col span={8} className="p-[10px]">
+      <Card hoverable>
+        <div className="item">
+          <div className="text-[20px] font-semibold">{item?.title}</div>
+          <div className="flex justify-center gap-[10px] items-center">
+            {/* <MdOutlineAccessTime size={25} /> */}
+            <div>{item?.endTime}</div>
+          </div>
+          <div className="flex justify-center">
+            <ZoomImage url={activeImg} />
+          </div>
+          <Row>
+            <Col span={8}>
+              <div>Rank</div>
+              <div>{item?.rank}</div>
+            </Col>
+            <Col span={8}>
+              <div>Price</div>
+              <div>{item?.startPrice}</div>
+            </Col>
+            <Col span={8}>
+              <div>Auction order</div>
+              <div>{item?.auctionOrder}</div>
+            </Col>
+          </Row>
+          <Row>
+            {item?.detailUrls?.map((itemImg) => (
+              <Col
+                span={4}
+                className="p-[2px]"
+                key={itemImg}
+                onClick={() => setActiveImg(itemImg)}
+              >
+                <Image
+                  className="slide-item"
+                  src={itemImg}
+                  preview={false}
+                  key={itemImg}
+                />
+              </Col>
+            ))}
+          </Row>
+        </div>
+      </Card>
+    </Col>
+  );
+};
 
 const ItemList = () => {
   const navigate = useNavigate();
   const { bidId } = useParams();
-  const [itemList, setItemList] = useState([
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Bán hết",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Chưa có hàng",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Chưa có hàng",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Bán hết",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Bán hết",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-    {
-      id: 1,
-      title: "Colon Hermes Eau de Mandarin 100ml",
-      endTime: "20/12/2024 09:00:00",
-      rank: "B",
-      price: "3000",
-      availableStatus: "Bán hết",
-      itemImgs: [
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-        "https://assets.ecoauc.com/images/item/20241212/247663469-1-wixjqnfzlohrdpvgmtbackesyu.jpg",
-      ],
-    },
-  ]);
-
-  const getBidBgColor = (bid) => {
-    if (bid?.status === "preview posible") return "#e7c5a3";
-    return "#94b3e1";
-  };
+  const [itemList, setItemList] = useState([]);
 
   const imageListRef = useRef(null); // Ref to access the image list
 
@@ -122,55 +78,20 @@ const ItemList = () => {
     }
   };
 
-  const generateItem = (item) => {
-    return (
-      <Col span={8} className="p-[10px]">
-        <Card hoverable>
-          <div
-            className="item"
-            //   style={{ backgroundColor: `${getBidBgColor(item)}` }}
-          >
-            <div className="text-[20px] font-semibold">{item?.title}</div>
-            <div className="flex justify-center gap-[10px] items-center">
-              <MdOutlineAccessTime size={25} />
-              <div>{item?.endTime}</div>
-            </div>
-            <div className="flex justify-center">
-              {/* <img src={item?.itemImgs[0]} className="image"/> */}
-              <ZoomImage url={item?.itemImgs[0]} />
-            </div>
-            <Row>
-              <Col span={8}>
-                <div>Rank</div>
-                <div>{item?.rank}</div>
-              </Col>
-              <Col span={8}>
-                <div>Price</div>
-                <div>{item?.price}</div>
-              </Col>
-              <Col span={8}>
-                <div>{item?.availableStatus}</div>
-              </Col>
-            </Row>
-            <Row>
-              {item?.itemImgs?.map((itemImg) => (
-                <Col span={4} className="p-[2px]" key={itemImg}>
-                  <Image
-                    className="slide-item"
-                    src={itemImg}
-                    preview={false}
-                    key={itemImg}
-                  />
-                </Col>
-              ))}
-            </Row>
-          </div>
-        </Card>
-      </Col>
-    );
+  const fetchData = async () => {
+    const result = await apiFactory.itemApi.list();
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setItemList(result?.data);
   };
 
-  useEffect(() => {}, [bidId]);
+  useEffect(() => {
+    fetchData();
+  }, [bidId]);
 
   return (
     <div className="item-list">
@@ -180,7 +101,11 @@ const ItemList = () => {
         </button>
         <div>Danh sách các vật phẩm của phiên đấu giá A</div>
       </div>
-      <Row>{itemList?.map((item) => generateItem(item))}</Row>
+      <Row>
+        {itemList?.map((item) => (
+          <ItemDetail item={item} key={item} />
+        ))}
+      </Row>
       <div className="paging-bottom">
         <Pagination
           defaultCurrent={1}
