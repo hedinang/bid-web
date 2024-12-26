@@ -1,7 +1,6 @@
 import { Card, Col, Image, Pagination, Row } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { MdOutlineAccessTime } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
@@ -64,22 +63,12 @@ const ItemList = () => {
   const navigate = useNavigate();
   const { bidId } = useParams();
   const [itemList, setItemList] = useState([]);
-
-  const imageListRef = useRef(null); // Ref to access the image list
-
-  const scroll = (direction) => {
-    const { current } = imageListRef;
-    if (current) {
-      const scrollAmount = 150; // Adjust scroll amount as needed
-      current.scrollBy({
-        left: direction === "next" ? scrollAmount : -scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
+  const [bid, setBid] = useState();
 
   const fetchData = async () => {
-    const result = await apiFactory.itemApi.list();
+    if (!bidId) return;
+
+    const result = await apiFactory.itemApi.list(bidId);
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
@@ -89,8 +78,21 @@ const ItemList = () => {
     setItemList(result?.data);
   };
 
+  const fetchBid = async () => {
+    if (!bidId) return;
+    const result = await apiFactory.bidApi.getBid(bidId);
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setBid(result?.data);
+  };
+
   useEffect(() => {
     fetchData();
+    fetchBid();
   }, [bidId]);
 
   return (
@@ -99,7 +101,7 @@ const ItemList = () => {
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Danh sách các vật phẩm của phiên đấu giá A</div>
+        <div>Danh sách các vật phẩm của phiên đấu giá {bid?.bidId}</div>
       </div>
       <Row>
         {itemList?.map((item) => (

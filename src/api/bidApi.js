@@ -5,5 +5,9 @@ class BidApi extends BaseApi {
   list() {
     return this.get(`${BID}/list`);
   }
+
+  getBid(bidId) {
+    return this.get(`${BID}/${bidId}`);
+  }
 }
 export default BidApi;
