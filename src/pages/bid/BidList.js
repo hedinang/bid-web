@@ -42,6 +42,8 @@ const BidList = () => {
   };
 
   const generateBid = (bid) => {
+    if (!bid?.bidStatus) return null;
+
     return (
       <Col span={6} className="p-[10px]">
         <Card hoverable>

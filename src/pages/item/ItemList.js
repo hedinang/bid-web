@@ -8,13 +8,18 @@ import ZoomImage from "../../components/img/ZoomImage";
 import "./style.scss";
 
 const ItemDetail = ({ item }) => {
-  const [activeImg, setActiveImg] = useState(item?.detailUrls[0]);
+  const [activeImg, setActiveImg] = useState();
+
+  useEffect(() => {
+    setActiveImg(item?.detailUrls[0]);
+  }, [item]);
 
   return (
-    <Col span={8} className="p-[10px]">
+    <Col span={8} className="p-[10px]" key={item?.title}>
       <Card hoverable>
         <div className="item">
           <div className="text-[20px] font-semibold">{item?.title}</div>
+          <div className="text-[16px] text-[#194ee9]">{item?.itemId}</div>
           <div className="flex justify-center gap-[10px] items-center">
             {/* <MdOutlineAccessTime size={25} /> */}
             <div>{item?.endTime}</div>
@@ -64,11 +69,18 @@ const ItemList = () => {
   const { bidId } = useParams();
   const [itemList, setItemList] = useState([]);
   const [bid, setBid] = useState();
+  const [searchItem, setSearchItem] = useState({
+    limit: 4,
+    page: 1,
+  });
 
   const fetchData = async () => {
     if (!bidId) return;
 
-    const result = await apiFactory.itemApi.list(bidId);
+    const result = await apiFactory.itemApi.list({
+      ...searchItem,
+      bidId,
+    });
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
@@ -90,10 +102,20 @@ const ItemList = () => {
     setBid(result?.data);
   };
 
+  const changePage = (e) => {
+    setSearchItem({
+      ...searchItem,
+      page: e,
+    });
+  };
+
   useEffect(() => {
-    fetchData();
     fetchBid();
   }, [bidId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [bidId, searchItem]);
 
   return (
     <div className="item-list">
@@ -101,7 +123,7 @@ const ItemList = () => {
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Danh sách các vật phẩm của phiên đấu giá {bid?.bidId}</div>
+        <div>Danh sách vật phẩm của phiên đấu giá lúc {bid?.openTime}</div>
       </div>
       <Row>
         {itemList?.map((item) => (
@@ -110,10 +132,12 @@ const ItemList = () => {
       </Row>
       <div className="paging-bottom">
         <Pagination
-          defaultCurrent={1}
-          total={500}
+          current={searchItem?.page}
+          total={bid?.totalItem}
+          pageSize={searchItem?.limit}
           className="paging"
           showSizeChanger={false}
+          onChange={changePage}
         />
       </div>
     </div>

@@ -1,37 +1,38 @@
+import { Image } from "antd";
 import React, { useRef, useState } from "react";
 import "./style.scss";
 
 export default function ZoomImage({ url }) {
-  const sourceRef = useRef(null);
-  const targetRef = useRef(null);
+  const imageRef = useRef(null);
   const containerRef = useRef(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [opacity, setOpacity] = useState(0);
   const [offset, setOffset] = useState({ left: 0, top: 0 });
 
   const handleMouseEnter = () => {
-    setOpacity(1);
+    setOpacity(1); // Hiển thị phóng to
   };
 
   const handleMouseLeave = () => {
-    setOpacity(0);
+    setOpacity(0); // Ẩn phóng to
+    setOffset({ left: 0, top: 0 }); // Đặt lại vị trí về ban đầu
   };
 
   const handleMouseMove = (e) => {
-    const targetRect = targetRef.current.getBoundingClientRect();
-    const sourceRect = sourceRef.current.getBoundingClientRect();
+    const imageRect = imageRef.current.getBoundingClientRect();
     const containerRect = containerRef.current.getBoundingClientRect();
 
-    const xRatio = (targetRect.width - containerRect.width) / sourceRect.width;
+    const xRatio =
+      (imageRect.width - containerRect.width) / containerRect.width;
     const yRatio =
-      (targetRect.height - containerRect.height) / sourceRect.height;
+      (imageRect.height - containerRect.height) / containerRect.height;
 
     const left = Math.max(
-      Math.min(e.pageX - sourceRect.left, sourceRect.width),
+      Math.min(e.pageX - containerRect.left, containerRect.width),
       0
     );
     const top = Math.max(
-      Math.min(e.pageY - sourceRect.top, sourceRect.height),
+      Math.min(e.pageY - containerRect.top, containerRect.height),
       0
     );
 
@@ -42,25 +43,31 @@ export default function ZoomImage({ url }) {
   };
 
   return (
-    <div className="app">
-      <div
-        className="container"
-        ref={containerRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-      >
-        <img ref={sourceRef} className="image" alt="source" src={url} />
-        <img
-          ref={targetRef}
-          className={`target ${opacity ? "visible" : ""}`}
-          alt="target"
-          src={url}
-          style={{
-            transform: `translate(${offset.left}px, ${offset.top}px)`,
-          }}
-        />
-      </div>
+    <div
+      className="container"
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      onClick={() => setIsModalOpen(true)}
+    >
+      <img
+        ref={imageRef}
+        className={`image ${opacity ? "zoomed" : ""}`}
+        alt="zoom"
+        src={url}
+        style={{
+          transform: `translate(${offset.left}px, ${offset.top}px) scale(${opacity ? 2 : 1})`,
+        }}
+      />
+      <Image
+        className={`${!isModalOpen && "hidden"}`}
+        src={url}
+        preview={{
+          visible: isModalOpen,
+          onVisibleChange: (visible, prevVisible) => setIsModalOpen(false),
+        }}
+      />
     </div>
   );
 }

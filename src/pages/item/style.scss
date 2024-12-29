@@ -1,4 +1,5 @@
 .item-list {
+  overflow-y: scroll;
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 70px;
@@ -39,60 +40,4 @@
     background-color: #5984db;
     border-radius: 5px;
   }
-
-  // .xyz {
-  //   display: none;
-  // }
-
-  // .a:hover .xyz {
-  //   display: inline;
-  //   transform: scale(1.2); /* Zoom the image by 20% on hover */
-  // }
-
-  .a {
-    // width: 100px;
-    // height: 50px;
-    // background-color: lightblue;
-    // text-align: center;
-    // line-height: 50px;
-    // cursor: pointer;
-  }
-
-  .xyz {
-    width: 300px;
-    height: 200px;
-    overflow: hidden;
-    // opacity: 0; /* Hidden by default */
-    transform: scale(1); /* Default scale */
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease; /* Smooth transitions */
-  }
-
-  .a:hover + .xyz {
-    opacity: 1; /* Make visible on hover */
-    transform: scale(1.2); /* Zoom the image by 20% */
-  }
-}
-
-// .image-list {
-//   display: flex; /* Align items horizontally */
-//   overflow-x: auto; /* Enable horizontal scrolling */
-//   scroll-behavior: smooth; /* Smooth scrolling effect */
-//   gap: 10px; /* Space between images */
-//   padding: 10px; /* Optional padding around the images */
-//   white-space: nowrap; /* Prevent wrapping of items */
-// }
-
-// .image-list img {
-//   height: 150px; /* Set desired image height */
-//   object-fit: cover; /* Ensure the image maintains aspect ratio */
-//   border-radius: 5px; /* Optional: Rounded corners */
-//   cursor: pointer; /* Optional: Pointer cursor on hover */
-// }
-
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
