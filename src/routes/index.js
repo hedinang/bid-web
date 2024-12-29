@@ -8,17 +8,17 @@ import { ItemList } from "../pages/item/ItemList";
 import { ItemDetail } from "../pages/item/ItemDetail";
 
 const router = createBrowserRouter([
-  {
-    path: "login",
-    element: <Login />,
-  },
-  {
-    path: "register",
-    element: <Registration />,
-  },
+  // {
+  //   path: "login",
+  //   element: <Login />,
+  // },
+  // {
+  //   path: "register",
+  //   element: <Registration />,
+  // },
   {
     path: "*",
-    element: <Navigate to="/login" />,
+    element: <Navigate to="/bid-list" />,
   },
   {
     path: "bid-list",
