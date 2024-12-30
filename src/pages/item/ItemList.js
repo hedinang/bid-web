@@ -15,11 +15,14 @@ const ItemDetail = ({ item }) => {
   }, [item]);
 
   return (
-    <Col span={8} className="p-[10px]" key={item?.title}>
+    <Col xs={24} sm={24} md={12} xl={8} className="p-[10px]" key={item?.title}>
       <Card hoverable>
         <div className="item">
-          <div className="text-[20px] font-semibold">{item?.title}</div>
-          <div className="text-[16px] text-[#194ee9]">{item?.itemId}</div>
+          <div className="flex items-center justify-center gap-[10px]">
+            <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
+            <div className="text-[17px] font-semibold">{item?.title}</div>
+          </div>
+          <div className="text-center h-[44px]">{item?.description}</div>
           <div className="flex justify-center gap-[10px] items-center">
             {/* <MdOutlineAccessTime size={25} /> */}
             <div>{item?.endTime}</div>

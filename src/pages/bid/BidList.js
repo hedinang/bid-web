@@ -45,7 +45,7 @@ const BidList = () => {
     if (!bid?.bidStatus) return null;
 
     return (
-      <Col span={6} className="p-[10px]">
+      <Col xs={24} sm={12} md={8} lg={6} className="p-[10px]">
         <Card hoverable>
           <div className="bid">
             <div className="text-[20px] font-semibold">Thời gian đấu giá</div>
