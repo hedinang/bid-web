@@ -7,6 +7,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 RUN mkdir -p /var/www/disaster/html/store
 
 # Copy your custom nginx.conf to the container
+RUN mkdir -p /ssl
 COPY ssl /ssl
 COPY nginx.conf /etc/nginx/nginx.conf
 
@@ -14,7 +15,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY build /usr/share/nginx/html
 
 # Expose port 80 to the outside world
-EXPOSE 80
+# EXPOSE 80
 
 # Command to run Nginx
 CMD ["nginx", "-g", "daemon off;"]

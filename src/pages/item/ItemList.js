@@ -1,4 +1,4 @@
-import { Card, Col, Image, Pagination, Row } from "antd";
+import { Card, Col, Image, Pagination, Row, Select } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,7 +18,7 @@ const ItemDetail = ({ item }) => {
     <Col xs={24} sm={24} md={12} xl={8} className="p-[10px]" key={item?.title}>
       <Card hoverable>
         <div className="item">
-          <div className="flex items-center justify-center gap-[10px]">
+          <div className="item-title">
             <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
           </div>
@@ -31,18 +31,18 @@ const ItemDetail = ({ item }) => {
             <ZoomImage url={activeImg} />
           </div>
           <Row>
-            <Col span={8}>
-              <div>Rank</div>
+            <Col span={12}>
+              <div>Chất lượng</div>
               <div>{item?.rank}</div>
             </Col>
-            <Col span={8}>
-              <div>Price</div>
+            <Col span={12}>
+              <div>Giá khởi điểm</div>
               <div>{item?.startPrice}</div>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <div>Auction order</div>
               <div>{item?.auctionOrder}</div>
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             {item?.detailUrls?.map((itemImg) => (
@@ -126,8 +126,38 @@ const ItemList = () => {
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Danh sách vật phẩm của phiên đấu giá lúc {bid?.openTime}</div>
+        <div>Phiên đấu giá lúc {bid?.openTime}</div>
       </div>
+
+      <Row>
+        <Col span={12}>
+          <Select
+            placeholder="Chọn hãng"
+            allowClear
+            className="w-[200px]"
+            // onChange={handleChange}
+            options={[
+              { value: "LOUIS VUITTON", label: "LOUIS VUITTON" },
+              { value: "CHANEL", label: "CHANEL" },
+              { value: "HERMES", label: "HERMES" },
+              { value: "GUCCI", label: "GUCCI" },
+            ]}
+          />
+        </Col>
+        {/* <Col span={12}>
+          <Select
+            // defaultValue="lucy"
+            style={{ width: 120 }}
+            // onChange={handleChange}
+            options={[
+              { value: "jack", label: "Jack" },
+              { value: "lucy", label: "Lucy" },
+              { value: "Yiminghe", label: "yiminghe" },
+              { value: "disabled", label: "Disabled", disabled: true },
+            ]}
+          />
+        </Col> */}
+      </Row>
       <Row>
         {itemList?.map((item) => (
           <ItemDetail item={item} key={item} />

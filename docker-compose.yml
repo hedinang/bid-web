@@ -14,7 +14,7 @@ services:
     image: winitechvina/bid-web
     container_name: bid-web
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - bid-web:/usr/share/nginx/html
 volumes:
