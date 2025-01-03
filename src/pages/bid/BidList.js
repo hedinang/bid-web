@@ -5,6 +5,7 @@ import "./style.scss";
 import { useNavigate } from "react-router-dom";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
+import winitechLogo from "../../assets/bid-logo.png";
 
 const BidList = () => {
   const navigate = useNavigate();
@@ -92,11 +93,15 @@ const BidList = () => {
 
   return (
     <div className="bid-list">
-      <div className="flex justify-center text-[30px] p-[20px]">
-        Tài sản sắp được đấu giá
+      <div className="flex items-center">
+        <img src={winitechLogo} alt="" className="w-[150px]" />
+        <div className="text-center text-[30px] p-[20px] w-[80%]">
+          Tài sản sắp được đấu giá
+        </div>
       </div>
       <Row>{bidList?.map((bid) => generateBid(bid))}</Row>
     </div>
   );
 };
 export { BidList };
+// className="flex justify-center text-[30px] p-[20px]"
