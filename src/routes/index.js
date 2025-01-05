@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     element: <Navigate to="/bid-list" />,
   },
   {
-    path: "/",
+    // path: "/",
     element: <PublicLayout />,
     children: [
       {
