@@ -71,6 +71,7 @@ const ItemList = () => {
     limit: 24,
     page: 1,
     searchBranch: "",
+    searchRank: "",
   });
 
   const fetchData = async () => {
@@ -101,11 +102,21 @@ const ItemList = () => {
     setBid(result?.data);
   };
 
-  const onSearchBranch = (e) => {
+  const onChooseBranch = (e) => {
     setSearchItem({
+      ...searchItem,
       limit: 50,
       page: 1,
       searchBranch: e,
+    });
+  };
+
+  const onChooseRank = (e) => {
+    setSearchItem({
+      ...searchItem,
+      limit: 50,
+      page: 1,
+      searchRank: e,
     });
   };
 
@@ -133,13 +144,12 @@ const ItemList = () => {
         <div>Phiên đấu giá lúc {bid?.openTime}</div>
       </div>
 
-      <Row>
-        <Col span={12}>
+      <Row className="flex items-center">
+        <Col xs={24} sm={12} className="p-[10px]">
           <Select
             placeholder="Chọn hãng"
             allowClear
             className="w-[200px]"
-            // onChange={handleChange}
             options={[
               { value: "LOUIS VUITTON", label: "LOUIS VUITTON" },
               { value: "CHANEL", label: "CHANEL" },
@@ -282,22 +292,38 @@ const ItemList = () => {
               { value: "SHUNICHI TAMURA", label: "SHUNICHI TAMURA" },
               { value: "OTHER", label: "OTHER" },
             ]}
-            onChange={onSearchBranch}
+            onChange={onChooseBranch}
           />
         </Col>
-        {/* <Col span={12}>
+        <Col xs={24} sm={12} className="p-[10px]">
           <Select
-            // defaultValue="lucy"
-            style={{ width: 120 }}
-            // onChange={handleChange}
+            placeholder="Chọn chất lượng"
+            allowClear
+            className="w-[200px]"
+            onChange={onChooseRank}
             options={[
-              { value: "jack", label: "Jack" },
-              { value: "lucy", label: "Lucy" },
-              { value: "Yiminghe", label: "yiminghe" },
-              { value: "disabled", label: "Disabled", disabled: true },
+              { value: "N", label: "N" },
+              { value: "S", label: "S" },
+              { value: "A", label: "A" },
+              { value: "AB", label: "AB" },
+              { value: "B", label: "B" },
+              { value: "BC", label: "BC" },
+              { value: "C", label: "C" },
+              { value: "D", label: "D" },
+              { value: "F", label: "F" },
+              { value: "10", label: "10" },
+              { value: "9", label: "9" },
+              { value: "8", label: "8" },
+              { value: "7", label: "7" },
+              { value: "6", label: "6" },
+              { value: "5", label: "5" },
+              { value: "4", label: "4" },
+              { value: "3", label: "3" },
+              { value: "2", label: "2" },
+              { value: "1", label: "1" },
             ]}
           />
-        </Col> */}
+        </Col>
       </Row>
       <Row>
         {itemList?.map((item) => (
