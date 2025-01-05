@@ -44,9 +44,10 @@
 
   .paging-bottom {
     position: fixed;
-    bottom: 20px;
+    bottom: 80px;
     padding: 5px;
     background-color: #5984db;
     border-radius: 5px;
+    z-index: 999;
   }
 }
