@@ -1,11 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import Login from "../pages/login";
-import { Registration } from "../pages/registration/Registration";
+import { PublicLayout } from "../components/layouts/PublicLayout";
 import { BidList } from "../pages/bid/BidList";
 import { ItemList } from "../pages/item/ItemList";
-import { ItemDetail } from "../pages/item/ItemDetail";
 
 const router = createBrowserRouter([
   // {
@@ -21,16 +19,18 @@ const router = createBrowserRouter([
     element: <Navigate to="/bid-list" />,
   },
   {
-    path: "bid-list",
-    element: <BidList />,
+    path: "/",
+    element: <PublicLayout />,
+    children: [
+      {
+        path: "/bid-list",
+        element: <BidList />,
+      },
+      {
+        path: "/item-list/:bidId",
+        element: <ItemList />,
+      },
+    ],
   },
-  {
-    path: "item-list/:bidId",
-    element: <ItemList />,
-  },
-  // {
-  //   path: "item-detail",
-  //   element: <ItemDetail />,
-  // },
 ]);
 export default router;
