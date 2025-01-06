@@ -1,4 +1,4 @@
-import { Card, Col, Image, Pagination, Row, Select } from "antd";
+import { Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
@@ -66,6 +66,8 @@ const ItemList = () => {
   const navigate = useNavigate();
   const { bidId } = useParams();
   const [itemList, setItemList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [bid, setBid] = useState();
   const [searchItem, setSearchItem] = useState({
     limit: 24,
@@ -75,6 +77,7 @@ const ItemList = () => {
   });
 
   const fetchData = async () => {
+    setIsLoading(true);
     if (!bidId) return;
 
     const result = await apiFactory.itemApi.list({
@@ -86,7 +89,7 @@ const ItemList = () => {
       toast.error("can not load bid list");
       return;
     }
-
+    setIsLoading(false);
     setItemList(result?.data);
   };
 
@@ -326,9 +329,13 @@ const ItemList = () => {
         </Col>
       </Row>
       <Row>
-        {itemList?.map((item) => (
-          <ItemDetail item={item} key={item} />
-        ))}
+        {isLoading ? (
+          <div className="w-full flex justify-center">
+            <Spin />
+          </div>
+        ) : (
+          itemList?.map((item) => <ItemDetail item={item} key={item} />)
+        )}
       </Row>
       <div className="paging-bottom">
         <Pagination

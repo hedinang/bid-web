@@ -3,9 +3,9 @@ import "./style.scss";
 
 export const Footer = () => {
   return (
-    <Row>
+    <Row className="bg-[#3f66da] text-[white]">
       <Col sm={0} md={0} xl={5} />
-      <Col sm={24} md={12} xl={7} className="left-footer">
+      <Col sm={24} md={12} xl={7} className="left-footer w-full">
         <div>
           Điện thoại: <span className="font-semibold">0982992628</span>
         </div>
@@ -13,7 +13,7 @@ export const Footer = () => {
           Email: <span className="font-semibold">gavip13051995@gmail.com</span>
         </div>
       </Col>
-      <Col sm={24} md={12} xl={7} className="right-footer">
+      <Col sm={24} md={12} xl={7} className="right-footer w-full">
         © 2024-2025. Toàn bộ bản quyền thuộc{" "}
         <span className="font-semibold">Stjtrading</span>
       </Col>

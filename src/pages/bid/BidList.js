@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row } from "antd";
+import { Button, Card, Col, Row, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { MdOutlineAccessTime } from "react-icons/md";
 import "./style.scss";
@@ -10,6 +10,7 @@ import winitechLogo from "../../assets/bid-logo.png";
 const BidList = () => {
   const navigate = useNavigate();
   const [bidList, setBidList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getBidStatusButotn = (bid) => {
     switch (bid?.bidStatus) {
@@ -77,13 +78,14 @@ const BidList = () => {
   };
 
   const fetchData = async () => {
+    setIsLoading(true);
     const result = await apiFactory.bidApi.list();
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
       return;
     }
-
+    setIsLoading(false);
     setBidList(result?.data);
   };
 
@@ -99,7 +101,15 @@ const BidList = () => {
           Tài sản sắp được đấu giá
         </div>
       </div>
-      <Row>{bidList?.map((bid) => generateBid(bid))}</Row>
+      <Row>
+        {isLoading ? (
+          <div className="w-full flex justify-center">
+            <Spin />
+          </div>
+        ) : (
+          bidList?.map((bid) => generateBid(bid))
+        )}
+      </Row>
     </div>
   );
 };
