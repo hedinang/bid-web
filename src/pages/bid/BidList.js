@@ -18,7 +18,9 @@ const BidList = () => {
         return (
           <Button
             className="text-[#2d7717] text-[18px]"
-            onClick={() => navigate("/item-list/" + bid?.bidId)}
+            onClick={() =>
+              navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+            }
           >
             Xem trước
           </Button>
@@ -28,7 +30,9 @@ const BidList = () => {
         return (
           <Button
             className="bg-[#2d7717] text-[white] text-[18px]"
-            onClick={() => navigate("/item-list/" + bid?.bidId)}
+            onClick={() =>
+              navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+            }
           >
             Tham gia
           </Button>

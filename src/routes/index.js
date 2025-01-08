@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element: <BidList />,
       },
       {
-        path: "/item-list/:bidId",
+        path: "/item-list/:bidId/:bidStatus",
         element: <ItemList />,
       },
     ],

@@ -64,7 +64,8 @@ const ItemDetail = ({ item }) => {
 
 const ItemList = () => {
   const navigate = useNavigate();
-  const { bidId } = useParams();
+  const { bidId, bidStatus } = useParams();
+
   const [itemList, setItemList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -83,6 +84,7 @@ const ItemList = () => {
     const result = await apiFactory.itemApi.list({
       ...searchItem,
       bidId,
+      bidStatus,
     });
 
     if (result?.status !== 200) {
@@ -95,7 +97,10 @@ const ItemList = () => {
 
   const fetchBid = async () => {
     if (!bidId) return;
-    const result = await apiFactory.bidApi.getBid(bidId);
+    const result = await apiFactory.bidApi.getBid({
+      bidId,
+      bidStatus
+    });
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
