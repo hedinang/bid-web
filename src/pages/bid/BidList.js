@@ -5,7 +5,8 @@ import "./style.scss";
 import { useNavigate } from "react-router-dom";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
-import winitechLogo from "../../assets/bid-logo.png";
+import winitechLogo from "../../assets/bid-icon.png";
+import { sortBy } from "lodash";
 
 const BidList = () => {
   const navigate = useNavigate();
@@ -13,38 +14,49 @@ const BidList = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getBidStatusButotn = (bid) => {
-    switch (bid?.bidStatus) {
-      case "Preview possible":
-        return (
-          <Button
-            className="text-[#2d7717] text-[18px]"
-            onClick={() =>
-              navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
-            }
-          >
-            Xem trước
-          </Button>
-        );
+    return (
+      <Button
+        className="text-[#2d7717] text-[18px]"
+        onClick={() =>
+          navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+        }
+      >
+        Xem trước
+      </Button>
+    );
 
-      case "In session":
-        return (
-          <Button
-            className="bg-[#2d7717] text-[white] text-[18px]"
-            onClick={() =>
-              navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
-            }
-          >
-            Tham gia
-          </Button>
-        );
+    // switch (bid?.bidStatus) {
+    //   case "Preview possible":
+    //     return (
+    //       <Button
+    //         className="text-[#2d7717] text-[18px]"
+    //         onClick={() =>
+    //           navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+    //         }
+    //       >
+    //         Xem trước
+    //       </Button>
+    //     );
 
-      default:
-        return (
-          <Button className="text-[#2d7717] text-[18px]" disabled>
-            Chuẩn bị
-          </Button>
-        );
-    }
+    //   case "In session":
+    //     return (
+    //       <Button
+    //         className="bg-[#2d7717] text-[white] text-[18px]"
+    //         onClick={() =>
+    //           navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+    //         }
+    //       >
+    //         Tham gia
+    //       </Button>
+    //     );
+
+    //   default:
+    //     return (
+    //       <Button className="text-[#2d7717] text-[18px]" disabled>
+    //         Chuẩn bị
+    //       </Button>
+    //     );
+    // }
   };
 
   const generateBid = (bid) => {
@@ -60,7 +72,7 @@ const BidList = () => {
               <div>{bid?.openTime}</div>
             </div>
             <div className="flex justify-center">
-              <img src={bid?.headerIcon} className="h-[40px]" />
+              <img src={winitechLogo} className="h-[40px]" />
             </div>
             {bid?.bidStatus !== "In session" ? (
               <div className="flex gap-[30px] justify-center">
@@ -90,7 +102,7 @@ const BidList = () => {
       return;
     }
     setIsLoading(false);
-    setBidList(result?.data);
+    setBidList(sortBy(result?.data, "openTime"));
   };
 
   useEffect(() => {
@@ -99,11 +111,12 @@ const BidList = () => {
 
   return (
     <div className="bid-list">
-      <div className="flex items-center">
-        <img src={winitechLogo} alt="" className="w-[150px]" />
-        <div className="text-center text-[30px] p-[20px] w-[80%]">
+      <div className="text-[30px] p-[20px] text-center">
+        {/* <img src={winitechLogo} alt="" className="w-[150px]" /> */}
+        {/* <div className="text-center text-[30px] p-[20px] w-[80%]">
           Tài sản sắp được đấu giá
-        </div>
+        </div> */}
+        Tài sản sắp được đấu giá
       </div>
       <Row>
         {isLoading ? (
