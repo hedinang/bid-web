@@ -14,58 +14,68 @@ const BidList = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getBidStatusButotn = (bid) => {
-    return (
-      <Button
-        className="text-[#2d7717] text-[18px]"
-        onClick={() =>
-          navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
-        }
-      >
-        Xem trước
-      </Button>
-    );
+    // return (
+    //   <Button
+    //     className="text-[#2d7717] text-[18px]"
+    //     onClick={() =>
+    //       navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+    //     }
+    //   >
+    //     Xem trước
+    //   </Button>
+    // );
 
-    // switch (bid?.bidStatus) {
-    //   case "Preview possible":
-    //     return (
-    //       <Button
-    //         className="text-[#2d7717] text-[18px]"
-    //         onClick={() =>
-    //           navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
-    //         }
-    //       >
-    //         Xem trước
-    //       </Button>
-    //     );
+    switch (bid?.donePage) {
+      case 0:
+        return (
+          <Button className="text-[#2d7717] text-[18px]" disabled>
+            Chuẩn bị
+          </Button>
+        );
 
-    //   case "In session":
-    //     return (
-    //       <Button
-    //         className="bg-[#2d7717] text-[white] text-[18px]"
-    //         onClick={() =>
-    //           navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
-    //         }
-    //       >
-    //         Tham gia
-    //       </Button>
-    //     );
+      // case "In session":
+      //   return (
+      //     <Button
+      //       className="bg-[#2d7717] text-[white] text-[18px]"
+      //       onClick={() =>
+      //         navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+      //       }
+      //     >
+      //       Tham gia
+      //     </Button>
+      //   );
 
-    //   default:
-    //     return (
-    //       <Button className="text-[#2d7717] text-[18px]" disabled>
-    //         Chuẩn bị
-    //       </Button>
-    //     );
-    // }
+      default:
+        return (
+          <Button
+            className="text-[#2d7717] text-[18px]"
+            onClick={() =>
+              navigate("/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+            }
+          >
+            Xem trước
+          </Button>
+        );
+    }
   };
 
   const generateBid = (bid) => {
     if (!bid?.bidStatus) return null;
+    const isUpdating =
+      bid?.donePage && Math.ceil(bid?.totalItem / 50) + 2 !== bid?.donePage;
 
     return (
-      <Col xs={24} sm={12} md={8} lg={6} className="p-[10px]">
+      <Col
+        xs={24}
+        sm={12}
+        md={8}
+        lg={6}
+        className="p-[10px]"
+        key={`${bid?.bidId}-${bid?.bidStatus}`}
+      >
         <Card hoverable>
           <div className="bid">
+            {isUpdating ? <div className="bid-update">Cập nhật</div> : <></>}
             <div className="text-[20px] font-semibold">Thời gian đấu giá</div>
             <div className="flex justify-center gap-[10px] items-center">
               <MdOutlineAccessTime size={25} />
@@ -102,7 +112,13 @@ const BidList = () => {
       return;
     }
     setIsLoading(false);
-    setBidList(sortBy(result?.data, "openTime"));
+
+    setBidList(
+      sortBy(result?.data, (e) => {
+        const [timePart, datePart] = e?.openTime?.split(" ");
+        return new Date(`${datePart}T${timePart}`);
+      })
+    );
   };
 
   useEffect(() => {
