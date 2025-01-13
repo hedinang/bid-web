@@ -9,7 +9,7 @@ import winitechLogo from "../../assets/bid-icon.png";
 import { sortBy } from "lodash";
 import { IoShirt } from "react-icons/io5";
 
-const BidList = () => {
+const AdminBidList = () => {
   const navigate = useNavigate();
   const [bidList, setBidList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -96,6 +96,9 @@ const BidList = () => {
             <div className="flex justify-center">
               <img src={winitechLogo} className="h-[40px]" />
             </div>
+            <a href={bid?.detailUrl} target="_blank" className="text-[blue]">
+              Original link
+            </a>
             {bid?.bidStatus !== "In session" ? (
               <div className="flex gap-[30px] justify-center">
                 <div className="flex items-center">Xem trước: </div>
@@ -140,10 +143,6 @@ const BidList = () => {
   return (
     <div className="bid-list">
       <div className="text-[30px] p-[20px] text-center">
-        {/* <img src={winitechLogo} alt="" className="w-[150px]" /> */}
-        {/* <div className="text-center text-[30px] p-[20px] w-[80%]">
-          Tài sản sắp được đấu giá
-        </div> */}
         Tài sản sắp được đấu giá
       </div>
       <Row>
@@ -158,5 +157,4 @@ const BidList = () => {
     </div>
   );
 };
-export { BidList };
-// className="flex justify-center text-[30px] p-[20px]"
+export { AdminBidList };

@@ -4,6 +4,8 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { PublicLayout } from "../components/layouts/PublicLayout";
 import { BidList } from "../pages/bid/BidList";
 import { ItemList } from "../pages/item/ItemList";
+import { AdminBidList } from "../pages/bid/AdminBidList";
+import { AdminItemList } from "../pages/item/AdminItemList";
 
 const router = createBrowserRouter([
   // {
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
       {
         path: "/bid-list",
         element: <BidList />,
+      },
+      {
+        path: "/admin/bid-list",
+        element: <AdminBidList />,
+      },
+      {
+        path: "/admin/item-list/:bidId/:bidStatus",
+        element: <AdminItemList />,
       },
       {
         path: "/item-list/:bidId/:bidStatus",
