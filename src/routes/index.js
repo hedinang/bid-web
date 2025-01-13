@@ -6,6 +6,7 @@ import { BidList } from "../pages/bid/BidList";
 import { ItemList } from "../pages/item/ItemList";
 import { AdminBidList } from "../pages/bid/AdminBidList";
 import { AdminItemList } from "../pages/item/AdminItemList";
+import { AdminItemDetail } from "../pages/item/AdminItemDetail";
 
 const router = createBrowserRouter([
   // {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/item-list/:bidId/:bidStatus",
         element: <ItemList />,
+      },
+      {
+        path: "/admin/item-detail/:itemId",
+        element: <AdminItemDetail />,
       },
     ],
   },

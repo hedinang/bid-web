@@ -1,8 +1,8 @@
 .container {
   position: relative;
   overflow: hidden;
-  max-width: 400px  !important; // Kích thước khung thumbnail
-  height: 300px !important;
+  width: 100%  !important; // Kích thước khung thumbnail
+  height: 560px !important;
   border: 1px solid #ccc;
 }
 
@@ -15,7 +15,8 @@
     opacity 0.3s ease;
   transform-origin: top left; // Gốc transform
   width: 100% !important;
-  height: 300px !important;
+  height: auto;
+  // height: 300px !important;
 }
 
 

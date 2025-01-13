@@ -8,6 +8,7 @@ import ZoomImage from "../../components/img/ZoomImage";
 import "./style.scss";
 
 const ItemDetail = ({ item }) => {
+  const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
 
   useEffect(() => {
@@ -43,7 +44,12 @@ const ItemDetail = ({ item }) => {
             </Col>
           </Row>
           <div>
-            <Button className="text-[#2d7717] text-[18px]">Xem chi tiết</Button>
+            <Button
+              className="text-[#2d7717] text-[18px]"
+              onClick={() => navigate(`/admin/item-detail/${item?.itemId}`)}
+            >
+              Xem chi tiết
+            </Button>
           </div>
           {/* <Row>
             {item?.detailUrls?.map((itemImg) => (
