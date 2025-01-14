@@ -7,6 +7,7 @@ import { ItemList } from "../pages/item/ItemList";
 import { AdminBidList } from "../pages/bid/AdminBidList";
 import { AdminItemList } from "../pages/item/AdminItemList";
 import { AdminItemDetail } from "../pages/item/AdminItemDetail";
+import { ItemDetail } from "../pages/item/ItemDetail";
 
 const router = createBrowserRouter([
   // {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/admin/item-detail/:itemId",
         element: <AdminItemDetail />,
+      },
+      {
+        path: "/item-detail/:itemId",
+        element: <ItemDetail />,
       },
     ],
   },

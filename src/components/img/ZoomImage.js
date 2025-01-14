@@ -2,7 +2,7 @@ import { Image } from "antd";
 import React, { useRef, useState } from "react";
 import "./style.scss";
 
-export default function ZoomImage({ url }) {
+export default function ZoomImage({ url, cssSize }) {
   const imageRef = useRef(null);
   const containerRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function ZoomImage({ url }) {
 
   return (
     <div
-      className="container"
+      className={`${cssSize === "small" ? "container-small" : "container-big"}`}
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -53,7 +53,7 @@ export default function ZoomImage({ url }) {
     >
       <img
         ref={imageRef}
-        className={`image ${opacity ? "zoomed" : ""}`}
+        className={`${cssSize === "small" ? "image-small" : "image-big"} ${opacity ? "zoomed" : ""}`}
         alt="zoom"
         src={url}
         style={{

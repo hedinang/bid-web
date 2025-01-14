@@ -1,11 +1,13 @@
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
 import ZoomImage from "../../components/img/ZoomImage";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
+import { IoArrowBackOutline } from "react-icons/io5";
 
 const AdminItemDetail = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [item, setItem] = useState({});
   const [activeUrl, setActiveUrl] = useState({});
@@ -56,10 +58,10 @@ const AdminItemDetail = () => {
     return <ZoomImage url={activeUrl} />;
   };
 
-  const generateImage = (url) => {
+  const generateImage = (img) => {
     return (
-      <Col span={6} className="p-[5px]" onClick={() => setActiveUrl(url)}>
-        <img src={url} className="slide-item" />
+      <Col span={6} className="p-[5px]" onClick={() => setActiveUrl(img)}>
+        <img src={img} className="slide-item" />
       </Col>
     );
   };
@@ -72,37 +74,42 @@ const AdminItemDetail = () => {
     <div className="bid-list">
       <div className="flex justify-between">
         <div className="w-[40%] p-[10px]">
-          <ZoomImage url={activeUrl} />
+          <ZoomImage url={activeUrl} cssSize={"big"} />
           <Row>{item?.detailUrls?.map((img) => generateImage(img))}</Row>
         </div>
         <div className="w-[55%]">
           <div>
-            <div className="text-center p-[5px]">{item?.itemId}</div>
+            <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
+              <button onClick={() => navigate("/admin/bid-list")}>
+                <IoArrowBackOutline size={25} />
+              </button>
+              <div className="font-semibold">{item?.itemId}</div>
+            </div>
             <div className="text-center p-[5px]">
               <a href={item?.itemUrl} target="_blank" className="text-[blue]">
                 Original link
               </a>
             </div>
-            <div className="text-center p-[5px]">{item?.title}</div>
-            <div className="text-center p-[5px]">{item?.description}</div>
+            <div className="text-center p-[5px] font-semibold">{item?.title}</div>
+            <div className="text-center p-[5px] font-semibold">{item?.description}</div>
             <div className="flex p-[5px]">
-              <div className="w-[200px] ">Bid id</div>
+              <div className="w-[200px] font-semibold">Bid id</div>
               <div>{item?.bidId}</div>
             </div>
             <div className="flex p-[5px]">
-              <div className="w-[200px] ">Rank</div>
+              <div className="w-[200px] font-semibold">Rank</div>
               <div>{item?.rank}</div>
             </div>
             <div className="flex p-[5px]">
-              <div className="w-[200px] ">Starting price</div>
+              <div className="w-[200px] font-semibold">Starting price</div>
               <div>{item?.startPrice}</div>
             </div>
             <div className="flex p-[5px]">
-              <div className="w-[200px] ">Branch</div>
+              <div className="w-[200px] font-semibold">Branch</div>
               <div>{item?.branch}</div>
             </div>
             <div className="flex p-[5px]">
-              <div className="w-[200px] ">Category</div>
+              <div className="w-[200px] font-semibold">Category</div>
               <div>{item?.category}</div>
             </div>
           </div>

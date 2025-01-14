@@ -31,7 +31,7 @@ const ItemDetail = ({ item }) => {
             <div>{item?.endTime}</div>
           </div>
           <div className="flex justify-center">
-            <ZoomImage url={activeImg} />
+            <ZoomImage url={activeImg} cssSize={"small"}/>
           </div>
           <Row>
             <Col span={12}>
@@ -158,7 +158,7 @@ const AdminItemList = () => {
   return (
     <div className="item-list">
       <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
-        <button onClick={() => navigate("/bid-list")}>
+        <button onClick={() => navigate("/admin/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
         <div>Phiên đấu giá lúc {bid?.openTime}</div>

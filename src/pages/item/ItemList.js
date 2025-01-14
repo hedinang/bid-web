@@ -1,4 +1,4 @@
-import { Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
+import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import ZoomImage from "../../components/img/ZoomImage";
 import "./style.scss";
 
 const ItemDetail = ({ item }) => {
+  const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const ItemDetail = ({ item }) => {
             <div>{item?.endTime}</div>
           </div>
           <div className="flex justify-center">
-            <ZoomImage url={activeImg} />
+            <ZoomImage url={activeImg} cssSize={"small"} />
           </div>
           <Row>
             <Col span={12}>
@@ -39,7 +40,15 @@ const ItemDetail = ({ item }) => {
               <div>{item?.startPrice}</div>
             </Col>
           </Row>
-          <Row>
+          <div>
+            <Button
+              className="text-[#2d7717] text-[18px]"
+              onClick={() => navigate(`/item-detail/${item?.itemId}`)}
+            >
+              Xem chi tiết
+            </Button>
+          </div>
+          {/* <Row>
             {item?.detailUrls?.map((itemImg) => (
               <Col
                 span={4}
@@ -55,7 +64,7 @@ const ItemDetail = ({ item }) => {
                 />
               </Col>
             ))}
-          </Row>
+          </Row> */}
         </div>
       </Card>
     </Col>
@@ -99,7 +108,7 @@ const ItemList = () => {
     if (!bidId) return;
     const result = await apiFactory.bidApi.getBid({
       bidId,
-      bidStatus
+      bidStatus,
     });
 
     if (result?.status !== 200) {
