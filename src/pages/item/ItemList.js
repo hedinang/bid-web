@@ -35,8 +35,7 @@ const ItemDetail = ({ item }) => {
           </div>
           <div className="flex justify-center">
             {/* <ZoomImage url={activeImg} cssSize={"small"} /> */}
-            {/* <img src={activeImg} /> */}
-            <Image src={activeImg} className="!w-[100%] !h-[300px]"/>
+            <Image src={activeImg} className="!w-[100%] !h-[300px]" />
           </div>
           <Row>
             <Col span={12}>
