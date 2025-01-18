@@ -125,12 +125,17 @@ const BidList = () => {
     }
     setIsLoading(false);
 
-    setBidList(
-      sortBy(result?.data, (e) => {
+    const preparedBidList = result?.data
+      ?.map((e) => {
         const [timePart, datePart] = e?.openTime?.split(" ");
-        return new Date(`${datePart}T${timePart}`);
+        return {
+          ...e,
+          compareTime: new Date(`${datePart}T${timePart}`),
+        };
       })
-    );
+      ?.filter((e) => e?.compareTime > new Date());
+
+    setBidList(sortBy(preparedBidList, "compareTime"));
   };
 
   useEffect(() => {

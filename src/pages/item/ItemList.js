@@ -1,10 +1,9 @@
 import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import apiFactory from "../../api";
+import { useNavigate } from "react-router-dom";
 import ZoomImage from "../../components/img/ZoomImage";
+import { useItemContext } from "../../context/ItemContext";
 import "./style.scss";
 
 const ItemDetail = ({ item }) => {
@@ -16,7 +15,14 @@ const ItemDetail = ({ item }) => {
   }, [item]);
 
   return (
-    <Col xs={24} sm={24} md={12} xl={8} className="p-[10px]" key={item?.title}>
+    <Col
+      xs={24}
+      sm={24}
+      md={12}
+      xl={8}
+      className="p-[10px]"
+      key={item?.itemId + item?.title}
+    >
       <Card hoverable>
         <div className="item">
           <div className="item-title">
@@ -28,7 +34,9 @@ const ItemDetail = ({ item }) => {
             <div>{item?.endTime}</div>
           </div>
           <div className="flex justify-center">
-            <ZoomImage url={activeImg} cssSize={"small"} />
+            {/* <ZoomImage url={activeImg} cssSize={"small"} /> */}
+            {/* <img src={activeImg} /> */}
+            <Image src={activeImg} className="!w-[100%] !h-[300px]"/>
           </div>
           <Row>
             <Col span={12}>
@@ -48,23 +56,6 @@ const ItemDetail = ({ item }) => {
               Xem chi tiết
             </Button>
           </div>
-          {/* <Row>
-            {item?.detailUrls?.map((itemImg) => (
-              <Col
-                span={4}
-                className="p-[2px]"
-                key={itemImg}
-                onClick={() => setActiveImg(itemImg)}
-              >
-                <Image
-                  className="slide-item"
-                  src={itemImg}
-                  preview={false}
-                  key={itemImg}
-                />
-              </Col>
-            ))}
-          </Row> */}
         </div>
       </Card>
     </Col>
@@ -73,84 +64,16 @@ const ItemDetail = ({ item }) => {
 
 const ItemList = () => {
   const navigate = useNavigate();
-  const { bidId, bidStatus } = useParams();
-
-  const [itemList, setItemList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [bid, setBid] = useState();
-  const [searchItem, setSearchItem] = useState({
-    limit: 24,
-    page: 1,
-    searchBranch: "",
-    searchRank: "",
-  });
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    if (!bidId) return;
-
-    const result = await apiFactory.itemApi.list({
-      ...searchItem,
-      bidId,
-      bidStatus,
-    });
-
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
-    }
-    setIsLoading(false);
-    setItemList(result?.data);
-  };
-
-  const fetchBid = async () => {
-    if (!bidId) return;
-    const result = await apiFactory.bidApi.getBid({
-      bidId,
-      bidStatus,
-    });
-
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
-    }
-
-    setBid(result?.data);
-  };
-
-  const onChooseBranch = (e) => {
-    setSearchItem({
-      ...searchItem,
-      limit: 50,
-      page: 1,
-      searchBranch: e,
-    });
-  };
-
-  const onChooseRank = (e) => {
-    setSearchItem({
-      ...searchItem,
-      limit: 50,
-      page: 1,
-      searchRank: e,
-    });
-  };
-
-  const changePage = (e) => {
-    setSearchItem({
-      ...searchItem,
-      page: e,
-    });
-  };
-
-  useEffect(() => {
-    fetchBid();
-  }, [bidId]);
-
-  useEffect(() => {
-    fetchData();
-  }, [bidId, searchItem]);
+  const {
+    itemList,
+    bid,
+    isLoading,
+    searchItem,
+    onChooseBranch,
+    onChooseRank,
+    onChooseCategory,
+    changePage,
+  } = useItemContext();
 
   return (
     <div className="item-list">
@@ -162,7 +85,7 @@ const ItemList = () => {
       </div>
 
       <Row className="flex items-center">
-        <Col xs={24} sm={12} className="p-[10px]">
+        <Col xs={24} md={8} className="p-[10px]">
           <Select
             placeholder="Chọn hãng"
             allowClear
@@ -312,7 +235,46 @@ const ItemList = () => {
             onChange={onChooseBranch}
           />
         </Col>
-        <Col xs={24} sm={12} className="p-[10px]">
+        <Col xs={24} md={8} className="p-[10px]">
+          <Select
+            placeholder="Chọn loại sản phẩm"
+            allowClear
+            className="w-[200px]"
+            onChange={onChooseCategory}
+            options={[
+              { value: "WATCH", label: "WATCH" },
+              { value: "BAG", label: "BAG" },
+              { value: "Jewelry", label: "Jewelry" },
+              { value: "Accessory", label: "Accessory" },
+              { value: "Fashion accessories", label: "Fashion accessories" },
+              { value: "Pottery", label: "Pottery" },
+              { value: "Camera", label: "Camera" },
+              { value: "Apparel", label: "Apparel" },
+              { value: "Shoes", label: "Shoes" },
+              { value: "Art quality", label: "Art quality" },
+              { value: "furniture", label: "furniture" },
+              { value: "bicycle", label: "bicycle" },
+              { value: "Consumer electronics", label: "Consumer electronics" },
+              { value: "Hobby", label: "Hobby" },
+              { value: "Sport", label: "Sport" },
+              { value: "Musical instrument", label: "Musical instrument" },
+              { value: "the expendables", label: "the expendables" },
+              { value: "game", label: "game" },
+              { value: "PC", label: "PC" },
+              { value: "Camping Equipment", label: "Camping Equipment" },
+              { value: "Audio Equipment", label: "Audio Equipment" },
+              { value: "education", label: "education" },
+              { value: "media", label: "media" },
+              { value: "Smoking device", label: "Smoking device" },
+              { value: "cellphone", label: "cellphone" },
+              { value: "kimono", label: "kimono" },
+              { value: "Brand empty box", label: "Brand empty box" },
+              { value: "Car bike equipment", label: "Car bike equipment" },
+              { value: "sewing machine", label: "sewing machine" },
+            ]}
+          />
+        </Col>
+        <Col xs={24} md={8} className="p-[10px]">
           <Select
             placeholder="Chọn chất lượng"
             allowClear
@@ -348,7 +310,7 @@ const ItemList = () => {
             <Spin />
           </div>
         ) : (
-          itemList?.map((item) => <ItemDetail item={item} key={item} />)
+          itemList?.map((item) => <ItemDetail item={item} />)
         )}
       </Row>
       <div className="paging-bottom">

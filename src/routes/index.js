@@ -8,6 +8,7 @@ import { AdminBidList } from "../pages/bid/AdminBidList";
 import { AdminItemList } from "../pages/item/AdminItemList";
 import { AdminItemDetail } from "../pages/item/AdminItemDetail";
 import { ItemDetail } from "../pages/item/ItemDetail";
+import { ItemProvider } from "../context/ItemContext";
 
 const router = createBrowserRouter([
   // {
@@ -27,28 +28,45 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       {
-        path: "/bid-list",
-        element: <BidList />,
-      },
-      {
         path: "/admin/bid-list",
         element: <AdminBidList />,
       },
       {
         path: "/admin/item-list/:bidId/:bidStatus",
-        element: <AdminItemList />,
-      },
-      {
-        path: "/item-list/:bidId/:bidStatus",
-        element: <ItemList />,
+        element: (
+          <ItemProvider>
+            <AdminItemList />
+          </ItemProvider>
+        ),
       },
       {
         path: "/admin/item-detail/:itemId",
-        element: <AdminItemDetail />,
+        element: (
+          <ItemProvider>
+            <AdminItemDetail />
+          </ItemProvider>
+        ),
+      },
+
+      {
+        path: "/bid-list",
+        element: <BidList />,
+      },
+      {
+        path: "/item-list/:bidId/:bidStatus",
+        element: (
+          <ItemProvider>
+            <ItemList />
+          </ItemProvider>
+        ),
       },
       {
         path: "/item-detail/:itemId",
-        element: <ItemDetail />,
+        element: (
+          <ItemProvider>
+            <ItemDetail />
+          </ItemProvider>
+        ),
       },
     ],
   },
