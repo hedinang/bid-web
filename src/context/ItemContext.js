@@ -31,6 +31,12 @@ export const ItemProvider = ({ children }) => {
   const [activeUrl, setActiveUrl] = useState({});
   const { itemId } = useParams();
 
+  const setFullActiveUrl = (url) => {
+    setActiveUrl(
+      url?.replace("https://resize.ecoauc.com", "https://assets.ecoauc.com")
+    );
+  };
+
   const fetchItemDetail = async () => {
     setIsLoading(true);
     if (!itemId) return;
@@ -43,7 +49,7 @@ export const ItemProvider = ({ children }) => {
     }
     setIsLoading(false);
     setItem(result?.data);
-    setActiveUrl(result?.data?.detailUrls?.[0]);
+    setFullActiveUrl(result?.data?.detailUrls?.[0]);
   };
 
   const fetchItemList = async () => {
@@ -62,6 +68,15 @@ export const ItemProvider = ({ children }) => {
     }
     setIsLoading(false);
     setItemList(result?.data);
+    // setItemList(
+    //   result?.data?.map((e) => {
+    //     e?.detailUrl?.map((f) => {
+    //       f.replace("https://resize.ecoauc.com", "https://assets.ecoauc.com");
+    //       return f;
+    //     });
+    //     return e;
+    //   })
+    // );
   };
 
   const fetchBid = async () => {
@@ -134,6 +149,7 @@ export const ItemProvider = ({ children }) => {
       item,
       activeUrl,
       setActiveUrl,
+      setFullActiveUrl,
       onChooseBranch,
       onChooseRank,
       onChooseCategory,

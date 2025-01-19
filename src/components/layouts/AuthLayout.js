@@ -1,35 +1,35 @@
 import { Layout, Space } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  Outlet,
-  useNavigate,
-  useSearchParams
-} from "react-router-dom";
+import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import { verifiedAccessToken } from "../../utils/Utils";
 import "./style.scss";
+import { useInfoUser } from "../../store/UserStore";
 
 const CHAT_WEB = process.env.REACT_APP_CHAT_WEB || "http://localhost:3000";
 
 const AuthLayout = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { updateUser } = useInfoUser();
+
   const navigate = useNavigate();
   const [verified, setVerified] = useState(false);
 
   const process = async () => {
-    setVerified(verifiedAccessToken());
-    
-    if (!verifiedAccessToken()) {
+    setVerified(verifiedAccessToken(updateUser));
+
+    if (!verifiedAccessToken(updateUser)) {
       if (!searchParams.get("callback")) {
         navigate("/login");
       } else {
         navigate("/login?callback=" + searchParams.get("callback"));
       }
     } else {
-      if (!searchParams.get("callback")) {
-        window.location.href = CHAT_WEB;
-      } else {
-        window.location.href = searchParams.get("callback");
-      }
+      navigate("/admin/bid-list");
+      // if (!searchParams.get("callback")) {
+      //   window.location.href = CHAT_WEB;
+      // } else {
+      //   window.location.href = searchParams.get("callback");
+      // }
     }
   };
 

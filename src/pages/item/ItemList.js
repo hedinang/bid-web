@@ -11,7 +11,12 @@ const ItemDetail = ({ item }) => {
   const [activeImg, setActiveImg] = useState();
 
   useEffect(() => {
-    setActiveImg(item?.detailUrls[0]);
+    setActiveImg(
+      item?.detailUrls[0]?.replace(
+        "https://resize.ecoauc.com",
+        "https://assets.ecoauc.com"
+      )
+    );
   }, [item]);
 
   return (
@@ -33,9 +38,13 @@ const ItemDetail = ({ item }) => {
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center p-[5px]">
             {/* <ZoomImage url={activeImg} cssSize={"small"} /> */}
-            <Image src={activeImg} className="!w-[100%] !h-[300px]" />
+            <Image
+              src={activeImg}
+              height={300}
+              // className="!w-[100%] !h-[300px]"
+            />
           </div>
           <Row>
             <Col span={12}>

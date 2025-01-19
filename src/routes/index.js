@@ -9,12 +9,14 @@ import { AdminItemList } from "../pages/item/AdminItemList";
 import { AdminItemDetail } from "../pages/item/AdminItemDetail";
 import { ItemDetail } from "../pages/item/ItemDetail";
 import { ItemProvider } from "../context/ItemContext";
+import Login from "../pages/login";
+import AuthLayout from "../components/layouts/AuthLayout";
 
 const router = createBrowserRouter([
-  // {
-  //   path: "login",
-  //   element: <Login />,
-  // },
+  {
+    path: "login",
+    element: <Login />,
+  },
   // {
   //   path: "register",
   //   element: <Registration />,
@@ -26,6 +28,32 @@ const router = createBrowserRouter([
   {
     // path: "/",
     element: <PublicLayout />,
+    children: [
+      {
+        path: "/bid-list",
+        element: <BidList />,
+      },
+      {
+        path: "/item-list/:bidId/:bidStatus",
+        element: (
+          <ItemProvider>
+            <ItemList />
+          </ItemProvider>
+        ),
+      },
+      {
+        path: "/item-detail/:itemId",
+        element: (
+          <ItemProvider>
+            <ItemDetail />
+          </ItemProvider>
+        ),
+      },
+    ],
+  },
+  {
+    // path: "/",
+    element: <AuthLayout />,
     children: [
       {
         path: "/admin/bid-list",
@@ -44,27 +72,6 @@ const router = createBrowserRouter([
         element: (
           <ItemProvider>
             <AdminItemDetail />
-          </ItemProvider>
-        ),
-      },
-
-      {
-        path: "/bid-list",
-        element: <BidList />,
-      },
-      {
-        path: "/item-list/:bidId/:bidStatus",
-        element: (
-          <ItemProvider>
-            <ItemList />
-          </ItemProvider>
-        ),
-      },
-      {
-        path: "/item-detail/:itemId",
-        element: (
-          <ItemProvider>
-            <ItemDetail />
           </ItemProvider>
         ),
       },

@@ -4,7 +4,7 @@ import React from "react";
 import apiFactory from "../api";
 import jwtDecode from "jwt-decode";
 
-const verifiedAccessToken = async () => {
+const verifiedAccessToken = async (updateUser) => {
   const accessToken = Cookies.get("access_token");
   if (!accessToken) {
     return false;
@@ -17,6 +17,7 @@ const verifiedAccessToken = async () => {
       const me = await apiFactory.userApi.getMe();
 
       if (me?.status === 200) {
+        updateUser(me?.data?.user);
         return true;
       } else {
         Cookies.remove("access_token");

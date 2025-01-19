@@ -8,8 +8,11 @@ import { toast } from "react-toastify";
 import winitechLogo from "../../assets/bid-icon.png";
 import { sortBy } from "lodash";
 import { IoShirt } from "react-icons/io5";
+import Cookies from "js-cookie";
+import { useInfoUser } from "../../store/UserStore";
 
 const AdminBidList = () => {
+  const { user } = useInfoUser();
   const navigate = useNavigate();
   const [bidList, setBidList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,6 +88,11 @@ const AdminBidList = () => {
             <div className="text-[20px] font-semibold">
               {bid?.bidId} - Thời gian đấu giá
             </div>
+            {user?.role === "SUPER_ADMIN" && (
+              <div>
+                <Button className="text-[#2d7717] text-[18px]">sync</Button>
+              </div>
+            )}
             <div className="flex justify-center gap-[10px] items-center">
               <MdOutlineAccessTime size={25} />
               <div>{bid?.openTime}</div>
@@ -136,14 +144,25 @@ const AdminBidList = () => {
     );
   };
 
+  const logout = async () => {
+    await apiFactory.userApi.logout();
+    Cookies.remove("access_token");
+    navigate("/login");
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <div className="bid-list">
-      <div className="text-[30px] p-[20px] text-center">
-        Tài sản sắp được đấu giá
+      <div>
+        <div className="text-[30px] p-[20px] text-center">
+          Tài sản sắp được đấu giá
+        </div>
+        <div className="absolute top-[20px] right-[10px]">
+          <Button onClick={logout}>logout</Button>
+        </div>
       </div>
       <Row>
         {isLoading ? (

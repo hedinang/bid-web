@@ -2,7 +2,6 @@ import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import ZoomImage from "../../components/img/ZoomImage";
 import { useItemContext } from "../../context/ItemContext";
 import "./style.scss";
 
@@ -339,3 +338,4 @@ const AdminItemList = () => {
   );
 };
 export { AdminItemList };
+

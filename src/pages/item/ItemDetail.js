@@ -6,17 +6,23 @@ import { useItemContext } from "../../context/ItemContext";
 
 const ItemDetail = () => {
   const navigate = useNavigate();
-  const { item, activeUrl, setActiveUrl, bid } = useItemContext();
+  const { item, activeUrl, bid, setFullActiveUrl } =
+    useItemContext();
 
   const generateImage = (img) => {
+    const fillImg = img.replace(
+      "https://resize.ecoauc.com",
+      "https://assets.ecoauc.com"
+    );
+
     return (
       <Col
         span={6}
         className="col-slide-item"
-        onClick={() => setActiveUrl(img)}
+        onClick={() => setFullActiveUrl(img)}
         key={img}
       >
-        <img src={img} className="slide-item" />
+        <img src={fillImg} className="slide-item" />
       </Col>
     );
   };
@@ -93,3 +99,4 @@ const ItemDetail = () => {
 };
 
 export { ItemDetail };
+

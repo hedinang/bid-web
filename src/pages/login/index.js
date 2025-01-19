@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { useInfoUser } from "../../store/UserStore";
 import "./style.scss";
-import winitechLogo from "../../assets/winitechLogo.jpg";
+import winitechLogo from "../../assets/bid-icon.png";
 import { verifiedAccessToken } from "../../utils/Utils";
 import CryptoJS from "crypto-js";
 
@@ -34,7 +34,7 @@ function Login(props) {
     setLoading(true);
     try {
       const req = {
-        userId: values.username.trim(),
+        username: values.username.trim(),
         password: values.password.trim(),
       };
 
@@ -49,22 +49,23 @@ function Login(props) {
 
       toast.success("Login success");
       Cookies.set("access_token", result.data.token);
+      
+      navigate("/admin/bid-list");
+      // const encryptAuthData = CryptoJS.AES.encrypt(
+      //   JSON.stringify(req),
+      //   SECRET_KEY_AUTH
+      // ).toString();
 
-      const encryptAuthData = CryptoJS.AES.encrypt(
-        JSON.stringify(req),
-        SECRET_KEY_AUTH
-      ).toString();
+      // isRememberMe
+      //   ? Cookies.set("auth", encryptAuthData)
+      //   : Cookies.remove("auth");
 
-      isRememberMe
-        ? Cookies.set("auth", encryptAuthData)
-        : Cookies.remove("auth");
-
-      if (!searchParams.get("callback")) {
-        window.location.href = CHAT_WEB + "?token=" + result.data.token;
-      } else {
-        window.location.href =
-          searchParams.get("callback") + "?token=" + result.data.token;
-      }
+      // if (!searchParams.get("callback")) {
+      //   window.location.href = CHAT_WEB + "?token=" + result.data.token;
+      // } else {
+      //   window.location.href =
+      //     searchParams.get("callback") + "?token=" + result.data.token;
+      // }
     } catch (error) {
     } finally {
       setLoading(false);
@@ -137,7 +138,7 @@ function Login(props) {
           <div>
             <Form.Item
               name="username"
-              label="ID"
+              label="Username"
               rules={[
                 {
                   required: true,
@@ -159,18 +160,18 @@ function Login(props) {
             >
               <Input.Password disabled={loading} />
             </Form.Item>
-            <Checkbox
+            {/* <Checkbox
               className="mb-5 mt-1 flex justify-start"
               checked={isRememberMe}
               onChange={() => setIsRememberMe(!isRememberMe)}
             >
               Remember me
-            </Checkbox>
+            </Checkbox> */}
             <Form.Item>
               <div className="login-button">
-                <Button className="bg-[#776d6d] text-[#f2f2f2]">
+                {/* <Button className="bg-[#776d6d] text-[#f2f2f2]">
                   Forget password ?
-                </Button>
+                </Button> */}
                 <Button
                   className="button  w-[100px] bg-[#0082d1] text-[#f2f2f2]"
                   htmlType="submit"
@@ -187,7 +188,7 @@ function Login(props) {
                 </Button>
               </div>
             </Form.Item>
-            <div>
+            {/* <div>
               Not a member ?{" "}
               <u
                 className="text-[#0082d1] cursor-pointer"
@@ -195,7 +196,7 @@ function Login(props) {
               >
                 Signup
               </u>
-            </div>
+            </div> */}
           </div>
         </Form>
       </div>
