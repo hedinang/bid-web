@@ -10,11 +10,23 @@ const ItemDetail = ({ item }) => {
   const [activeImg, setActiveImg] = useState();
 
   useEffect(() => {
-    setActiveImg(item?.detailUrls[0]);
+    setActiveImg(
+      item?.detailUrls[0]?.replace(
+        "https://resize.ecoauc.com",
+        "https://assets.ecoauc.com"
+      )
+    );
   }, [item]);
 
   return (
-    <Col xs={24} sm={24} md={12} xl={8} className="p-[10px]" key={item?.title}>
+    <Col
+      xs={24}
+      sm={24}
+      md={12}
+      xl={8}
+      className="p-[10px]"
+      key={item?.itemId + item?.title}
+    >
       <Card hoverable>
         <div className="item">
           <div className="item-title">
@@ -28,9 +40,13 @@ const ItemDetail = ({ item }) => {
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center p-[5px]">
             {/* <ZoomImage url={activeImg} cssSize={"small"} /> */}
-            <Image src={activeImg} className="!w-[100%] !h-[300px]" />
+            <Image
+              src={activeImg}
+              height={300}
+              // className="!w-[100%] !h-[300px]"
+            />
           </div>
           <Row>
             <Col span={12}>
@@ -50,23 +66,6 @@ const ItemDetail = ({ item }) => {
               Xem chi tiết
             </Button>
           </div>
-          {/* <Row>
-            {item?.detailUrls?.map((itemImg) => (
-              <Col
-                span={4}
-                className="p-[2px]"
-                key={itemImg}
-                onClick={() => setActiveImg(itemImg)}
-              >
-                <Image
-                  className="slide-item"
-                  src={itemImg}
-                  preview={false}
-                  key={itemImg}
-                />
-              </Col>
-            ))}
-          </Row> */}
         </div>
       </Card>
     </Col>
@@ -89,7 +88,7 @@ const AdminItemList = () => {
   return (
     <div className="item-list">
       <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
-        <button onClick={() => navigate("/admin/bid-list")}>
+      <button onClick={() => navigate("/admin/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
         <div>Phiên đấu giá lúc {bid?.openTime}</div>
