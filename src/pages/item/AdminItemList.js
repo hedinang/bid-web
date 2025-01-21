@@ -11,7 +11,7 @@ const ItemDetail = ({ item }) => {
 
   useEffect(() => {
     setActiveImg(
-      item?.detailUrls[0]?.replace(
+      item?.detailUrls?.[0]?.replace(
         "https://resize.ecoauc.com",
         "https://assets.ecoauc.com"
       )
