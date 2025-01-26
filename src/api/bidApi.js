@@ -18,6 +18,10 @@ class BidApi extends BaseApi {
     return this.post(`${BID}/stop`, payload);
   }
 
+  deleteBid(payload) {
+    return this.post(`${BID}/delete`, payload);
+  }
+
   syncBidList(payload) {
     return this.post(`${BID}/store/bid`, payload);
   }

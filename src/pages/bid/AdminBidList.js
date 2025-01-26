@@ -69,6 +69,15 @@ const SummaryBid = ({ bid }) => {
     );
   };
 
+  const deleteBid = async () => {
+    const result = await apiFactory.bidApi.deleteBid({
+      uniqueId: bid?.uniqueId,
+    });
+    if (result?.status === 200) {
+      toast.success(`Delete bid successfully`);
+    }
+  };
+
   useEffect(() => {
     setIsUpdating(
       bid?.donePage && Math.ceil(bid?.totalItem / 50) + 2 !== bid?.donePage
@@ -106,6 +115,12 @@ const SummaryBid = ({ bid }) => {
               </Button>
               <Button className="text-[#2d7717] text-[18px]" onClick={syncBid}>
                 sync
+              </Button>
+              <Button
+                className="text-[#2d7717] text-[18px]"
+                onClick={deleteBid}
+              >
+                delete
               </Button>
             </div>
           )}
