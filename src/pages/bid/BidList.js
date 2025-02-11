@@ -27,7 +27,7 @@ const BidList = () => {
     // );
 
     switch (bid?.donePage) {
-      case 0:
+      case Math.ceil(bid?.totalItem / 50):
         return (
           <Button className="text-[#2d7717] text-[18px]" disabled>
             Chuẩn bị
@@ -63,12 +63,16 @@ const BidList = () => {
   const generateBid = (bid) => {
     if (!bid?.bidStatus) return null;
     const isUpdating =
-      bid?.donePage && Math.ceil(bid?.totalItem / 50) + 2 !== bid?.donePage;
+      bid?.donePage !== 0 && Math.ceil(bid?.totalItem / 50) !== bid?.donePage;
+    // bid?.donePage && Math.ceil(bid?.totalItem / 50) + 2 !== bid?.donePage;
 
     const doneItem =
-      Math.ceil(bid?.totalItem / 50) + 2 === bid?.donePage
+      bid?.donePage === 0
         ? bid?.totalItem
-        : bid?.donePage * 50;
+        : (Math.ceil(bid?.totalItem / 50) - bid?.donePage) * 50;
+    // Math.ceil(bid?.totalItem / 50) + 2 === bid?.donePage
+    //   ? bid?.totalItem
+    //   : bid?.donePage * 50;
 
     return (
       <Col
