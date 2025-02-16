@@ -3,11 +3,11 @@ import { BID } from "./apiConstant";
 
 class BidApi extends BaseApi {
   list() {
-    return this.get(`${BID}/list`);
+    return this.get(`${BID}/public/list`);
   }
 
   getBid(bid) {
-    return this.post(`${BID}/detail`, bid);
+    return this.post(`${BID}/public/detail`, bid);
   }
 
   syncBid(payload) {

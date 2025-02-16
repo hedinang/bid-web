@@ -24,7 +24,7 @@ const AuthLayout = ({ children }) => {
         navigate("/login?callback=" + searchParams.get("callback"));
       }
     } else {
-      navigate("/admin/bid-list");
+      // navigate("/admin/bid-list");
       // if (!searchParams.get("callback")) {
       //   window.location.href = CHAT_WEB;
       // } else {

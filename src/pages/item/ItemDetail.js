@@ -6,8 +6,7 @@ import { useItemContext } from "../../context/ItemContext";
 
 const ItemDetail = () => {
   const navigate = useNavigate();
-  const { item, activeUrl, bid, setFullActiveUrl } =
-    useItemContext();
+  const { item, activeUrl, bid, setFullActiveUrl } = useItemContext();
 
   const generateImage = (img) => {
     const fillImg = img.replace(
@@ -27,15 +26,19 @@ const ItemDetail = () => {
     );
   };
 
+  const onBackPage = () => {
+    if (bid?.bidId) {
+      navigate(`/item-list/${bid?.bidId}/${bid?.bidStatus}`);
+    } else {
+      navigate(`/bid-list`);
+    }
+  };
+
   return (
     <div className="item-list">
       <div className="item-header">
         <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
-          <button
-            onClick={() =>
-              navigate(`/item-list/${bid?.bidId}/${bid?.bidStatus}`)
-            }
-          >
+          <button onClick={onBackPage}>
             <IoArrowBackOutline size={25} />
           </button>
           <div className="font-semibold">{item?.itemId}</div>
@@ -55,11 +58,7 @@ const ItemDetail = () => {
           <div>
             <span className="item-header-right">
               <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
-                <button
-                  onClick={() =>
-                    navigate(`/item-list/${bid?.bidId}/${bid?.bidStatus}`)
-                  }
-                >
+                <button onClick={onBackPage}>
                   <IoArrowBackOutline size={25} />
                 </button>
                 <div className="font-semibold">{item?.itemId}</div>
@@ -99,4 +98,3 @@ const ItemDetail = () => {
 };
 
 export { ItemDetail };
-

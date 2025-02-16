@@ -20,7 +20,7 @@ const SummaryBid = ({ bid }) => {
 
   const getBidStatusButotn = (bid) => {
     switch (bid?.donePage) {
-      case 0:
+      case Math.ceil(bid?.totalItem / 50):
         return (
           <Button className="text-[#2d7717] text-[18px]" disabled>
             Chuẩn bị
@@ -79,14 +79,15 @@ const SummaryBid = ({ bid }) => {
   };
 
   useEffect(() => {
+    if (!bid?.bidStatus) return null;
     setIsUpdating(
-      bid?.donePage && Math.ceil(bid?.totalItem / 50) + 2 !== bid?.donePage
+      bid?.donePage !== 0 && Math.ceil(bid?.totalItem / 50) !== bid?.donePage
     );
 
     setDoneItem(
-      Math.ceil(bid?.totalItem / 50) + 2 === bid?.donePage
+      bid?.donePage === 0
         ? bid?.totalItem
-        : bid?.donePage * 50
+        : (Math.ceil(bid?.totalItem / 50) - bid?.donePage) * 50
     );
   }, [bid]);
 
