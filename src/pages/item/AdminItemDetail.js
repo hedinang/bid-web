@@ -1,12 +1,16 @@
-import { Col, Row } from "antd";
+import { Button, Col, Input, Row } from "antd";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { IoCartOutline } from "react-icons/io5";
 import ZoomImage from "../../components/img/ZoomImage";
 import { useItemContext } from "../../context/ItemContext";
+import { NumericFormat } from "react-number-format";
+import { useState } from "react";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
   const { item, activeUrl, bid, setFullActiveUrl } = useItemContext();
+  const [bidPrice, setBidPrice] = useState(0);
 
   const generateImage = (img) => {
     const fillImg = img.replace(
@@ -48,6 +52,25 @@ const AdminItemDetail = () => {
         <div className="text-center p-[5px] font-semibold">
           {item?.description}
         </div>
+        <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+          <NumericFormat
+            className="w-[150px]"
+            value={bidPrice}
+            prefix="¥"
+            customInput={Input}
+            isAllowed={(values) =>
+              values.floatValue === undefined || values.floatValue <= 1000000
+            }
+            onValueChange={(values, sourceInfo) => {
+              setBidPrice(values?.floatValue);
+            }}
+          />
+          <Button
+            shape="circle"
+            icon={<IoCartOutline size={20} />}
+            className=""
+          />
+        </div>
       </div>
 
       <div className="content">
@@ -78,6 +101,26 @@ const AdminItemDetail = () => {
               </div>
               <div className="text-center p-[5px] font-semibold">
                 {item?.description}
+              </div>
+              <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+                <NumericFormat
+                  className="w-[150px]"
+                  value={bidPrice}
+                  prefix="¥"
+                  customInput={Input}
+                  isAllowed={(values) =>
+                    values.floatValue === undefined ||
+                    values.floatValue <= 1000000
+                  }
+                  onValueChange={(values, sourceInfo) => {
+                    setBidPrice(values?.floatValue);
+                  }}
+                />
+                <Button
+                  shape="circle"
+                  icon={<IoCartOutline size={20} />}
+                  className=""
+                />
               </div>
             </span>
             <div className="flex p-[5px]">

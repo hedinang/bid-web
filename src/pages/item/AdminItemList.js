@@ -1,13 +1,25 @@
-import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  Input,
+  Pagination,
+  Row,
+  Select,
+  Spin,
+} from "antd";
 import { useEffect, useState } from "react";
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useItemContext } from "../../context/ItemContext";
 import "./style.scss";
+import { NumericFormat } from "react-number-format";
 
 const ItemDetail = ({ item }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
+  const [bidPrice, setBidPrice] = useState(0);
 
   useEffect(() => {
     setActiveImg(
@@ -37,6 +49,25 @@ const ItemDetail = ({ item }) => {
             </a>
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>
+          <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+            <NumericFormat
+              className="w-[150px]"
+              value={bidPrice}
+              prefix="¥"
+              customInput={Input}
+              isAllowed={(values) =>
+                values.floatValue === undefined || values.floatValue <= 1000000
+              }
+              onValueChange={(values, sourceInfo) => {
+                setBidPrice(values?.floatValue);
+              }}
+            />
+            <Button
+              shape="circle"
+              icon={<IoCartOutline size={20} />}
+              className=""
+            />
+          </div>
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
@@ -58,10 +89,11 @@ const ItemDetail = ({ item }) => {
               <div>{item?.startPrice}</div>
             </Col>
           </Row>
+
           <div>
             <Button
               className="text-[#2d7717] text-[18px]"
-              onClick={() => navigate(`/admin/item-detail/${item?.itemId}`)}
+              onClick={() => navigate(`/admin/bid/item-detail/${item?.itemId}`)}
             >
               Xem chi tiết
             </Button>
@@ -88,7 +120,7 @@ const AdminItemList = () => {
   return (
     <div className="item-list">
       <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
-      <button onClick={() => navigate("/admin/bid-list")}>
+        <button onClick={() => navigate("/admin/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
         <div>Phiên đấu giá lúc {bid?.openTime}</div>
@@ -337,4 +369,3 @@ const AdminItemList = () => {
   );
 };
 export { AdminItemList };
-

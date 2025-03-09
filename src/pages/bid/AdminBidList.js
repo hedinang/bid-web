@@ -32,7 +32,7 @@ const SummaryBid = ({ bid }) => {
           <Button
             className="text-[#2d7717] text-[18px]"
             onClick={() =>
-              navigate("/admin/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+              navigate("/admin/bid/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
             }
           >
             Xem trước

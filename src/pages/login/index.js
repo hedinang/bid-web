@@ -50,7 +50,7 @@ function Login(props) {
       toast.success("Login success");
       Cookies.set("access_token", result.data.token);
       
-      navigate("/admin/bid-list");
+      navigate("/admin/bid/bid-list");
       // const encryptAuthData = CryptoJS.AES.encrypt(
       //   JSON.stringify(req),
       //   SECRET_KEY_AUTH

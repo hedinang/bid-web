@@ -11,6 +11,7 @@ import { ItemDetail } from "../pages/item/ItemDetail";
 import { ItemProvider } from "../context/ItemContext";
 import Login from "../pages/login";
 import AuthLayout from "../components/layouts/AuthLayout";
+import { UserManagement } from "../pages/user/UserManagement";
 
 const router = createBrowserRouter([
   {
@@ -56,11 +57,11 @@ const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       {
-        path: "/admin/bid-list",
+        path: "/admin/bid/bid-list",
         element: <AdminBidList />,
       },
       {
-        path: "/admin/item-list/:bidId/:bidStatus",
+        path: "/admin/bid/item-list/:bidId/:bidStatus",
         element: (
           <ItemProvider>
             <AdminItemList />
@@ -68,10 +69,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/admin/item-detail/:itemId",
+        path: "/admin/bid/item-detail/:itemId",
         element: (
           <ItemProvider>
             <AdminItemDetail />
+          </ItemProvider>
+        ),
+      },
+      {
+        path: "/admin/users",
+        element: (
+          <ItemProvider>
+            <UserManagement />
           </ItemProvider>
         ),
       },

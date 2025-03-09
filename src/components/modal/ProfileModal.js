@@ -30,13 +30,13 @@ const ProfileModal = ({ isModalOpen, closeModal }) => {
           <div className="relative avatarWrapper inline-block ">
             <Avatar
               style={{
-                backgroundColor: getColorFromInitial(user?.name[0]),
-                color: getColor(user?.name[0]),
+                backgroundColor: getColorFromInitial(user?.name?.[0]),
+                color: getColor(user?.name?.[0]),
               }}
               size={80}
               src={user?.avatar ? getAvatar(user) : null}
             >
-              {user?.name[0]}
+              {user?.name?.[0]}
             </Avatar>
           </div>
         </div>

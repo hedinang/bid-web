@@ -1,11 +1,11 @@
 import { Layout, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
-import { verifiedAccessToken } from "../../utils/Utils";
-import "./style.scss";
 import { useInfoUser } from "../../store/UserStore";
-
-const CHAT_WEB = process.env.REACT_APP_CHAT_WEB || "http://localhost:3000";
+import { verifiedAccessToken } from "../../utils/Utils";
+import { SideBar } from "../sideBar";
+import "./style.scss";
+import { Footer } from "../footer/Footer";
 
 const AuthLayout = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,9 +41,12 @@ const AuthLayout = ({ children }) => {
     <Space className="space-app" direction="vertical" size={[0, 48]}>
       {verified && (
         <Layout className="layout-app">
-          {/* <ChatSideBar/> */}
+          <SideBar />
           <Layout.Content>
-            <Outlet />
+            <div className="flex flex-col min-h-[100vh] justify-between">
+              <Outlet />
+              <Footer />
+            </div>
           </Layout.Content>
         </Layout>
       )}

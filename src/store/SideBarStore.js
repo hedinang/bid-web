@@ -2,27 +2,34 @@ import { create } from "zustand";
 
 export const useSideBarStore = create((set) => ({
   isSelectedConversation: false,
-  isMsgDetail: false,
-  isWorkManagement: false,
+  isAuction: false,
+  isCart: false,
   isProfileDetail: false,
-  isMenuOrganizationBook: true,
+  isUser: true,
   isNotification: false,
+  isMenuSideBar: false,
+
+  isAdminSettingUserOptions: true,
+  isAdminSettingUser: false,
+
+  setIsMenuSideBar: (value) => set((state) => ({ isMenuSideBar: value })),
 
   setIsSelectedConversation: (value) =>
     set((state) => ({ isSelectedConversation: value })),
 
-  switchIsMsgDetail: (value) =>
+  switchIsAuction: (value) =>
     set((state) => ({
-      isMsgDetail: state.isMsgDetail === value ? value : !state.isMsgDetail,
+      isAuction: state.isAuction === value ? value : !state.isAuction,
     })),
 
   switchIsProfileDetail: () =>
     set((state) => ({ isProfileDetail: !state.isProfileDetail })),
 
-  switchIsMenuOrganizationBook: () =>
-    set((state) => ({ isMenuOrganizationBook: !state.isMenuOrganizationBook })),
+  switchIsUser: () =>
+    set((state) => ({ isUser: !state.isUser })),
 
-  switchIsWorkManagement: () => set((state) => ({ isWorkManagement: !state.isWorkManagement })),
+  switchIsCart: () =>
+    set((state) => ({ isCart: !state.isCart })),
 
   setIsNotification: (value) => set((state) => ({ isNotification: value })),
 }));

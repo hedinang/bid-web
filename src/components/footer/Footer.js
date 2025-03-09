@@ -3,7 +3,7 @@ import "./style.scss";
 
 export const Footer = () => {
   return (
-    <Row className="bg-[#3f66da] text-[white]">
+    <Row className="bg-[#2a56b9] text-[white]">
       <Col sm={0} md={0} xl={5} />
       <Col sm={24} md={12} xl={7} className="left-footer w-full">
         <div>
