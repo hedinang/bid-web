@@ -11,15 +11,29 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
-import { useItemContext } from "../../context/ItemContext";
-import "./style.scss";
 import { NumericFormat } from "react-number-format";
+import { useNavigate } from "react-router-dom";
+import apiFactory from "../../api";
+import { role } from "../../config/Constant";
+import { useItemContext } from "../../context/ItemContext";
+import { useInfoUser } from "../../store/UserStore";
+import "./style.scss";
 
 const ItemDetail = ({ item }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
-  const [bidPrice, setBidPrice] = useState(0);
+  const [bidPrice, setBidPrice] = useState(item?.bidPrice);
+  const { user, languageMap } = useInfoUser();
+
+  const addToCard = async () => {
+    const result = await apiFactory.orderApi.addToCard({
+      bidId: item?.bidId,
+      itemId: item?.itemId,
+      bidPrice: bidPrice,
+    });
+
+    console.log(result);
+  };
 
   useEffect(() => {
     setActiveImg(
@@ -44,30 +58,36 @@ const ItemDetail = ({ item }) => {
           <div className="item-title">
             <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
-            <a href={item?.itemUrl} target="_blank" className="text-[blue]">
-              Original link
-            </a>
+            {user?.role !== role.CUSTOMER && (
+              <a href={item?.itemUrl} target="_blank" className="text-[blue]">
+                Original link
+              </a>
+            )}
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>
-          <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-            <NumericFormat
-              className="w-[150px]"
-              value={bidPrice}
-              prefix="¥"
-              customInput={Input}
-              isAllowed={(values) =>
-                values.floatValue === undefined || values.floatValue <= 1000000
-              }
-              onValueChange={(values, sourceInfo) => {
-                setBidPrice(values?.floatValue);
-              }}
-            />
-            <Button
-              shape="circle"
-              icon={<IoCartOutline size={20} />}
-              className=""
-            />
-          </div>
+          {user?.role === role.CUSTOMER && (
+            <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+              <NumericFormat
+                className="w-[150px]"
+                value={bidPrice}
+                prefix="¥"
+                customInput={Input}
+                isAllowed={(values) =>
+                  values.floatValue === undefined ||
+                  values.floatValue <= 1000000
+                }
+                onValueChange={(values, sourceInfo) => {
+                  setBidPrice(values?.floatValue);
+                }}
+              />
+              <Button
+                shape="circle"
+                icon={<IoCartOutline size={20} />}
+                className=""
+                onClick={addToCard}
+              />
+            </div>
+          )}
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
@@ -93,7 +113,9 @@ const ItemDetail = ({ item }) => {
           <div>
             <Button
               className="text-[#2d7717] text-[18px]"
-              onClick={() => navigate(`/admin/bid/item-detail/${item?.itemId}`)}
+              onClick={() =>
+                navigate(`/inside/bid/item-detail/${item?.itemId}`)
+              }
             >
               Xem chi tiết
             </Button>
@@ -120,7 +142,7 @@ const AdminItemList = () => {
   return (
     <div className="item-list">
       <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
-        <button onClick={() => navigate("/admin/bid-list")}>
+        <button onClick={() => navigate("/inside/bid/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
         <div>Phiên đấu giá lúc {bid?.openTime}</div>

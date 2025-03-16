@@ -73,9 +73,9 @@ export const MESSAGE_STATUS = {
 };
 
 export const role = {
-  HOST: "HOST",
-  MEMBER: "MEMBER",
   ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
+  CUSTOMER: "CUSTOMER",
 };
 export const FILE_STATUS = {
   PAUSE: "PAUSE",

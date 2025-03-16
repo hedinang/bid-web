@@ -10,6 +10,7 @@ import { sortBy } from "lodash";
 import { IoShirt } from "react-icons/io5";
 import Cookies from "js-cookie";
 import { useInfoUser } from "../../store/UserStore";
+import { role } from "../../config/Constant";
 
 const SummaryBid = ({ bid }) => {
   const { user } = useInfoUser();
@@ -32,7 +33,9 @@ const SummaryBid = ({ bid }) => {
           <Button
             className="text-[#2d7717] text-[18px]"
             onClick={() =>
-              navigate("/admin/bid/item-list/" + bid?.bidId + "/" + bid?.bidStatus)
+              navigate(
+                "/inside/bid/item-list/" + bid?.bidId + "/" + bid?.bidStatus
+              )
             }
           >
             Xem trước
@@ -136,9 +139,11 @@ const SummaryBid = ({ bid }) => {
           <div className="flex justify-center">
             <img src={winitechLogo} className="h-[40px]" />
           </div>
-          <a href={bid?.detailUrl} target="_blank" className="text-[blue]">
-            Original link
-          </a>
+          {user?.role !== role.CUSTOMER && (
+            <a href={bid?.detailUrl} target="_blank" className="text-[blue]">
+              Original link
+            </a>
+          )}
           {bid?.bidStatus !== "In session" ? (
             <div className="flex gap-[30px] justify-center">
               <div className="flex items-center">Xem trước: </div>

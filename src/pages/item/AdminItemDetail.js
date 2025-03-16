@@ -1,16 +1,19 @@
 import { Button, Col, Input, Row } from "antd";
-import { IoArrowBackOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
-import { IoCartOutline } from "react-icons/io5";
-import ZoomImage from "../../components/img/ZoomImage";
-import { useItemContext } from "../../context/ItemContext";
+import { useEffect, useState } from "react";
+import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
 import { NumericFormat } from "react-number-format";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import apiFactory from "../../api";
+import ZoomImage from "../../components/img/ZoomImage";
+import { role } from "../../config/Constant";
+import { useItemContext } from "../../context/ItemContext";
+import { useInfoUser } from "../../store/UserStore";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
   const { item, activeUrl, bid, setFullActiveUrl } = useItemContext();
   const [bidPrice, setBidPrice] = useState(0);
+  const { user } = useInfoUser();
 
   const generateImage = (img) => {
     const fillImg = img.replace(
@@ -30,47 +33,70 @@ const AdminItemDetail = () => {
     );
   };
 
+  const onBackPage = () => {
+    if (bid?.bidId) {
+      navigate(`/inside/bid/item-list/${bid?.bidId}/${bid?.bidStatus}`);
+    } else {
+      navigate(`/inside/bid/bid-list`);
+    }
+  };
+
+  const addToCard = async () => {
+    const result = await apiFactory.orderApi.addToCard({
+      bidId: item?.bidId,
+      itemId: item?.itemId,
+      bidPrice: bidPrice,
+    });
+
+    console.log(result);
+  };
+
+  useEffect(() => {
+    setBidPrice(item?.bidPrice);
+  }, [item?.itemId]);
+
   return (
     <div className="item-list">
       <div className="item-header">
         <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
-          <button
-            onClick={() =>
-              navigate(`/admin/item-list/${bid?.bidId}/${bid?.bidStatus}`)
-            }
-          >
+          <button onClick={onBackPage}>
             <IoArrowBackOutline size={25} />
           </button>
           <div className="font-semibold">{item?.itemId}</div>
         </div>
-        <div className="text-center p-[5px]">
-          <a href={item?.itemUrl} target="_blank" className="text-[blue]">
-            Original link
-          </a>
-        </div>
+        {user?.role !== role.CUSTOMER && (
+          <div className="text-center p-[5px]">
+            <a href={item?.itemUrl} target="_blank" className="text-[blue]">
+              Original link
+            </a>
+          </div>
+        )}
         <div className="text-center p-[5px] font-semibold">{item?.title}</div>
         <div className="text-center p-[5px] font-semibold">
           {item?.description}
         </div>
-        <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-          <NumericFormat
-            className="w-[150px]"
-            value={bidPrice}
-            prefix="¥"
-            customInput={Input}
-            isAllowed={(values) =>
-              values.floatValue === undefined || values.floatValue <= 1000000
-            }
-            onValueChange={(values, sourceInfo) => {
-              setBidPrice(values?.floatValue);
-            }}
-          />
-          <Button
-            shape="circle"
-            icon={<IoCartOutline size={20} />}
-            className=""
-          />
-        </div>
+        {user?.role === role.CUSTOMER && (
+          <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+            <NumericFormat
+              className="w-[150px]"
+              value={bidPrice}
+              prefix="¥"
+              customInput={Input}
+              isAllowed={(values) =>
+                values.floatValue === undefined || values.floatValue <= 1000000
+              }
+              onValueChange={(values, sourceInfo) => {
+                setBidPrice(values?.floatValue);
+              }}
+            />
+            <Button
+              shape="circle"
+              icon={<IoCartOutline size={20} />}
+              className=""
+              onClick={addToCard}
+            />
+          </div>
+        )}
       </div>
 
       <div className="content">
@@ -82,46 +108,51 @@ const AdminItemDetail = () => {
           <div>
             <span className="item-header-right">
               <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
-                <button
-                  onClick={() =>
-                    navigate(`/admin/item-list/${bid?.bidId}/${bid?.bidStatus}`)
-                  }
-                >
+                <button onClick={onBackPage}>
                   <IoArrowBackOutline size={25} />
                 </button>
                 <div className="font-semibold">{item?.itemId}</div>
               </div>
-              <div className="text-center p-[5px]">
-                <a href={item?.itemUrl} target="_blank" className="text-[blue]">
-                  Original link
-                </a>
-              </div>
+              {user?.role !== role.CUSTOMER && (
+                <div className="text-center p-[5px]">
+                  <a
+                    href={item?.itemUrl}
+                    target="_blank"
+                    className="text-[blue]"
+                  >
+                    Original link
+                  </a>
+                </div>
+              )}
               <div className="text-center p-[5px] font-semibold">
                 {item?.title}
               </div>
               <div className="text-center p-[5px] font-semibold">
                 {item?.description}
               </div>
-              <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-                <NumericFormat
-                  className="w-[150px]"
-                  value={bidPrice}
-                  prefix="¥"
-                  customInput={Input}
-                  isAllowed={(values) =>
-                    values.floatValue === undefined ||
-                    values.floatValue <= 1000000
-                  }
-                  onValueChange={(values, sourceInfo) => {
-                    setBidPrice(values?.floatValue);
-                  }}
-                />
-                <Button
-                  shape="circle"
-                  icon={<IoCartOutline size={20} />}
-                  className=""
-                />
-              </div>
+              {user?.role === role.CUSTOMER && (
+                <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+                  <NumericFormat
+                    className="w-[150px]"
+                    value={bidPrice}
+                    prefix="¥"
+                    customInput={Input}
+                    isAllowed={(values) =>
+                      values.floatValue === undefined ||
+                      values.floatValue <= 1000000
+                    }
+                    onValueChange={(values, sourceInfo) => {
+                      setBidPrice(values?.floatValue);
+                    }}
+                  />
+                  <Button
+                    shape="circle"
+                    icon={<IoCartOutline size={20} />}
+                    className=""
+                    onClick={addToCard}
+                  />
+                </div>
+              )}
             </span>
             <div className="flex p-[5px]">
               <div className="w-[200px] font-semibold">Bid id</div>

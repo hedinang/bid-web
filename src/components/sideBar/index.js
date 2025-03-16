@@ -120,30 +120,29 @@ const SideBar = () => {
   };
 
   const onChangeSideBar = (pathname) => {
-    console.log("ss", location?.pathname?.substring(1, pathname?.length + 1));
+    // if (location?.pathname?.substring(1, pathname?.length + 1) === pathname) {
+    //   // click 2 times to icon
+    //   switch (pathname) {
+    //     case "inside/bid/bid-list":
+    //       switchIsAuction(false);
+    //       break;
+    //     case "cart":
+    //       switchIsCart();
+    //       break;
+    //     case "user":
+    //       switchIsUser();
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // } else {
+    //   if (pathname === "chat") {
+    //     setIsNotification(false);
+    //   }
 
-    if (location?.pathname?.substring(1, pathname?.length + 1) === pathname) {
-      // click 2 times to icon
-      switch (pathname) {
-        case "auction":
-          switchIsAuction(false);
-          break;
-        case "cart":
-          switchIsCart();
-          break;
-        case "user":
-          switchIsUser();
-          break;
-        default:
-          break;
-      }
-    } else {
-      if (pathname === "chat") {
-        setIsNotification(false);
-      }
-
-      navigate(pathname);
-    }
+    //   navigate(pathname);
+    // }
+    navigate(pathname);
   };
 
   const openModalSettings = () => {
@@ -276,7 +275,7 @@ const SideBar = () => {
           <button
             className="p-[20px] flex items-center"
             onClick={() => {
-              onChangeSideBar("auction");
+              onChangeSideBar("inside/bid/bid-list");
               setIsMenuSideBar(false);
             }}
             ref={tourStepRef1}
@@ -330,7 +329,7 @@ const SideBar = () => {
           <button
             className="p-[20px] flex items-center"
             onClick={() => {
-              onChangeSideBar("/admin/users");
+              onChangeSideBar("/inside/users");
               setIsMenuSideBar(false);
             }}
             ref={tourStepRef2}
