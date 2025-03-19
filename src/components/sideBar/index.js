@@ -302,7 +302,7 @@ const SideBar = () => {
           <button
             className="p-[20px] flex items-center"
             onClick={() => {
-              onChangeSideBar("work-management/dashboard");
+              onChangeSideBar("cart");
               setIsMenuSideBar(false);
             }}
             ref={tourStepRef2}
@@ -329,7 +329,7 @@ const SideBar = () => {
           <button
             className="p-[20px] flex items-center"
             onClick={() => {
-              onChangeSideBar("/inside/users");
+              onChangeSideBar("/user-list");
               setIsMenuSideBar(false);
             }}
             ref={tourStepRef2}

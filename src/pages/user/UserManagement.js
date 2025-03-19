@@ -26,10 +26,15 @@ const UserManagement = () => {
 
   const columns = [
     {
-      title: "User code",
-      dataIndex: "userCode",
-      key: "userCode",
+      title: "UserId",
+      dataIndex: "userId",
+      key: "userId",
       width: "150px",
+    },
+    {
+      title: "Username",
+      dataIndex: "username",
+      key: "username",
     },
     {
       title: "Name",
@@ -47,25 +52,10 @@ const UserManagement = () => {
       key: "phone",
     },
     {
-      title: "Birthday",
-      dataIndex: "birthday",
-      key: "birthday",
-    },
-    // {
-    //   title: `${languageMap?.["a"] ?? "Language"}`,
-    //   dataIndex: "language",
-    //   key: "language",
-    // },
-    {
       title: "Role",
-      dataIndex: "roleCode",
-      key: "roleCode",
+      dataIndex: "role",
+      key: "role",
     },
-    // {
-    //   title: `${languageMap?.["a"] ?? "Avatar"}`,
-    //   dataIndex: "avatar",
-    //   key: "avatar",
-    // },
     {
       title: "Action",
       dataIndex: "action",

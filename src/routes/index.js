@@ -12,7 +12,7 @@ import { ItemProvider } from "../context/ItemContext";
 import Login from "../pages/login";
 import AuthLayout from "../components/layouts/AuthLayout";
 import { UserManagement } from "../pages/user/UserManagement";
-import { Cart } from "../pages/cart/Cart";
+import { OrderList } from "../pages/cart/OrderList";
 
 const router = createBrowserRouter([
   {
@@ -89,7 +89,15 @@ const router = createBrowserRouter([
         path: "/cart",
         element: (
           <ItemProvider>
-            <Cart />
+            <OrderList />
+          </ItemProvider>
+        ),
+      },
+      {
+        path: "/user-list",
+        element: (
+          <ItemProvider>
+            <UserManagement />
           </ItemProvider>
         ),
       },
