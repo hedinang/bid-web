@@ -23,8 +23,8 @@ const CreateUserModal = ({
   const { languageMap } = useInfoUser();
   const [user, setUser] = useState({
     ...editingUser,
-    roleCode: editingUser ? editingUser?.roleCode : "NORMAL",
-    birthday: editingUser?.birthday ? dayjs(editingUser?.birthday) : null,
+    // roleCode: editingUser ? editingUser?.roleCode : "NORMAL",
+    // birthday: editingUser?.birthday ? dayjs(editingUser?.birthday) : null,
   });
 
   const [form] = Form.useForm();
@@ -35,89 +35,40 @@ const CreateUserModal = ({
     }
   };
 
-  const onCreate = async (request) => {
-    try {
-      const result = await apiFactory.userApi.createUser(request);
-
-      if (result?.status !== 200) {
-        toast.error(result?.message);
-        return;
-      }
-
-      if (!isActive) {
-        const filteredUserList = userList?.filter(
-          (user) => user?.userId !== result?.data?.userId
-        );
-        setUserList([...filteredUserList]);
-        cancelModal();
-        return;
-      }
-
-      if (userList?.some((user) => user?.userId === result?.data?.userId)) {
-        const updatedUserList = userList?.map((user) => {
-          if (user?.userId === result?.data?.userId) {
-            return {
-              ...result?.data,
-              birthday: result?.data?.birthday
-                ? dayjs(result?.data?.birthday)?.format("YYYY-MM-DD")
-                : null,
-              isNew: true,
-            };
-          }
-
-          return { ...user, isNew: false };
-        });
-
-        setUserList([...updatedUserList]);
-      } else {
-        const updatedUserList = userList?.map(({ isNew, ...rest }) => rest);
-
-        updatedUserList?.unshift({
-          ...result?.data,
-          birthday: result?.data?.birthday
-            ? dayjs(result?.data?.birthday)?.format("YYYY-MM-DD")
-            : null,
-          isNew: true,
-        });
-
-        setUserList([...updatedUserList]);
-      }
-
-      cancelModal();
-    } catch (error) {}
-  };
-
-  const onUpdate = async (request) => {
-    const result = await apiFactory.userApi.updateUser(request);
+  const onStore = async (request) => {
+    const result = await apiFactory.userApi.storeUser({
+      ...request,
+      userId: editingUser?.userId,
+    });
 
     if (result?.status !== 200) {
       toast.error(result?.message);
       return;
     }
 
-    const updatedUserList = userList?.map(({ isNew, ...rest }) => rest);
+    if (request?.status === "INACTIVE") {
+      let userIndex = userList?.findIndex(
+        (u) => u?.userId === result?.data?.userId
+      );
+      userList?.splice(userIndex, 1);
+      setUserList([...userList]);
+      cancelModal();
+      return;
+    }
 
-    const userIndex = updatedUserList?.findIndex(
-      (usr) => usr?.userId === request?.userId
-    );
-
-    updatedUserList[userIndex] = {
-      ...result?.data,
-      birthday: result?.data?.birthday
-        ? dayjs(result?.data?.birthday)?.format("YYYY-MM-DD")
-        : null,
-      isNew: true,
-    };
-
-    setUserList(
-      [...updatedUserList]?.filter((user) => user?.isActive === isActive)
-    );
+    if (editingUser?.userId) {
+      let userIndex = userList?.findIndex(
+        (u) => u?.userId === result?.data?.userId
+      );
+      userList[userIndex] = { ...result?.data };
+    } else {
+      userList = [{ ...result?.data }, ...userList];
+    }
+    setUserList([...userList]);
     cancelModal();
   };
 
   const handleResetPassword = async () => {
-    setIsOpenModalResetPW(false);
-
     try {
       const rs = await apiFactory.userApi.resetPassword(user?.userId);
 
@@ -129,6 +80,8 @@ const CreateUserModal = ({
     } catch (error) {
       console.error("Error reset password:", error);
     }
+
+    setIsOpenModalResetPW(false);
   };
 
   const handleConfirmCreateUser = async () => {
@@ -136,42 +89,15 @@ const CreateUserModal = ({
     form.submit();
   };
 
-  const handleCheckExistedUser = async () => {
-    try {
-      const rs = await apiFactory.userApi.checkExistedUser(
-        form.getFieldValue("userId")
-      );
-
-      if (rs?.status === 200) {
-        if (rs?.data) {
-          setIsOpenModalConfirmSave(true);
-        } else {
-          form.submit();
-        }
-      }
-    } catch (error) {
-      cancelModal();
-    }
-  };
-
   const onFinish = async (values) => {
-    if (values?.roleCode?.trim() !== role.SYSTEM) {
-      if (!values?.userId?.trim()) {
-        toast.warn("Please enter userId");
-        return;
-      }
+    if (!values?.username?.trim()) {
+      toast.warn("Please enter userId");
+      return;
+    }
 
-      if (!values?.name?.trim()) {
-        toast.warn("Please enter Name");
-        return;
-      }
-
-      const regex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d-]+$/;
-
-      if (!regex.test(values?.userId?.trim())) {
-        toast.warn("UserId must contain both letters and numbers");
-        return;
-      }
+    if (!values?.name?.trim()) {
+      toast.warn("Please enter Name");
+      return;
     }
 
     setIsLoading(true);
@@ -183,11 +109,7 @@ const CreateUserModal = ({
     };
 
     try {
-      if (editingUser) {
-        await onUpdate(formatValue);
-      } else {
-        await onCreate(formatValue);
-      }
+      await onStore(formatValue);
     } catch (error) {
       console.error("Error fetching alarm list data:", error);
     } finally {
@@ -239,13 +161,12 @@ const CreateUserModal = ({
         initialValues={user}
       >
         <Form.Item
-          name="userId"
+          name="username"
           label="Username"
           rules={[
             {
               required: true,
-              message:
-                languageMap?.["as.menu.user.message.required"] ?? "Required!",
+              message: "Required!",
             },
             {
               pattern: /^[A-Za-z0-9-]+$/,
@@ -256,7 +177,7 @@ const CreateUserModal = ({
           ]}
           normalize={(value) => (value ? value.toUpperCase() : "")}
         >
-          <Input maxLength={30} type="text" disabled={editingUser} />
+          <Input maxLength={30} type="text" />
         </Form.Item>
         <Form.Item
           name="name"
@@ -292,36 +213,26 @@ const CreateUserModal = ({
           <Input maxLength={30} type="text" />
         </Form.Item>
         <Form.Item
-          name="roleCode"
+          name="role"
           label={languageMap?.["as.menu.user.update.role"] ?? "Role"}
         >
           <Select size={"middle"} options={optionsRoleCode} />
         </Form.Item>
-        {!user?.isActive && (
-          <Form.Item
-            name="isActive"
-            label={languageMap?.["as.menu.user.update.active"] ?? "Active"}
-          >
-            <Select
-              size={"middle"}
-              defaultValue={true}
-              options={[
-                {
-                  value: true,
-                  label:
-                    languageMap?.["as.menu.user.update.activeSelect"] ??
-                    "Active",
-                },
-                {
-                  value: false,
-                  label:
-                    languageMap?.["as.menu.user.update.inactiveSelect"] ??
-                    "Inactive",
-                },
-              ]}
-            />
-          </Form.Item>
-        )}
+        <Form.Item name="status" label="Status">
+          <Select
+            size={"middle"}
+            options={[
+              {
+                value: "ACTIVE",
+                label: "Active",
+              },
+              {
+                value: "INACTIVE",
+                label: "Inactive",
+              },
+            ]}
+          />
+        </Form.Item>
         {isLoading ? (
           <div className="flex justify-center mt-[10px]">
             <Spin
@@ -333,13 +244,7 @@ const CreateUserModal = ({
             <Button type="primary" className="bg-[grey]" onClick={cancelModal}>
               {languageMap?.["as.menu.user.update.btnCancel"] ?? "Cancel"}
             </Button>
-            <Button
-              type="primary"
-              className="bg-[#4db74d]"
-              onClick={() =>
-                editingUser ? form.submit() : handleCheckExistedUser()
-              }
-            >
+            <Button type="primary" className="bg-[#4db74d]" htmlType="submit">
               {editingUser
                 ? languageMap?.["as.menu.user.update.btnUpdate"] ?? "Update"
                 : languageMap?.["as.menu.user.update.btnCreate"] ?? "Create"}

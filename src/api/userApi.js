@@ -24,5 +24,13 @@ class UserApi extends BaseApi {
   saveMe(param) {
     return this.post(`${USER}/save-me`, param);
   }
+
+  storeUser(param) {
+    return this.post(`${USER}/store-user`, param);
+  }
+
+  resetPassword(param) {
+    return this.post(`${USER}/reset-password/${param}`);
+  }
 }
 export default UserApi;

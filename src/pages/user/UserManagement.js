@@ -9,8 +9,10 @@ const UserManagement = () => {
   const [userSearch, setUserSearch] = useState({
     limit: 30,
     page: 1,
-    userName: null,
-    isActive: true,
+    search: {
+      userName: null,
+      status: "ACTIVE",
+    },
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,23 +55,23 @@ const UserManagement = () => {
       dataIndex: "role",
       key: "role",
     },
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      width: "100px",
-      render: (text, record) =>
-        record?.isActive ? (
-          <Button
-            className="bg-[#e00d0d] text-[white]"
-            onClick={() => {
-              setIsRemoveUserModal(true);
-              setRemovingUserId(record?.userId);
-            }}
-            icon={<FiTrash className="text-[18px]" />}
-          />
-        ) : null,
-    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   width: "100px",
+    //   render: (text, record) =>
+    //     record?.isActive ? (
+    //       <Button
+    //         className="bg-[#e00d0d] text-[white]"
+    //         onClick={() => {
+    //           setIsRemoveUserModal(true);
+    //           setRemovingUserId(record?.userId);
+    //         }}
+    //         icon={<FiTrash className="text-[18px]" />}
+    //       />
+    //     ) : null,
+    // },
   ];
 
   const rowClassName = (record) => {
@@ -93,16 +95,24 @@ const UserManagement = () => {
     setIsOpenUserModal(true);
   };
 
+  const onDoubleClick = (record) => {
+    setSelectedUser(record);
+    setIsOpenUserModal(true);
+  };
+
+  const getSelectedColor = (record) => {
+    if (record?.userId === selectedUser?.userId) return "bg-red";
+  };
+
   const cancelCreateModal = () => {
     setIsRemoveUserModal(false);
     setIsOpenUserModal(false);
     setSelectedUser(null);
   };
 
-
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [userSearch]);
 
   return (
     <div>
@@ -129,7 +139,7 @@ const UserManagement = () => {
                 trigger="hover"
               >
                 <Switch
-                  value={userSearch?.isActive}
+                  value={userSearch?.search?.status === "ACTIVE"}
                   // style={{ zoom: isMobile && "0.7" }}
                   className="ml-2 w-[10px]"
                   onChange={(checked, e) => {
@@ -137,9 +147,12 @@ const UserManagement = () => {
                     setIsLoadMoreData(true);
                     setUserSearch({
                       ...userSearch,
-                      limit: 30,
-                      skip: 0,
-                      isActive: checked,
+                      search: {
+                        ...userSearch?.search,
+                        status: checked ? "ACTIVE" : "INACTIVE",
+                      },
+                      // limit: 30,
+                      // skip: 0,
                     });
                   }}
                 />
@@ -163,22 +176,22 @@ const UserManagement = () => {
               size={"middle"}
               className="max-h-[1000px]"
               rowClassName={rowClassName}
-              //   onRow={(record, index) => ({
-              //     onDoubleClick: (e) => onDoubleClick(record),
-              //     className: getSelectedColor(record),
-              //     ref: index === userList?.length - 1 ? lastRecordRef : null,
-              //   })}
-              //   scroll={
-              //     isMobile
-              //       ? {
-              //           x: 700,
-              //           y: 420,
-              //         }
-              //       : {
-              //           x: 1000,
-              //           y: 700,
-              //         }
-              //   }
+              onRow={(record, index) => ({
+                onDoubleClick: (e) => onDoubleClick(record),
+                className: getSelectedColor(record),
+                // ref: index === userList?.length - 1 ? lastRecordRef : null,
+              })}
+              // scroll={
+              //   isMobile
+              //     ? {
+              //         x: 700,
+              //         y: 420,
+              //       }
+              //     : {
+              //         x: 1000,
+              //         y: 700,
+              //       }
+              // }
             />
           </div>
         </div>
