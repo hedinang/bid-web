@@ -336,14 +336,6 @@ export const windowNames = {
   NOTIFICATION_DETAIL: "NOTIFICATION_DETAIL",
 };
 
-export const REACTION_TYPE_LABEL = [
-  { type: "LIKE", label: <span>👍</span> },
-  { type: "LOVE", label: <span>❤️ </span> },
-  { type: "SMILE", label: <span>😂</span> },
-  { type: "SAD", label: <span>😢</span> },
-  { type: "ANGRY", label: <span>😠</span> },
-];
-
 export const modalTypes = {
   REMOVE_MESSAGE: "REMOVE_MESSAGE",
 };

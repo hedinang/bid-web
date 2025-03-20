@@ -1,12 +1,14 @@
 import { Button, Input, Popover, Switch, Table } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiTrash } from "react-icons/fi";
-import { useSideBarStore } from "../../store/SideBarStore";
+import { toast } from "react-toastify";
+import apiFactory from "../../api";
+import { CreateUserModal } from "../../components/modal/adminSetting/CreateUserModal";
 
 const UserManagement = () => {
   const [userSearch, setUserSearch] = useState({
     limit: 30,
-    skip: 0,
+    page: 1,
     userName: null,
     isActive: true,
   });
@@ -18,18 +20,13 @@ const UserManagement = () => {
   const [removingUserId, setRemovingUserId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isOpenModalResetPW, setIsOpenModalResetPW] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 860);
-  //   const { user, languageMap } = useInfoUser();
-  const { switchIsWorkManagementOptions, isWorkManagementOptions } =
-    useSideBarStore((state) => state);
   const [userList, setUserList] = useState([]);
-
   const columns = [
     {
       title: "UserId",
       dataIndex: "userId",
       key: "userId",
-      width: "150px",
+      width: "300px",
     },
     {
       title: "Username",
@@ -79,6 +76,34 @@ const UserManagement = () => {
     return record?.isNew ? "bg-[#ffe678]" : "";
   };
 
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    const result = await apiFactory.userApi.listPerson(userSearch);
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setIsLoading(false);
+    setUserList(result?.data?.items);
+  };
+
+  const onAdd = () => {
+    setIsOpenUserModal(true);
+  };
+
+  const cancelCreateModal = () => {
+    setIsRemoveUserModal(false);
+    setIsOpenUserModal(false);
+    setSelectedUser(null);
+  };
+
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <div>
       <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
@@ -105,7 +130,7 @@ const UserManagement = () => {
               >
                 <Switch
                   value={userSearch?.isActive}
-                  style={{ zoom: isMobile && "0.7" }}
+                  // style={{ zoom: isMobile && "0.7" }}
                   className="ml-2 w-[10px]"
                   onChange={(checked, e) => {
                     // scrollToTopTable();
@@ -123,8 +148,8 @@ const UserManagement = () => {
             <Button
               className="ml-2"
               type="primary"
-              //   onClick={onAdd}
-              style={{ zoom: isMobile && "0.9" }}
+              onClick={onAdd}
+              // style={{ zoom: isMobile && "0.9" }}
             >
               Create User
             </Button>
@@ -158,6 +183,19 @@ const UserManagement = () => {
           </div>
         </div>
       </div>
+
+      {isOpenUserModal && (
+        <CreateUserModal
+          isModalOpen={isOpenUserModal}
+          cancelModal={cancelCreateModal}
+          title={selectedUser ? "Update user" : "Create User"}
+          setUserList={setUserList}
+          userList={userList}
+          editingUser={selectedUser}
+          setIsOpenModalResetPW={setIsOpenModalResetPW}
+          isActive={userSearch?.isActive}
+        />
+      )}
     </div>
   );
 };
