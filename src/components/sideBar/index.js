@@ -10,14 +10,14 @@ import {
   Tour,
 } from "antd";
 import Cookies from "js-cookie";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CiUser } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
 import { RiAuctionLine } from "react-icons/ri";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import apiFactory from "../../api";
 // import { closeAuthSocket, closeChatSocket } from "../../api/webSocket";
-import { windowNames } from "../../config/Constant";
+import { role, windowNames } from "../../config/Constant";
 import { useSideBarStore } from "../../store/SideBarStore";
 import { useInfoUser } from "../../store/UserStore";
 import { getAvatar, getColor, getColorFromInitial } from "../../utils/Utils";
@@ -36,17 +36,11 @@ const SideBar = () => {
   const [showProfile, setShowProfile] = useState(false);
   const infoRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
   const {
     isSelectedConversation,
     isNotification,
     isProfileDetail,
     switchIsProfileDetail,
-    switchIsAuction,
-    switchIsCart,
-    switchIsUser,
-    switchIsAdminSetting,
-    setIsNotification,
     isMenuSideBar,
     setIsMenuSideBar,
   } = useSideBarStore((state) => state);
@@ -108,9 +102,6 @@ const SideBar = () => {
       fcmToken: Cookies.get("fcm_token"),
       token: Cookies.get("access_token"),
     });
-    // closeAuthSocket();
-    // closeChatSocket();
-    //stompDisconnect();
     switchIsProfileDetail();
     Cookies.remove("access_token");
     Cookies.remove("access_token", { domain: "winivina.iptime.org" });
@@ -120,28 +111,6 @@ const SideBar = () => {
   };
 
   const onChangeSideBar = (pathname) => {
-    // if (location?.pathname?.substring(1, pathname?.length + 1) === pathname) {
-    //   // click 2 times to icon
-    //   switch (pathname) {
-    //     case "inside/bid/bid-list":
-    //       switchIsAuction(false);
-    //       break;
-    //     case "cart":
-    //       switchIsCart();
-    //       break;
-    //     case "user":
-    //       switchIsUser();
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // } else {
-    //   if (pathname === "chat") {
-    //     setIsNotification(false);
-    //   }
-
-    //   navigate(pathname);
-    // }
     navigate(pathname);
   };
 
@@ -230,122 +199,129 @@ const SideBar = () => {
     return resultComponent;
   };
 
-  const featureList = [
-    {
-      key: "face",
-      img: (
-        <Tooltip
-          placement="right"
-          title={languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
-          color={"#0091ff"}
-        >
-          <button
-            className="p-[12px]"
-            onClick={() => {
-              setIsMenuSideBar(false);
-              setShowProfile(!showProfile);
-              switchIsProfileDetail();
-            }}
+  const featureList = useMemo(() => {
+    const rawColumn = [
+      {
+        key: "face",
+        img: (
+          <Tooltip
+            placement="right"
+            title={languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
+            color={"#0091ff"}
           >
-            <div
-              className="flex cursor-pointer flex items-center"
-              ref={tourStepRef0}
+            <button
+              className="p-[12px]"
+              onClick={() => {
+                setIsMenuSideBar(false);
+                setShowProfile(!showProfile);
+                switchIsProfileDetail();
+              }}
             >
-              <CustomAvatar person={user} />
+              <div
+                className="flex cursor-pointer flex items-center"
+                ref={tourStepRef0}
+              >
+                <CustomAvatar person={user} />
 
+                {isMobile && (
+                  <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
+                    {languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
+                  </h2>
+                )}
+              </div>
+            </button>
+          </Tooltip>
+        ),
+        navigationItem: "",
+      },
+      {
+        key: "auction",
+        img: (
+          <Tooltip
+            placement="right"
+            title={languageMap?.["menu.sidebar.title.chat"] ?? "Phiên đấu giá"}
+            color={"#0091ff"}
+          >
+            <button
+              className="p-[20px] flex items-center"
+              onClick={() => {
+                onChangeSideBar("inside/bid/bid-list");
+                setIsMenuSideBar(false);
+              }}
+              ref={tourStepRef1}
+            >
+              <RiAuctionLine size={25} color={isMobile ? "black" : "#2a56b9"} />
               {isMobile && (
                 <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
-                  {languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
+                  {languageMap?.["menu.sidebar.title.chat"] ?? "Phiên đấu giá"}
                 </h2>
               )}
-            </div>
-          </button>
-        </Tooltip>
-      ),
-      navigationItem: "",
-    },
-    {
-      key: "auction",
-      img: (
-        <Tooltip
-          placement="right"
-          title={languageMap?.["menu.sidebar.title.chat"] ?? "Phiên đấu giá"}
-          color={"#0091ff"}
-        >
-          <button
-            className="p-[20px] flex items-center"
-            onClick={() => {
-              onChangeSideBar("inside/bid/bid-list");
-              setIsMenuSideBar(false);
-            }}
-            ref={tourStepRef1}
+            </button>
+          </Tooltip>
+        ),
+        navigationItem: "chatting list",
+      },
+      {
+        key: "cart",
+        img: (
+          <Tooltip
+            placement="right"
+            title={languageMap?.["event.title"] ?? "Giỏ hàng"}
+            color={"#0091ff"}
           >
-            <RiAuctionLine size={25} color={isMobile ? "black" : "#2a56b9"} />
-            {isMobile && (
-              <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
-                {languageMap?.["menu.sidebar.title.chat"] ?? "Phiên đấu giá"}
-              </h2>
-            )}
-          </button>
-        </Tooltip>
-      ),
-      navigationItem: "chatting list",
-    },
-    {
-      key: "cart",
-      img: (
-        <Tooltip
-          placement="right"
-          title={languageMap?.["event.title"] ?? "Giỏ hàng"}
-          color={"#0091ff"}
-        >
-          <button
-            className="p-[20px] flex items-center"
-            onClick={() => {
-              onChangeSideBar("cart");
-              setIsMenuSideBar(false);
-            }}
-            ref={tourStepRef2}
+            <button
+              className="p-[20px] flex items-center"
+              onClick={() => {
+                onChangeSideBar("cart");
+                setIsMenuSideBar(false);
+              }}
+              ref={tourStepRef2}
+            >
+              <IoCartOutline size={25} color={isMobile ? "black" : "#2a56b9"} />
+              {isMobile && (
+                <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
+                  {languageMap?.["event.title"] ?? "Event"}
+                </h2>
+              )}
+            </button>
+          </Tooltip>
+        ),
+        navigationItem: "event",
+      },
+    ];
+
+    if (user?.role !== role.CUSTOMER) {
+      rawColumn?.push({
+        key: "admin-setting",
+        img: (
+          <Tooltip
+            placement="right"
+            title={languageMap?.["admin-setting"] ?? "Danh sách người dùng"}
+            color={"#0091ff"}
           >
-            <IoCartOutline size={25} color={isMobile ? "black" : "#2a56b9"} />
-            {isMobile && (
-              <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
-                {languageMap?.["event.title"] ?? "Event"}
-              </h2>
-            )}
-          </button>
-        </Tooltip>
-      ),
-      navigationItem: "event",
-    },
-    {
-      key: "admin-setting",
-      img: (
-        <Tooltip
-          placement="right"
-          title={languageMap?.["admin-setting"] ?? "Danh sách người dùng"}
-          color={"#0091ff"}
-        >
-          <button
-            className="p-[20px] flex items-center"
-            onClick={() => {
-              onChangeSideBar("/user-list");
-              setIsMenuSideBar(false);
-            }}
-            ref={tourStepRef2}
-          >
-            <CiUser size={25} color={isMobile ? "black" : "#2a56b9"} />
-            {isMobile && (
-              <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
-                {languageMap?.["admin-setting"] ?? "Admin setting"}
-              </h2>
-            )}
-          </button>
-        </Tooltip>
-      ),
-      navigationItem: "event",
-    },
-  ];
+            <button
+              className="p-[20px] flex items-center"
+              onClick={() => {
+                onChangeSideBar("/user-list");
+                setIsMenuSideBar(false);
+              }}
+              ref={tourStepRef2}
+            >
+              <CiUser size={25} color={isMobile ? "black" : "#2a56b9"} />
+              {isMobile && (
+                <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
+                  {languageMap?.["admin-setting"] ?? "Admin setting"}
+                </h2>
+              )}
+            </button>
+          </Tooltip>
+        ),
+        navigationItem: "event",
+      });
+    }
+
+    return rawColumn;
+  }, [user?.role]);
 
   const handleClickOutside = (event) => {
     if (infoRef.current && !infoRef.current.contains(event.target)) {

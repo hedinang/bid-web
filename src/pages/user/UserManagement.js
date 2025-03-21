@@ -4,13 +4,14 @@ import { FiTrash } from "react-icons/fi";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { CreateUserModal } from "../../components/modal/adminSetting/CreateUserModal";
+import { debounce } from "lodash";
 
 const UserManagement = () => {
   const [userSearch, setUserSearch] = useState({
     limit: 30,
     page: 1,
     search: {
-      userName: null,
+      username: null,
       status: "ACTIVE",
     },
   });
@@ -110,6 +111,18 @@ const UserManagement = () => {
     setSelectedUser(null);
   };
 
+  const debouncedSetUsernameSearch = debounce((e) => {
+    // scrollToTopTable();
+    setIsLoadMoreData(true);
+    setUserSearch({
+      ...userSearch,
+      search: {
+        ...userSearch?.search,
+        username: e?.target?.value,
+      },
+    });
+  }, 500);
+
   useEffect(() => {
     fetchUsers();
   }, [userSearch]);
@@ -129,8 +142,11 @@ const UserManagement = () => {
               >
                 <Input
                   className="w-full mr-2"
-                  //   placeholder={languageMap?.["as.menu.user.placeHolderSearch"] ?? "Search user code, username, email"}
-                  //   onChange={(e) => debouncedSetUsernameSearch(e)}
+                  placeholder={
+                    // languageMap?.["as.menu.user.placeHolderSearch"] ??
+                    "Search username, email"
+                  }
+                  onChange={(e) => debouncedSetUsernameSearch(e)}
                   allowClear
                 />
               </Popover>

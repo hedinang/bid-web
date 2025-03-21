@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
+import { formatTime } from "../../utils/formatTime";
 
 const OrderList = () => {
   const { user } = useInfoUser();
@@ -40,6 +41,7 @@ const OrderList = () => {
         dataIndex: "title",
         align: "center",
         key: "deptAbbr",
+        width: "400px",
       },
       {
         title: "Category",
@@ -52,7 +54,7 @@ const OrderList = () => {
         dataIndex: "branch",
         align: "center",
         key: "opStatCd",
-        //   render: (e) => getLabelByCode(e, opStatCode, user?.language),
+        width: "140px",
       },
       {
         title: "Rank",
@@ -65,14 +67,15 @@ const OrderList = () => {
         dataIndex: "bidPrice",
         align: "center",
         key: "workClsCd",
-        //   render: (e) => getLabelByCode(e, workClsCode, user?.language),
+        width: "80px",
       },
       {
         title: "Order Date",
         dataIndex: "updatedAt",
         align: "center",
         key: "workClsCd",
-        //   render: (e) => getLabelByCode(e, workClsCode, user?.language),
+        render: (e) => formatTime(e),
+        width: "100px",
       },
       {
         title: "Status",

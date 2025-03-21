@@ -11,6 +11,7 @@ import { IoShirt } from "react-icons/io5";
 import Cookies from "js-cookie";
 import { useInfoUser } from "../../store/UserStore";
 import { role } from "../../config/Constant";
+import { SideBarConversation } from "../../components/sideBar/SideBarConversation";
 
 const SummaryBid = ({ bid }) => {
   const { user } = useInfoUser();
@@ -170,6 +171,7 @@ const AdminBidList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [threadList, setThreadList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const[isMenu, setIsMenu] = useState(false)
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -181,12 +183,17 @@ const AdminBidList = () => {
     }
     setIsLoading(false);
 
-    setBidList(
-      sortBy(result?.data, (e) => {
+    const preparedBidList = result?.data
+      ?.map((e) => {
         const [timePart, datePart] = e?.openTime?.split(" ");
-        return new Date(`${datePart}T${timePart}`);
+        return {
+          ...e,
+          compareTime: new Date(`${datePart}T${timePart}`),
+        };
       })
-    );
+      ?.filter((e) => e?.compareTime > new Date());
+
+    setBidList(sortBy(preparedBidList, "compareTime"));
   };
 
   const syncBidList = async () => {
@@ -234,9 +241,9 @@ const AdminBidList = () => {
         <div className="text-[30px] p-[20px] text-center">
           Tài sản sắp được đấu giá
         </div>
-        <div className="absolute top-[20px] right-[10px]">
+        {/* <div className="absolute top-[20px] right-[10px]">
           <Button onClick={logout}>logout</Button>
-        </div>
+        </div> */}
       </div>
       {user?.role === "SUPER_ADMIN" && (
         <div className="flex justify-center gap-[10px]">
@@ -279,6 +286,11 @@ const AdminBidList = () => {
           ))}
         </div>
       </Modal>
+      <SideBarConversation
+        // isExitGroup={isExitGroup}
+        isOpen={isMenu}
+        onClose={() => setIsMenu(false)}
+      />
     </div>
   );
 };
