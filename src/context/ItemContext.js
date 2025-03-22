@@ -47,7 +47,7 @@ export const ItemProvider = ({ children }) => {
       toast.error("can not load bid list");
       return;
     }
-    setIsLoading(false);
+    setIsLoading(false);    
     setItem(result?.data);
     setFullActiveUrl(result?.data?.detailUrls?.[0]);
   };
@@ -156,6 +156,8 @@ export const ItemProvider = ({ children }) => {
       changePage,
       isLoading,
       searchItem,
+      setItemList,
+      setItem
     }),
     [bidId, bidStatus, itemList, bid, isLoading, searchItem, item, activeUrl]
   );

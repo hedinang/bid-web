@@ -8,10 +8,12 @@ import ZoomImage from "../../components/img/ZoomImage";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
+import { MdCancel } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
-  const { item, activeUrl, bid, setFullActiveUrl } = useItemContext();
+  const { item, activeUrl, bid, setFullActiveUrl, setItem } = useItemContext();
   const [bidPrice, setBidPrice] = useState(0);
   const { user } = useInfoUser();
 
@@ -42,13 +44,55 @@ const AdminItemDetail = () => {
   };
 
   const addToCard = async () => {
-    const result = await apiFactory.orderApi.addToCard({
+    const rs = await apiFactory.orderApi.addToCard({
       bidId: item?.bidId,
       itemId: item?.itemId,
       bidPrice: bidPrice,
     });
 
-    console.log(result);
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      item.orderType = "ORDER";
+      setItem({ ...item });
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const onCancel = async () => {
+    const rs = await apiFactory.orderApi.changeStatus({
+      orderId: item?.orderId,
+      type: "CANCEL",
+    });
+
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      item.orderType = "CANCEL";
+      setItem({ ...item });
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const showItemStatus = () => {
+    if (item?.orderType === "ORDER")
+      return <div className="text-white px-[10px] bg-[#2a56b9]">Đợi đặt</div>;
+
+    if (item?.orderType === "BIDDING")
+      return <div className="text-white px-[10px] bg-[#c9ac12]">Đã đặt</div>;
+
+    if (item?.orderType === "CANCEL")
+      return <div className="text-white px-[10px] bg-[#e81224]">Hủy đặt</div>;
+
+    if (item?.orderType === "SUCCESS")
+      return (
+        <div className="text-white px-[10px] bg-[#78b43d]">Đấu thành công</div>
+      );
+
+    if (item?.orderType === "FAILED")
+      return (
+        <div className="text-white px-[10px] bg-[#dd5930]">Đấu thất bại</div>
+      );
   };
 
   useEffect(() => {
@@ -63,6 +107,7 @@ const AdminItemDetail = () => {
             <IoArrowBackOutline size={25} />
           </button>
           <div className="font-semibold">{item?.itemId}</div>
+          {showItemStatus()}
         </div>
         {user?.role !== role.CUSTOMER && (
           <div className="text-center p-[5px]">
@@ -88,13 +133,26 @@ const AdminItemDetail = () => {
               onValueChange={(values, sourceInfo) => {
                 setBidPrice(values?.floatValue);
               }}
+              disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                item?.orderType
+              )}
             />
-            <Button
-              shape="circle"
-              icon={<IoCartOutline size={20} />}
-              className=""
-              onClick={addToCard}
-            />
+            {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
+              <Button
+                shape="circle"
+                icon={<IoCartOutline size={20} />}
+                className=""
+                onClick={addToCard}
+              />
+            )}
+            {item?.orderType === "ORDER" && (
+              <Button
+                shape="circle"
+                icon={<MdCancel size={20} />}
+                className=""
+                onClick={onCancel}
+              />
+            )}
           </div>
         )}
       </div>
@@ -112,6 +170,7 @@ const AdminItemDetail = () => {
                   <IoArrowBackOutline size={25} />
                 </button>
                 <div className="font-semibold">{item?.itemId}</div>
+                {showItemStatus()}
               </div>
               {user?.role !== role.CUSTOMER && (
                 <div className="text-center p-[5px]">
@@ -144,13 +203,28 @@ const AdminItemDetail = () => {
                     onValueChange={(values, sourceInfo) => {
                       setBidPrice(values?.floatValue);
                     }}
+                    disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                      item?.orderType
+                    )}
                   />
-                  <Button
-                    shape="circle"
-                    icon={<IoCartOutline size={20} />}
-                    className=""
-                    onClick={addToCard}
-                  />
+                  {!["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                    item?.orderType
+                  ) && (
+                    <Button
+                      shape="circle"
+                      icon={<IoCartOutline size={20} />}
+                      className=""
+                      onClick={addToCard}
+                    />
+                  )}
+                  {item?.orderType === "ORDER" && (
+                    <Button
+                      shape="circle"
+                      icon={<MdCancel size={20} />}
+                      className=""
+                      onClick={onCancel}
+                    />
+                  )}
                 </div>
               )}
             </span>

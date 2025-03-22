@@ -18,21 +18,76 @@ import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
 import "./style.scss";
+import { MdCancel } from "react-icons/md";
+import { toast } from "react-toastify";
 
-const ItemDetail = ({ item }) => {
+const ItemDetail = ({ item, itemList, setItemList }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
   const [bidPrice, setBidPrice] = useState(item?.bidPrice);
   const { user, languageMap } = useInfoUser();
 
   const addToCard = async () => {
-    const result = await apiFactory.orderApi.addToCard({
+    const rs = await apiFactory.orderApi.addToCard({
       bidId: item?.bidId,
       itemId: item?.itemId,
       bidPrice: bidPrice,
     });
 
-    console.log(result);
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      const itemIndex = itemList?.findIndex(
+        (e) => e?.itemId === item?.itemId
+      );
+
+      if (itemIndex > -1) {
+        itemList[itemIndex].orderType = "ORDER";
+        itemList[itemIndex].orderId = rs?.data?.orderId;
+      }
+
+      setItemList([...itemList]);
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const onCancel = async () => {
+    const rs = await apiFactory.orderApi.changeStatus({
+      orderId: item?.orderId,
+      type: "CANCEL",
+    });
+
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      const itemIndex = itemList?.findIndex(
+        (e) => e?.orderId === item?.orderId
+      );
+
+      if (itemIndex > -1) {
+        itemList[itemIndex].orderType = "CANCEL";
+      }
+
+      setItemList([...itemList]);
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const showItemStatus = () => {
+    if (item?.orderType === "ORDER")
+      return <div className="item-status bg-[#2a56b9]">Đợi đặt</div>;
+
+    if (item?.orderType === "BIDDING")
+      return <div className="item-status bg-[#c9ac12]">Đã đặt</div>;
+
+    if (item?.orderType === "CANCEL")
+      return <div className="item-status bg-[#e81224]">Hủy đặt</div>;
+
+    if (item?.orderType === "SUCCESS")
+      return <div className="item-status bg-[#78b43d]">Đấu thành công</div>;
+
+    if (item?.orderType === "FAILED")
+      return <div className="item-status bg-[#dd5930]">Đấu thất bại</div>;
   };
 
   useEffect(() => {
@@ -53,6 +108,7 @@ const ItemDetail = ({ item }) => {
       className="p-[10px]"
       key={item?.itemId + item?.title}
     >
+      {showItemStatus()}
       <Card hoverable>
         <div className="item">
           <div className="item-title">
@@ -79,13 +135,26 @@ const ItemDetail = ({ item }) => {
                 onValueChange={(values, sourceInfo) => {
                   setBidPrice(values?.floatValue);
                 }}
+                disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                  item?.orderType
+                )}
               />
-              <Button
-                shape="circle"
-                icon={<IoCartOutline size={20} />}
-                className=""
-                onClick={addToCard}
-              />
+              {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
+                <Button
+                  shape="circle"
+                  icon={<IoCartOutline size={20} />}
+                  className=""
+                  onClick={addToCard}
+                />
+              )}
+              {item?.orderType === "ORDER" && (
+                <Button
+                  shape="circle"
+                  icon={<MdCancel size={20} />}
+                  className=""
+                  onClick={onCancel}
+                />
+              )}
             </div>
           )}
           <div className="flex justify-center gap-[10px] items-center">
@@ -137,6 +206,7 @@ const AdminItemList = () => {
     onChooseRank,
     onChooseCategory,
     changePage,
+    setItemList
   } = useItemContext();
 
   return (
@@ -374,7 +444,9 @@ const AdminItemList = () => {
             <Spin />
           </div>
         ) : (
-          itemList?.map((item) => <ItemDetail item={item} key={item} />)
+          itemList?.map((item) => (
+            <ItemDetail item={item} key={item} itemList={itemList} setItemList={setItemList}/>
+          ))
         )}
       </Row>
       <div className="paging-bottom">

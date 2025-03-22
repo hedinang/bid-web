@@ -13,5 +13,9 @@ class OrderApi extends BaseApi {
   addToCard(payload) {
     return this.post(`${ORDER}/store`, payload);
   }
+
+  changeStatus(payload) {
+    return this.post(`${ORDER}/change-status`, payload);
+  }
 }
 export default OrderApi;

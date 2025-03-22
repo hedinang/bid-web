@@ -34,7 +34,7 @@ export const PublicLayout = ({ children }) => {
     <div className="flex flex-col min-h-[100vh] justify-between">
       <Outlet />
       <div className="absolute top-[20px] right-[10px]">
-                <Button onClick={logout}>login</Button>
+                <Button type="primary" onClick={logout}>login</Button>
               </div>
       <Footer />
     </div>

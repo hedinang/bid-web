@@ -183,12 +183,12 @@ const SideBar = () => {
           >
             {languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
           </div>
-          <div
+          {/* <div
             className="cursor-pointer profile-item"
             onClick={openModalSettings}
           >
             {languageMap?.["menu.profile.setting"] ?? "Setting"}
-          </div>
+          </div> */}
           <Divider />
           <div className="cursor-pointer profile-item" onClick={logout}>
             {languageMap?.["menu.profile.logout"] ?? "Logout"}
@@ -405,12 +405,12 @@ const SideBar = () => {
         {isProfileDetail && (
           <div className="profile" ref={infoRef}>
             <div className="flex bg-[#e2e3e5] p-2 w-full items-center">
-              <div className="me-3">
+              {/* <div className="me-3">
                 <div className="relative avatarWrapper inline-block ">
                   <Avatar
                     style={{
-                      backgroundColor: getColorFromInitial(user?.name[0]),
-                      color: getColor(user?.name[0]),
+                      backgroundColor: getColorFromInitial(user?.name?.[0]),
+                      color: getColor(user?.name?.[0]),
                     }}
                     size={80}
                     src={user?.avatar ? getAvatar(user) : null}
@@ -418,18 +418,18 @@ const SideBar = () => {
                     {user?.name?.[0]}
                   </Avatar>
                 </div>
-              </div>
+              </div> */}
               <div>
                 <div>
                   <h3 className="text-base text-[#23497c] font-bold ">
-                    {user?.name}
+                    {user?.username}
                   </h3>
                 </div>
-                <div className="mt-1">
+                {/* <div className="mt-1">
                   <h6 className="text-xs text-[#23497c] break-all">
-                    {user?.userId}
+                    {user?.name}
                   </h6>
-                </div>
+                </div> */}
                 <div className="mt-1">
                   <h6 className="text-xs text-[#23497c] break-all">
                     {user?.email}
@@ -455,9 +455,9 @@ const SideBar = () => {
             >
               {languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
             </button>
-            <button className="profile-item" onClick={openModalSettings}>
+            {/* <button className="profile-item" onClick={openModalSettings}>
               {languageMap?.["menu.profile.setting"] ?? "Setting"}
-            </button>
+            </button> */}
             <Divider />
             <button className="profile-item" onClick={logout}>
               {languageMap?.["menu.profile.logout"] ?? "Logout"}

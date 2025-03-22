@@ -2,14 +2,46 @@ import { Button, Image, Modal, Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { FiTrash } from "react-icons/fi";
 import { IoMdRefresh } from "react-icons/io";
+import { FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
 import { formatTime } from "../../utils/formatTime";
+import { IoHammerOutline } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+
+const ROOL_WEB = process.env.REACT_APP_WEB || "https://stjtrading.com/";
 
 const OrderList = () => {
   const { user } = useInfoUser();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [clientDetail, setClientDetail] = useState(null);
+  const [orderList, setOrderList] = useState([]);
+  const [searchOrder, setSearchOrder] = useState({
+    limit: 24,
+    page: 1,
+    // searchBranch: "",
+    // searchRank: "",
+  });
+
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    const result = await apiFactory.orderApi.list(searchOrder);
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+    setIsLoading(false);
+    const data = result?.data?.items?.map((e) => ({
+      ...e,
+      action: e?.type,
+    }));
+    setOrderList([...data]);
+  };
 
   const columns = useMemo(() => {
     let rawColumn = [
@@ -30,12 +62,27 @@ const OrderList = () => {
           );
         },
       },
-      // {
-      //   title: "Item Id",
-      //   dataIndex: "deptNm",
-      //   align: "center",
-      //   key: "deptNm",
-      // },
+      {
+        title: "Item Id",
+        dataIndex: "itemId",
+        align: "center",
+        key: "itemId",
+        render: (e, record) => {
+          return user?.role === role?.CUSTOMER ? (
+            <a
+              href={ROOL_WEB + "/inside/bid/item-detail/" + e}
+              target="_blank"
+              className="text-[blue]"
+            >
+              {e}
+            </a>
+          ) : (
+            <a href={record?.itemUrl} target="_blank" className="text-[blue]">
+              {e}
+            </a>
+          );
+        },
+      },
       {
         title: "Title",
         dataIndex: "title",
@@ -79,39 +126,39 @@ const OrderList = () => {
       },
       {
         title: "Status",
-        dataIndex: "status",
+        dataIndex: "type",
         align: "center",
         key: "workClsCd",
         render: (e) => {
-          if (e === 0)
+          if (e === "ORDER")
             return (
               <div className="bg-[#2a56b9] text-[white] py-[10px] rounded-[2px]">
                 Đợi đặt
               </div>
             );
 
-          if (e === 1)
+          if (e === "BIDDING")
             return (
               <div className="bg-[#c9ac12] text-[white] py-[10px] rounded-[2px]">
                 Đã đặt
               </div>
             );
 
-          if (e === 2)
+          if (e === "CANCEL")
             return (
-              <div className="bg-[red] text-[white] py-[10px] rounded-[2px]">
+              <div className="bg-[#e81224] text-[white] py-[10px] rounded-[2px]">
                 Hủy đặt
               </div>
             );
 
-          if (e === 3)
+          if (e === "SUCCESS")
             return (
-              <div className="bg-[green] text-[white] py-[10px] rounded-[2px]">
+              <div className="bg-[#78b43d] text-[white] py-[10px] rounded-[2px]">
                 Đấu thành công
               </div>
             );
 
-          if (e === 4)
+          if (e === "FAILED")
             return (
               <div className="bg-[#dd5930] text-[white] py-[10px] rounded-[2px]">
                 Đấu thất bại
@@ -124,33 +171,57 @@ const OrderList = () => {
         dataIndex: "action",
         align: "center",
         key: "action",
-        render: (e) => {
-          if (e === 0)
-            return (
-              <Button
-                className="bg-[#e00d0d] text-[white]"
-                // onClick={}
-                icon={<FiTrash className="text-[18px]" />}
-              />
-            );
+        render: (e, record) => {
+          if (e === "ORDER") {
+            if (user?.role === role.CUSTOMER) {
+              return (
+                <Button
+                  className="bg-[#e00d0d] text-[white]"
+                  onClick={() => changeOrderStatus(record, "CANCEL")}
+                  icon={<FiTrash className="text-[18px]" />}
+                />
+              );
+            } else {
+              return (
+                <Button
+                  className="bg-[#2a56b9] text-[white]"
+                  onClick={() => changeOrderStatus(record, "BIDDING")}
+                  icon={<IoHammerOutline className="text-[18px]" />}
+                />
+              );
+            }
+          }
 
-          if (e === 1)
-            return (
-              <Button
-                className="bg-[#e00d0d] text-[white]"
-                // onClick={}
-                icon={<FiTrash className="text-[18px]" />}
-              />
-            );
+          if (e === "CANCEL") {
+            if (user?.role === role.CUSTOMER) {
+              return (
+                <Button
+                  className="bg-[green] text-[white]"
+                  onClick={() => changeOrderStatus(record, "ORDER")}
+                  icon={<IoMdRefresh className="text-[18px]" />}
+                />
+              );
+            }
+          }
 
-          if (e === 2)
-            return (
-              <Button
-                className="bg-[#2a56b9] text-[white]"
-                // onClick={}
-                icon={<IoMdRefresh className="text-[18px]" />}
-              />
-            );
+          if (e === "BIDDING") {
+            if (user?.role !== role.CUSTOMER) {
+              return (
+                <div className="flex gap-[10px] justify-center">
+                  <Button
+                    className="bg-[green] text-[white]"
+                    onClick={() => changeOrderStatus(record, "SUCCESS")}
+                    icon={<FaCheck className="text-[18px]" />}
+                  />
+                  <Button
+                    className="bg-[grey] text-[white]"
+                    onClick={() => changeOrderStatus(record, "FAILED")}
+                    icon={<FaInfoCircle className="text-[18px]" />}
+                  />
+                </div>
+              );
+            }
+          }
         },
       },
     ];
@@ -178,37 +249,29 @@ const OrderList = () => {
     }
 
     return rawColumn;
-  }, [user?.role]);
+  }, [user?.role, orderList]);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [clientDetail, setClientDetail] = useState(null);
-  const [orderList, setOrderList] = useState([]);
-  const [searchOrder, setSearchOrder] = useState({
-    limit: 24,
-    page: 1,
-    // searchBranch: "",
-    // searchRank: "",
-  });
+  const changeOrderStatus = async (record, type) => {
+    const rs = await apiFactory.orderApi.changeStatus({
+      orderId: record?.orderId,
+      type,
+    });
 
-  const fetchOrders = async () => {
-    setIsLoading(true);
-    const result = await apiFactory.orderApi.list(searchOrder);
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      const orderIndex = orderList?.findIndex(
+        (order) => order?.orderId === record?.orderId
+      );
 
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
+      if (orderIndex > -1) {
+        orderList[orderIndex].type = type;
+        orderList[orderIndex].action = type;
+      }
+
+      setOrderList([...orderList]);
+    } else {
+      toast.success("Action unsuccessfully");
     }
-    setIsLoading(false);
-
-    let data = [];
-    for (let index = 0; index < result?.data?.items?.length; index++) {
-      data?.push({
-        ...result?.data?.items[index],
-        status: index,
-        action: index,
-      });
-    }
-    setOrderList(data);
   };
 
   useEffect(() => {
@@ -226,7 +289,7 @@ const OrderList = () => {
           size="small"
           columns={columns}
           dataSource={orderList}
-          // loading={isLoading}
+          loading={isLoading}
           bordered
           // onRow={(record, rowIndex) => {
           //   return {
