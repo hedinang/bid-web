@@ -1,13 +1,94 @@
-import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Image,
+  Input,
+  Pagination,
+  Row,
+  Select,
+  Spin,
+} from "antd";
 import { useEffect, useState } from "react";
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
+import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
+import apiFactory from "../../api";
+import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
+import { useInfoUser } from "../../store/UserStore";
 import "./style.scss";
+import { MdCancel } from "react-icons/md";
+import { toast } from "react-toastify";
 
-const ItemDetail = ({ item }) => {
+const ItemDetail = ({ item, itemList, setItemList }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
+  const [bidPrice, setBidPrice] = useState(item?.bidPrice);
+  const { user, languageMap } = useInfoUser();
+
+  const addToCard = async () => {
+    const rs = await apiFactory.orderApi.addToCard({
+      bidId: item?.bidId,
+      itemId: item?.itemId,
+      bidPrice: bidPrice,
+    });
+
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      const itemIndex = itemList?.findIndex(
+        (e) => e?.itemId === item?.itemId
+      );
+
+      if (itemIndex > -1) {
+        itemList[itemIndex].orderType = "ORDER";
+        itemList[itemIndex].orderId = rs?.data?.orderId;
+      }
+
+      setItemList([...itemList]);
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const onCancel = async () => {
+    const rs = await apiFactory.orderApi.changeStatus({
+      orderId: item?.orderId,
+      type: "CANCEL",
+    });
+
+    if (rs?.status === 200) {
+      toast.success("Action successfully");
+      const itemIndex = itemList?.findIndex(
+        (e) => e?.orderId === item?.orderId
+      );
+
+      if (itemIndex > -1) {
+        itemList[itemIndex].orderType = "CANCEL";
+      }
+
+      setItemList([...itemList]);
+    } else {
+      toast.success("Action unsuccessfully");
+    }
+  };
+
+  const showItemStatus = () => {
+    if (item?.orderType === "ORDER")
+      return <div className="item-status bg-[#2a56b9]">Đợi đặt</div>;
+
+    if (item?.orderType === "BIDDING")
+      return <div className="item-status bg-[#c9ac12]">Đã đặt</div>;
+
+    if (item?.orderType === "CANCEL")
+      return <div className="item-status bg-[#e81224]">Hủy đặt</div>;
+
+    if (item?.orderType === "SUCCESS")
+      return <div className="item-status bg-[#78b43d]">Đấu thành công</div>;
+
+    if (item?.orderType === "FAILED")
+      return <div className="item-status bg-[#dd5930]">Đấu thất bại</div>;
+  };
 
   useEffect(() => {
     setActiveImg(
@@ -27,16 +108,55 @@ const ItemDetail = ({ item }) => {
       className="p-[10px]"
       key={item?.itemId + item?.title}
     >
+      {showItemStatus()}
       <Card hoverable>
         <div className="item">
           <div className="item-title">
             <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
-            <a href={item?.itemUrl} target="_blank" className="text-[blue]">
-              Original link
-            </a>
+            {user?.role !== role.CUSTOMER && (
+              <a href={item?.itemUrl} target="_blank" className="text-[blue]">
+                Original link
+              </a>
+            )}
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>
+          {user?.role === role.CUSTOMER && (
+            <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+              <NumericFormat
+                className="w-[150px]"
+                value={bidPrice}
+                prefix="¥"
+                customInput={Input}
+                isAllowed={(values) =>
+                  values.floatValue === undefined ||
+                  values.floatValue <= 1000000
+                }
+                onValueChange={(values, sourceInfo) => {
+                  setBidPrice(values?.floatValue);
+                }}
+                disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                  item?.orderType
+                )}
+              />
+              {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
+                <Button
+                  shape="circle"
+                  icon={<IoCartOutline size={20} />}
+                  className=""
+                  onClick={addToCard}
+                />
+              )}
+              {item?.orderType === "ORDER" && (
+                <Button
+                  shape="circle"
+                  icon={<MdCancel size={20} />}
+                  className=""
+                  onClick={onCancel}
+                />
+              )}
+            </div>
+          )}
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
@@ -58,10 +178,13 @@ const ItemDetail = ({ item }) => {
               <div>{item?.startPrice}</div>
             </Col>
           </Row>
+
           <div>
             <Button
               className="text-[#2d7717] text-[18px]"
-              onClick={() => navigate(`/admin/item-detail/${item?.itemId}`)}
+              onClick={() =>
+                navigate(`/inside/bid/item-detail/${item?.itemId}`)
+              }
             >
               Xem chi tiết
             </Button>
@@ -83,12 +206,13 @@ const AdminItemList = () => {
     onChooseRank,
     onChooseCategory,
     changePage,
+    setItemList
   } = useItemContext();
 
   return (
     <div className="item-list">
       <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
-      <button onClick={() => navigate("/admin/bid-list")}>
+        <button onClick={() => navigate("/inside/bid/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
         <div>Phiên đấu giá lúc {bid?.openTime}</div>
@@ -320,7 +444,9 @@ const AdminItemList = () => {
             <Spin />
           </div>
         ) : (
-          itemList?.map((item) => <ItemDetail item={item} key={item} />)
+          itemList?.map((item) => (
+            <ItemDetail item={item} key={item} itemList={itemList} setItemList={setItemList}/>
+          ))
         )}
       </Row>
       <div className="paging-bottom">
@@ -337,4 +463,3 @@ const AdminItemList = () => {
   );
 };
 export { AdminItemList };
-

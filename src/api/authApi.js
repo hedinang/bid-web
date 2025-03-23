@@ -20,6 +20,10 @@ class AuthApi extends BaseApi {
     logout() {
         return this.post(`${AUTHEN}/logout`, {},)
     }
+
+    changePassword(body) {
+        return this.post(AUTHEN + "/change-password", body);
+      }
 }
 
 export default AuthApi;

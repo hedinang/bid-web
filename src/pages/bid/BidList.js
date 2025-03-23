@@ -148,7 +148,7 @@ const BidList = () => {
 
   return (
     <div className="bid-list">
-      <div className="text-[30px] p-[20px] text-center">
+      <div className="text-[30px] p-[20px] mt-[30px] text-center">
         {/* <img src={winitechLogo} alt="" className="w-[150px]" /> */}
         {/* <div className="text-center text-[30px] p-[20px] w-[80%]">
           Tài sản sắp được đấu giá
