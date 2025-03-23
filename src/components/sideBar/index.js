@@ -455,9 +455,9 @@ const SideBar = () => {
             >
               {languageMap?.["menu.profile.myProfile"] ?? "My Profile"}
             </button>
-            {/* <button className="profile-item" onClick={openModalSettings}>
+            <button className="profile-item" onClick={openModalSettings}>
               {languageMap?.["menu.profile.setting"] ?? "Setting"}
-            </button> */}
+            </button>
             <Divider />
             <button className="profile-item" onClick={logout}>
               {languageMap?.["menu.profile.logout"] ?? "Logout"}

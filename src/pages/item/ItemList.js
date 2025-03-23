@@ -85,7 +85,7 @@ const ItemList = () => {
 
   return (
     <div className="item-list">
-      <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
+      <div className="flex justify-center text-[30px] p-[20px] gap-[10px] mt-[30px]">
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
