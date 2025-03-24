@@ -466,7 +466,7 @@ const OrderList = () => {
       <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
         Giỏ hàng
       </div>
-      <div className="desktop p-[16px]">
+      <div className="desktop p-[16px] mb-[40px]">
         <Table
           // className="custom-table"
           size="small"
@@ -474,6 +474,13 @@ const OrderList = () => {
           dataSource={orderList}
           loading={isLoading}
           bordered
+          // pagination={{
+          //   current: searchOrder?.page,
+          //   pageSize: searchOrder?.limit,
+          //   total: totalOrder,
+          // }}
+          pagination={false}
+
           // onRow={(record, rowIndex) => {
           //   return {
           //     onClick: () => handleRowClick(record, rowIndex),
@@ -489,7 +496,7 @@ const OrderList = () => {
         />
       </div>
 
-      <div className="mobile mt-[15px] mx-[10px]">
+      <div className="mobile mt-[15px] mx-[10px] mb-[50px]">
         {orderList?.map((order) => (
           <Order
             order={order}
@@ -498,16 +505,17 @@ const OrderList = () => {
             key={order?.orderId}
           />
         ))}
-        <div className="paging-bottom">
-          <Pagination
-            current={searchOrder?.page}
-            total={totalOrder}
-            pageSize={searchOrder?.limit}
-            className="paging"
-            showSizeChanger={false}
-            onChange={changePage}
-          />
-        </div>
+      </div>
+
+      <div className="paging-bottom">
+        <Pagination
+          current={searchOrder?.page}
+          total={totalOrder}
+          pageSize={searchOrder?.limit}
+          className="paging"
+          showSizeChanger={false}
+          onChange={changePage}
+        />
       </div>
 
       {clientDetail && (

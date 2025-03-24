@@ -20,8 +20,10 @@
   }
 
   .paging-bottom {
+    left: 50%;
+    transform: translateX(-50%);
     position: fixed;
-    bottom: 66px;
+    bottom: 90px;
     padding: 5px;
     background-color: #5984db;
     border-radius: 5px;
