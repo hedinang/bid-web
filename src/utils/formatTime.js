@@ -21,15 +21,15 @@ export const formatLastTime = (lastTime) => {
 }
 
 export const formatDate = (time) => {
-    if (!format(new Date(time), 'yyyy/MM/dd')) {
+    if (!format(new Date(time), 'dd/MM/yyyy')) {
         return '';
     }
-    return format(new Date(time), 'yyyy/MM/dd');
+    return format(new Date(time), 'dd/MM/yyyy');
 };
 
 export const formatTime = (time) => {
-    if (!format(new Date(time), 'hh:mm dd/MM/yyyy')) {
+    if (!format(new Date(time), 'HH:mm dd/MM/yyyy')) {
         return '';
     }
-    return format(new Date(time), 'hh:mm dd/MM/yyyy');
+    return format(new Date(time), 'HH:mm dd/MM/yyyy');
 };
