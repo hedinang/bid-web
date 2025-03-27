@@ -23,8 +23,9 @@ import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
-import { formatTime } from "../../utils/formatTime";
+import { formatDate, formatTime } from "../../utils/formatTime";
 import "./style.scss";
+import { GeneralModal } from "../../components/modal/GeneralModal";
 
 const ROOL_WEB = process.env.REACT_APP_WEB || "https://stjtrading.com/";
 
@@ -222,6 +223,8 @@ const OrderList = () => {
       itemDate: "",
     },
   });
+
+  const [confirmTitle, setConfirmTitle] = useState();
 
   const changePage = (e) => {
     setSearchOrder({
@@ -504,7 +507,77 @@ const OrderList = () => {
       <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
         Giỏ hàng
       </div>
-      {/* <div className="text-[20px] pl-[16px] pt-[16px] flex gap-[10px]"> */}
+      <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
+            )
+          }
+          disabled={!searchOrder?.search?.orderDate}
+        >
+          Đã đặt theo ngày đặt
+        </Button>
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
+            )
+          }
+          disabled={!searchOrder?.search?.orderDate}
+        >
+          Đấu thất bại theo ngày đặt
+        </Button>
+
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
+            )
+          }
+          disabled={!searchOrder?.search?.itemDate}
+        >
+          Đã đặt theo ngày item
+        </Button>
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
+            )
+          }
+          disabled={!searchOrder?.search?.itemDate}
+        >
+          Đấu thất bại theo ngày item
+        </Button>
+      </div>
+      <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
+            )
+          }
+          disabled={!searchOrder?.search?.orderDate}
+        >
+          Khôi phục đã đặt theo ngày đặt
+        </Button>
+        <Button
+          type="primary"
+          onClick={() =>
+            setConfirmTitle(
+              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
+            )
+          }
+          disabled={!searchOrder?.search?.itemDate}
+        >
+          Khôi phục đã đặt theo ngày đặt
+        </Button>
+      </div>
       <Row className="text-[20px] pl-[16px] pt-[16px]">
         {user?.role !== "CUSTOMER" && (
           <Col
@@ -797,25 +870,11 @@ const OrderList = () => {
             value={searchOrder?.search?.orderType}
             onChange={(e) => onChangeFilter("orderType", e)}
             options={[
-              { value: "N", label: "N" },
-              { value: "S", label: "S" },
-              { value: "A", label: "A" },
-              { value: "AB", label: "AB" },
-              { value: "B", label: "B" },
-              { value: "BC", label: "BC" },
-              { value: "C", label: "C" },
-              { value: "D", label: "D" },
-              { value: "F", label: "F" },
-              { value: "10", label: "10" },
-              { value: "9", label: "9" },
-              { value: "8", label: "8" },
-              { value: "7", label: "7" },
-              { value: "6", label: "6" },
-              { value: "5", label: "5" },
-              { value: "4", label: "4" },
-              { value: "3", label: "3" },
-              { value: "2", label: "2" },
-              { value: "1", label: "1" },
+              { value: "ORDER", label: "Đợi đặt" },
+              { value: "BIDDING", label: "Đã đặt" },
+              { value: "CANCEL", label: "Huỷ đặt" },
+              { value: "SUCCESS", label: "Đấu thành công" },
+              { value: "FAILED", label: "Đấu thất bại" },
             ]}
           />
         </Col>
@@ -853,7 +912,6 @@ const OrderList = () => {
         </Col>
       </Row>
 
-      {/* </div> */}
       <div className="desktop p-[16px] mb-[40px]">
         <Table
           // className="custom-table"
@@ -932,6 +990,14 @@ const OrderList = () => {
             <div className="text-[16px] mx-[5px]">{clientDetail?.phone}</div>
           </div>
         </Modal>
+      )}
+
+      {confirmTitle && (
+        <GeneralModal
+          title={confirmTitle}
+          open={confirmTitle}
+          onCancel={() => setConfirmTitle(null)}
+        />
       )}
     </div>
   );
