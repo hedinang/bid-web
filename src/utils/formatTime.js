@@ -28,8 +28,8 @@ export const formatDate = (time) => {
 };
 
 export const formatTime = (time) => {
-    if (!format(new Date(time), 'hh:mm dd/MM/yyyy')) {
+    if (!format(new Date(time), 'HH:mm dd/MM/yyyy')) {
         return '';
     }
-    return format(new Date(time), 'hh:mm dd/MM/yyyy');
+    return format(new Date(time), 'HH:mm dd/MM/yyyy');
 };

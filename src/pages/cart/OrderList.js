@@ -12,20 +12,20 @@ import {
   Table,
 } from "antd";
 import { debounce } from "lodash";
+import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa6";
 import { FiTrash } from "react-icons/fi";
 import { IoMdRefresh } from "react-icons/io";
 import { IoHammerOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
+import { GeneralModal } from "../../components/modal/GeneralModal";
 import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
 import { formatDate, formatTime } from "../../utils/formatTime";
 import "./style.scss";
-import { GeneralModal } from "../../components/modal/GeneralModal";
 
 const ROOL_WEB = process.env.REACT_APP_WEB || "https://stjtrading.com/";
 
@@ -235,7 +235,17 @@ const OrderList = () => {
 
   const fetchOrders = async (query) => {
     setIsLoading(true);
-    const result = await apiFactory.orderApi.list(query);
+    const result = await apiFactory.orderApi.list({
+      ...query,
+      search: {
+        ...query?.search,
+        orderDate: query?.search?.orderDate
+          ? moment
+              .tz(query?.search?.orderDate.toString(), moment.tz.guess())
+              ?.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+          : query?.search?.orderDate,
+      },
+    });
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
@@ -507,77 +517,81 @@ const OrderList = () => {
       <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
         Giỏ hàng
       </div>
-      <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
-            )
-          }
-          disabled={!searchOrder?.search?.orderDate}
-        >
-          Đã đặt theo ngày đặt
-        </Button>
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
-            )
-          }
-          disabled={!searchOrder?.search?.orderDate}
-        >
-          Đấu thất bại theo ngày đặt
-        </Button>
+      {user?.role !== "CUSTOMER" && (
+        <>
+          <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
+                )
+              }
+              disabled={!searchOrder?.search?.orderDate}
+            >
+              Đã đặt theo ngày đặt
+            </Button>
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
+                )
+              }
+              disabled={!searchOrder?.search?.orderDate}
+            >
+              Đấu thất bại theo ngày đặt
+            </Button>
 
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
-            )
-          }
-          disabled={!searchOrder?.search?.itemDate}
-        >
-          Đã đặt theo ngày item
-        </Button>
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
-            )
-          }
-          disabled={!searchOrder?.search?.itemDate}
-        >
-          Đấu thất bại theo ngày item
-        </Button>
-      </div>
-      <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
-            )
-          }
-          disabled={!searchOrder?.search?.orderDate}
-        >
-          Khôi phục đã đặt theo ngày đặt
-        </Button>
-        <Button
-          type="primary"
-          onClick={() =>
-            setConfirmTitle(
-              `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
-            )
-          }
-          disabled={!searchOrder?.search?.itemDate}
-        >
-          Khôi phục đã đặt theo ngày đặt
-        </Button>
-      </div>
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
+                )
+              }
+              disabled={!searchOrder?.search?.itemDate}
+            >
+              Đã đặt theo ngày item
+            </Button>
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
+                )
+              }
+              disabled={!searchOrder?.search?.itemDate}
+            >
+              Đấu thất bại theo ngày item
+            </Button>
+          </div>
+          <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
+                )
+              }
+              disabled={!searchOrder?.search?.orderDate}
+            >
+              Khôi phục đã đặt theo ngày đặt
+            </Button>
+            <Button
+              type="primary"
+              onClick={() =>
+                setConfirmTitle(
+                  `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
+                )
+              }
+              disabled={!searchOrder?.search?.itemDate}
+            >
+              Khôi phục đã đặt theo ngày đặt
+            </Button>
+          </div>
+        </>
+      )}
       <Row className="text-[20px] pl-[16px] pt-[16px]">
         {user?.role !== "CUSTOMER" && (
           <Col
