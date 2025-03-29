@@ -9,18 +9,20 @@ import {
   Select,
   Spin,
 } from "antd";
+import copy from "copy-to-clipboard";
 import { useEffect, useState } from "react";
+import { FaCopy } from "react-icons/fa";
 import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
+import { MdCancel } from "react-icons/md";
 import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
-import "./style.scss";
-import { MdCancel } from "react-icons/md";
-import { toast } from "react-toastify";
 import { formatTime } from "../../utils/formatTime";
+import "./style.scss";
 
 const ItemDetail = ({ item, itemList, setItemList }) => {
   const navigate = useNavigate();
@@ -37,9 +39,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
 
     if (rs?.status === 200) {
       toast.success("Action successfully");
-      const itemIndex = itemList?.findIndex(
-        (e) => e?.itemId === item?.itemId
-      );
+      const itemIndex = itemList?.findIndex((e) => e?.itemId === item?.itemId);
 
       if (itemIndex > -1) {
         itemList[itemIndex].orderType = "ORDER";
@@ -91,6 +91,19 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
       return <div className="item-status bg-[#dd5930]">Đấu thất bại</div>;
   };
 
+  const handleCopy = (itemId) => {
+    try {
+      const isSuccess = copy(itemId);
+      if (!isSuccess) {
+        toast.error("Chép mã sản phẩm lỗi !");
+      } else {
+        toast.success("Chép mã sản phẩm thành công");
+      }
+    } catch (error) {
+      toast.error("Chép mã sản phẩm lỗi !");
+    }
+  };
+
   useEffect(() => {
     setActiveImg(
       item?.detailUrls?.[0]?.replace(
@@ -113,7 +126,15 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
       <Card hoverable>
         <div className="item">
           <div className="item-title">
-            <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
+            <div className="flex gap-[10px] items-center">
+              <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
+              <button
+                onClick={() => handleCopy(item?.itemId)}
+                className="height-[18px]"
+              >
+                <FaCopy size={20} color="#2a56b9" />
+              </button>
+            </div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
             {user?.role !== role.CUSTOMER && (
               <a href={item?.itemUrl} target="_blank" className="text-[blue]">
@@ -207,7 +228,7 @@ const AdminItemList = () => {
     onChooseRank,
     onChooseCategory,
     changePage,
-    setItemList
+    setItemList,
   } = useItemContext();
 
   return (
@@ -446,7 +467,12 @@ const AdminItemList = () => {
           </div>
         ) : (
           itemList?.map((item) => (
-            <ItemDetail item={item} key={item} itemList={itemList} setItemList={setItemList}/>
+            <ItemDetail
+              item={item}
+              key={item}
+              itemList={itemList}
+              setItemList={setItemList}
+            />
           ))
         )}
       </Row>

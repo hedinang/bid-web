@@ -3,6 +3,9 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import ZoomImage from "../../components/img/ZoomImage";
 import { useItemContext } from "../../context/ItemContext";
+import { toast } from "react-toastify";
+import copy from "copy-to-clipboard";
+import { FaCopy } from "react-icons/fa";
 
 const ItemDetail = () => {
   const navigate = useNavigate();
@@ -34,6 +37,19 @@ const ItemDetail = () => {
     }
   };
 
+  const handleCopy = (itemId) => {
+    try {
+      const isSuccess = copy(itemId);
+      if (!isSuccess) {
+        toast.error("Chép mã sản phẩm lỗi !");
+      } else {
+        toast.success("Chép mã sản phẩm thành công");
+      }
+    } catch (error) {
+      toast.error("Chép mã sản phẩm lỗi !");
+    }
+  };
+
   return (
     <div className="item-list">
       <div className="item-header">
@@ -41,7 +57,15 @@ const ItemDetail = () => {
           <button onClick={onBackPage}>
             <IoArrowBackOutline size={25} />
           </button>
-          <div className="font-semibold">{item?.itemId}</div>
+          <div className="flex gap-[10px] items-center">
+            <div className="font-semibold">{item?.itemId}</div>
+            <button
+              onClick={() => handleCopy(item?.itemId)}
+              className="height-[18px]"
+            >
+              <FaCopy size={20} color="#2a56b9" />
+            </button>
+          </div>
         </div>
         <div className="text-center p-[5px] font-semibold">{item?.title}</div>
         <div className="text-center p-[5px] font-semibold">
@@ -61,7 +85,15 @@ const ItemDetail = () => {
                 <button onClick={onBackPage}>
                   <IoArrowBackOutline size={25} />
                 </button>
-                <div className="font-semibold">{item?.itemId}</div>
+                <div className="flex gap-[10px] items-center">
+                  <div className="font-semibold">{item?.itemId}</div>
+                  <button
+                    onClick={() => handleCopy(item?.itemId)}
+                    className="height-[18px]"
+                  >
+                    <FaCopy size={20} color="#2a56b9" />
+                  </button>
+                </div>
               </div>
               <div className="text-center p-[5px] font-semibold">
                 {item?.title}

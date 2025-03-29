@@ -1,15 +1,17 @@
 import { Button, Col, Input, Row } from "antd";
+import copy from "copy-to-clipboard";
 import { useEffect, useState } from "react";
+import { FaCopy } from "react-icons/fa";
 import { IoArrowBackOutline, IoCartOutline } from "react-icons/io5";
+import { MdCancel } from "react-icons/md";
 import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import ZoomImage from "../../components/img/ZoomImage";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
-import { MdCancel } from "react-icons/md";
-import { toast } from "react-toastify";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
@@ -95,6 +97,19 @@ const AdminItemDetail = () => {
       );
   };
 
+  const handleCopy = (itemId) => {
+    try {
+      const isSuccess = copy(itemId);
+      if (!isSuccess) {
+        toast.error("Chép mã sản phẩm lỗi !");
+      } else {
+        toast.success("Chép mã sản phẩm thành công");
+      }
+    } catch (error) {
+      toast.error("Chép mã sản phẩm lỗi !");
+    }
+  };
+
   useEffect(() => {
     setBidPrice(item?.bidPrice);
   }, [item?.itemId]);
@@ -106,7 +121,15 @@ const AdminItemDetail = () => {
           <button onClick={onBackPage}>
             <IoArrowBackOutline size={25} />
           </button>
-          <div className="font-semibold">{item?.itemId}</div>
+          <div className="flex gap-[10px] items-center">
+            <div className="font-semibold">{item?.itemId}</div>
+            <button
+              onClick={() => handleCopy(item?.itemId)}
+              className="height-[18px]"
+            >
+              <FaCopy size={20} color="#2a56b9" />
+            </button>
+          </div>
           {showItemStatus()}
         </div>
         {user?.role !== role.CUSTOMER && (
@@ -169,7 +192,15 @@ const AdminItemDetail = () => {
                 <button onClick={onBackPage}>
                   <IoArrowBackOutline size={25} />
                 </button>
-                <div className="font-semibold">{item?.itemId}</div>
+                <div className="flex gap-[10px] items-center">
+                  <div className="font-semibold">{item?.itemId}</div>
+                  <button
+                    onClick={() => handleCopy(item?.itemId)}
+                    className="height-[18px]"
+                  >
+                    <FaCopy size={20} color="#2a56b9" />
+                  </button>
+                </div>
                 {showItemStatus()}
               </div>
               {user?.role !== role.CUSTOMER && (

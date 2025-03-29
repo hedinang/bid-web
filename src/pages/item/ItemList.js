@@ -1,15 +1,30 @@
 import { Button, Card, Col, Image, Pagination, Row, Select, Spin } from "antd";
+import copy from "copy-to-clipboard";
 import { useEffect, useState } from "react";
+import { FaCopy } from "react-icons/fa";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import ZoomImage from "../../components/img/ZoomImage";
+import { toast } from "react-toastify";
 import { useItemContext } from "../../context/ItemContext";
-import "./style.scss";
 import { formatTime } from "../../utils/formatTime";
+import "./style.scss";
 
 const ItemDetail = ({ item }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
+
+  const handleCopy = (itemId) => {
+    try {
+      const isSuccess = copy(itemId);
+      if (!isSuccess) {
+        toast.error("Chép mã sản phẩm lỗi !");
+      } else {
+        toast.success("Chép mã sản phẩm thành công");
+      }
+    } catch (error) {
+      toast.error("Chép mã sản phẩm lỗi !");
+    }
+  };
 
   useEffect(() => {
     setActiveImg(
@@ -32,7 +47,15 @@ const ItemDetail = ({ item }) => {
       <Card hoverable>
         <div className="item">
           <div className="item-title">
-            <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
+            <div className="flex gap-[10px] items-center">
+              <div className="text-[17px] text-[#194ee9]">{item?.itemId}</div>
+              <button
+                onClick={() => handleCopy(item?.itemId)}
+                className="height-[18px]"
+              >
+                <FaCopy size={20} color="#2a56b9" />
+              </button>
+            </div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>

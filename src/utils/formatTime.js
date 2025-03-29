@@ -29,6 +29,8 @@ export const formatDate = (time) => {
 };
 
 export const formatTime = (time) => {
+  if (!time) return "";
+
   if (!format(new Date(time), "HH:mm dd/MM/yyyy")) {
     return "";
   }
