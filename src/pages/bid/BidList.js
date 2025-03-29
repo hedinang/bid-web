@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import winitechLogo from "../../assets/bid-icon.png";
 import { sortBy } from "lodash";
 import { IoShirt } from "react-icons/io5";
+import { formatTime } from "../../utils/formatTime";
 
 const BidList = () => {
   const navigate = useNavigate();
@@ -91,7 +92,7 @@ const BidList = () => {
             </div>
             <div className="flex justify-center gap-[10px] items-center">
               <MdOutlineAccessTime size={25} />
-              <div>{bid?.openTime}</div>
+              <div>{formatTime(bid?.openTime)}</div>
             </div>
             <div className="flex justify-center items-center gap-[10px]">
               <IoShirt size={20} color="#fccc14" />{" "}
@@ -131,7 +132,7 @@ const BidList = () => {
 
     const preparedBidList = result?.data
       ?.map((e) => {
-        const [timePart, datePart] = e?.openTime?.split(" ");
+        const [datePart, timePart] = e?.openTime?.split(" ");
         return {
           ...e,
           compareTime: new Date(`${datePart}T${timePart}`),

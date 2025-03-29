@@ -12,7 +12,6 @@ import {
   Table,
 } from "antd";
 import { debounce } from "lodash";
-import moment from "moment-timezone";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa6";
@@ -24,7 +23,7 @@ import apiFactory from "../../api";
 import { GeneralModal } from "../../components/modal/GeneralModal";
 import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
-import { formatDate, formatTime } from "../../utils/formatTime";
+import { formatDate, formatDateTime, formatTime } from "../../utils/formatTime";
 import "./style.scss";
 
 const ROOL_WEB = process.env.REACT_APP_WEB || "https://stjtrading.com/";
@@ -240,10 +239,17 @@ const OrderList = () => {
       search: {
         ...query?.search,
         orderDate: query?.search?.orderDate
-          ? moment
-              .tz(query?.search?.orderDate.toString(), moment.tz.guess())
-              ?.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
+          ? formatDateTime(
+              query?.search?.orderDate.toString(),
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+            )
           : query?.search?.orderDate,
+        itemDate: query?.search?.itemDate
+          ? formatDateTime(
+              query?.search?.itemDate.toString(),
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+            )
+          : query?.search?.itemDate,
       },
     });
 
@@ -280,7 +286,7 @@ const OrderList = () => {
         },
       },
       {
-        title: "Item Id",
+        title: "Mã sản phẩm",
         dataIndex: "itemId",
         align: "center",
         key: "itemId",
@@ -301,40 +307,40 @@ const OrderList = () => {
         },
       },
       {
-        title: "Title",
+        title: "Tên sản phẩm",
         dataIndex: "title",
         align: "center",
         key: "deptAbbr",
         width: "400px",
       },
       {
-        title: "Category",
+        title: "Loại",
         dataIndex: "category",
         align: "center",
         key: "openDate",
       },
       {
-        title: "Branch",
+        title: "Hãng",
         dataIndex: "branch",
         align: "center",
         key: "opStatCd",
         width: "140px",
       },
       {
-        title: "Rank",
+        title: "Chất lượng",
         dataIndex: "rank",
         align: "center",
         key: "highDeptNm",
       },
       {
-        title: "Bid Price",
+        title: "Giá đặt",
         dataIndex: "bidPrice",
         align: "center",
         key: "workClsCd",
         width: "80px",
       },
       {
-        title: "Order Date",
+        title: "Ngày đặt giá",
         dataIndex: "updatedAt",
         align: "center",
         key: "workClsCd",
@@ -342,7 +348,15 @@ const OrderList = () => {
         width: "100px",
       },
       {
-        title: "Status",
+        title: "Ngày đấu giá",
+        dataIndex: "itemDate",
+        align: "center",
+        key: "workClsCd",
+        render: (e) => formatTime(e),
+        width: "100px",
+      },
+      {
+        title: "Tình trạng",
         dataIndex: "type",
         align: "center",
         key: "workClsCd",
@@ -384,7 +398,7 @@ const OrderList = () => {
         },
       },
       {
-        title: "Action",
+        title: "Thao tác",
         dataIndex: "action",
         align: "center",
         key: "action",
@@ -446,7 +460,7 @@ const OrderList = () => {
     if (user?.role !== role.CUSTOMER) {
       rawColumn = [
         {
-          title: "Username",
+          title: "Tên tài khoản",
           dataIndex: "username",
           align: "center",
           key: "deptCd",
@@ -921,7 +935,7 @@ const OrderList = () => {
             placeholder="Ngày sản phẩm"
             value={searchOrder?.search?.itemDate}
             onChange={(date, dateString) => onChangeFilter("itemDate", date)}
-            disabled
+            // disabled
           />
         </Col>
       </Row>

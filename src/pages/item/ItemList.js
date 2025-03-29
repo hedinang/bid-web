@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ZoomImage from "../../components/img/ZoomImage";
 import { useItemContext } from "../../context/ItemContext";
 import "./style.scss";
+import { formatTime } from "../../utils/formatTime";
 
 const ItemDetail = ({ item }) => {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ const ItemList = () => {
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Phiên đấu giá lúc {bid?.openTime}</div>
+        <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
       </div>
 
       <Row className="flex items-center">

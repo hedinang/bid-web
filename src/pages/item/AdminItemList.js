@@ -20,6 +20,7 @@ import { useInfoUser } from "../../store/UserStore";
 import "./style.scss";
 import { MdCancel } from "react-icons/md";
 import { toast } from "react-toastify";
+import { formatTime } from "../../utils/formatTime";
 
 const ItemDetail = ({ item, itemList, setItemList }) => {
   const navigate = useNavigate();
@@ -215,7 +216,7 @@ const AdminItemList = () => {
         <button onClick={() => navigate("/inside/bid/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Phiên đấu giá lúc {bid?.openTime}</div>
+        <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
       </div>
 
       <Row className="flex items-center">

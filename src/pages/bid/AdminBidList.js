@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { useInfoUser } from "../../store/UserStore";
 import { role } from "../../config/Constant";
 import { SideBarConversation } from "../../components/sideBar/SideBarConversation";
+import { formatTime } from "../../utils/formatTime";
 
 const SummaryBid = ({ bid }) => {
   const { user } = useInfoUser();
@@ -131,7 +132,7 @@ const SummaryBid = ({ bid }) => {
           )}
           <div className="flex justify-center gap-[10px] items-center">
             <MdOutlineAccessTime size={25} />
-            <div>{bid?.openTime}</div>
+            <div>{formatTime(bid?.openTime)}</div>
           </div>
           <div className="flex justify-center items-center gap-[10px]">
             <IoShirt size={20} color="#fccc14" />{" "}
@@ -171,7 +172,7 @@ const AdminBidList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [threadList, setThreadList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const[isMenu, setIsMenu] = useState(false)
+  const [isMenu, setIsMenu] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -185,7 +186,7 @@ const AdminBidList = () => {
 
     const preparedBidList = result?.data
       ?.map((e) => {
-        const [timePart, datePart] = e?.openTime?.split(" ");
+        const [datePart, timePart] = e?.openTime?.split(" ");
         return {
           ...e,
           compareTime: new Date(`${datePart}T${timePart}`),
