@@ -1,15 +1,15 @@
-import { Button, Layout, Space } from "antd";
-import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { Layout, Space } from "antd";
 import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
+import { IoMenu } from "react-icons/io5";
+import { Outlet, useNavigate } from "react-router-dom";
+import apiFactory from "../../api";
+import { useSideBarStore } from "../../store/SideBarStore";
 import { useInfoUser } from "../../store/UserStore";
 import { verifiedAccessToken } from "../../utils/Utils";
+import { Footer } from "../footer/Footer";
 import { SideBar } from "../sideBar";
 import "./style.scss";
-import { Footer } from "../footer/Footer";
-import apiFactory from "../../api";
-import { IoMenu } from "react-icons/io5";
-import { useSideBarStore } from "../../store/SideBarStore";
 
 const AuthLayout = ({ children }) => {
   const { updateUser } = useInfoUser();
@@ -53,9 +53,6 @@ const AuthLayout = ({ children }) => {
                   <IoMenu size={25} />
                 </button>
                 <Outlet />
-              </div>
-              <div className="absolute top-[20px] right-[10px]">
-                <Button onClick={logout}>logout</Button>
               </div>
               <Footer />
             </div>

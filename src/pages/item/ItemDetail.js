@@ -53,7 +53,7 @@ const ItemDetail = () => {
   return (
     <div className="item-list">
       <div className="item-header">
-        <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
+        <div className="flex justify-center text-[20px] p-[5px] gap-[10px] mt-[60px]">
           <button onClick={onBackPage}>
             <IoArrowBackOutline size={25} />
           </button>

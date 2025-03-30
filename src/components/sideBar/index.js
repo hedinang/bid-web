@@ -97,17 +97,23 @@ const SideBar = () => {
     setIsClosingTour(false);
   };
 
+  // const logout = async () => {
+  //   await apiFactory.userApi.logout({
+  //     fcmToken: Cookies.get("fcm_token"),
+  //     token: Cookies.get("access_token"),
+  //   });
+  //   switchIsProfileDetail();
+  //   Cookies.remove("access_token");
+  //   Cookies.remove("access_token", { domain: "winivina.iptime.org" });
+  //   Cookies.remove("access_token", { domain: "msgauth.winitech.com" });
+  //   updateUser(null);
+  //   window.location.href = REACT_APP_AUTHENTICATION_WEB + "/login";
+  // };
+
   const logout = async () => {
-    await apiFactory.userApi.logout({
-      fcmToken: Cookies.get("fcm_token"),
-      token: Cookies.get("access_token"),
-    });
-    switchIsProfileDetail();
+    await apiFactory.userApi.logout();
     Cookies.remove("access_token");
-    Cookies.remove("access_token", { domain: "winivina.iptime.org" });
-    Cookies.remove("access_token", { domain: "msgauth.winitech.com" });
-    updateUser(null);
-    window.location.href = REACT_APP_AUTHENTICATION_WEB + "/login";
+    navigate("/");
   };
 
   const onChangeSideBar = (pathname) => {

@@ -12,6 +12,7 @@ import ZoomImage from "../../components/img/ZoomImage";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
+import { expiredBidOrder } from "../../utils/formatTime";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
@@ -143,7 +144,7 @@ const AdminItemDetail = () => {
         <div className="text-center p-[5px] font-semibold">
           {item?.description}
         </div>
-        {user?.role === role.CUSTOMER && (
+        {user?.role === role.CUSTOMER && !expiredBidOrder(bid?.openTime) && (
           <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
             <NumericFormat
               className="w-[150px]"
@@ -220,44 +221,45 @@ const AdminItemDetail = () => {
               <div className="text-center p-[5px] font-semibold">
                 {item?.description}
               </div>
-              {user?.role === role.CUSTOMER && (
-                <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-                  <NumericFormat
-                    className="w-[150px]"
-                    value={bidPrice}
-                    prefix="¥"
-                    customInput={Input}
-                    isAllowed={(values) =>
-                      values.floatValue === undefined ||
-                      values.floatValue <= 1000000
-                    }
-                    onValueChange={(values, sourceInfo) => {
-                      setBidPrice(values?.floatValue);
-                    }}
-                    disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+              {user?.role === role.CUSTOMER &&
+                !expiredBidOrder(bid?.openTime) && (
+                  <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+                    <NumericFormat
+                      className="w-[150px]"
+                      value={bidPrice}
+                      prefix="¥"
+                      customInput={Input}
+                      isAllowed={(values) =>
+                        values.floatValue === undefined ||
+                        values.floatValue <= 1000000
+                      }
+                      onValueChange={(values, sourceInfo) => {
+                        setBidPrice(values?.floatValue);
+                      }}
+                      disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                        item?.orderType
+                      )}
+                    />
+                    {!["BIDDING", "SUCCESS", "FAILED"]?.includes(
                       item?.orderType
+                    ) && (
+                      <Button
+                        shape="circle"
+                        icon={<IoCartOutline size={20} />}
+                        className=""
+                        onClick={addToCard}
+                      />
                     )}
-                  />
-                  {!["BIDDING", "SUCCESS", "FAILED"]?.includes(
-                    item?.orderType
-                  ) && (
-                    <Button
-                      shape="circle"
-                      icon={<IoCartOutline size={20} />}
-                      className=""
-                      onClick={addToCard}
-                    />
-                  )}
-                  {item?.orderType === "ORDER" && (
-                    <Button
-                      shape="circle"
-                      icon={<MdCancel size={20} />}
-                      className=""
-                      onClick={onCancel}
-                    />
-                  )}
-                </div>
-              )}
+                    {item?.orderType === "ORDER" && (
+                      <Button
+                        shape="circle"
+                        icon={<MdCancel size={20} />}
+                        className=""
+                        onClick={onCancel}
+                      />
+                    )}
+                  </div>
+                )}
             </span>
             <div className="flex p-[5px]">
               <div className="w-[200px] font-semibold">Bid id</div>

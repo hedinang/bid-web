@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, subHours } from "date-fns";
 import moment from "moment-timezone";
 
 export const formatLastTime = (lastTime) => {
@@ -35,6 +35,32 @@ export const formatTime = (time) => {
     return "";
   }
   return format(new Date(time), "HH:mm dd/MM/yyyy");
+};
+
+export const minusFormatTime = (time) => {
+  if (!time) return "";
+
+  if (!format(new Date(time), "HH:mm dd/MM/yyyy")) {
+    return "";
+  }
+
+  const prefixTime = time?.split(" ")?.[1];
+
+  return format(
+    subHours(new Date(time), prefixTime === "10:00:00" ? 8 : 3),
+    "HH:mm dd/MM/yyyy"
+  );
+};
+
+export const expiredBidOrder = (time) => {
+  if (!time) return false;
+
+  if (!format(new Date(time), "dd/MM/yyyy HH:mm")) {
+    return false;
+  }
+
+  const prefixTime = time?.split(" ")?.[1];
+  return subHours(new Date(time), prefixTime === "10:00:00" ? 8 : 3) < new Date();
 };
 
 //format "YYYY-MM-DDTHH:mm:ss.SSSZ" || "YYYY-MM-DD HH:mm:ss"

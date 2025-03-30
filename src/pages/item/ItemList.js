@@ -6,7 +6,7 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useItemContext } from "../../context/ItemContext";
-import { formatTime } from "../../utils/formatTime";
+import { formatTime, minusFormatTime } from "../../utils/formatTime";
 import "./style.scss";
 
 const ItemDetail = ({ item }) => {
@@ -113,7 +113,10 @@ const ItemList = () => {
         <button onClick={() => navigate("/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
+        <div className="text-center">
+          <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
+          <div>Đặt giá trước {minusFormatTime(bid?.openTime)}</div>
+        </div>
       </div>
 
       <Row className="flex items-center">

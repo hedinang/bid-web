@@ -21,7 +21,11 @@ import apiFactory from "../../api";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
 import { useInfoUser } from "../../store/UserStore";
-import { formatTime } from "../../utils/formatTime";
+import {
+  expiredBidOrder,
+  formatTime,
+  minusFormatTime,
+} from "../../utils/formatTime";
 import "./style.scss";
 
 const ItemDetail = ({ item, itemList, setItemList }) => {
@@ -29,6 +33,11 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
   const [activeImg, setActiveImg] = useState();
   const [bidPrice, setBidPrice] = useState(item?.bidPrice);
   const { user, languageMap } = useInfoUser();
+  const {
+    // itemList,
+    bid,
+    // setItemList,
+  } = useItemContext();
 
   const addToCard = async () => {
     const rs = await apiFactory.orderApi.addToCard({
@@ -143,7 +152,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
             )}
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>
-          {user?.role === role.CUSTOMER && (
+          {user?.role === role.CUSTOMER && !expiredBidOrder(bid?.openTime) && (
             <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
               <NumericFormat
                 className="w-[150px]"
@@ -237,7 +246,10 @@ const AdminItemList = () => {
         <button onClick={() => navigate("/inside/bid/bid-list")}>
           <IoArrowBackOutline size={25} />
         </button>
-        <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
+        <div className="text-center">
+          <div>Phiên đấu giá lúc {formatTime(bid?.openTime)}</div>
+          <div>Đặt giá trước {minusFormatTime(bid?.openTime)}</div>
+        </div>
       </div>
 
       <Row className="flex items-center">
