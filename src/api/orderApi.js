@@ -17,5 +17,13 @@ class OrderApi extends BaseApi {
   changeStatus(payload) {
     return this.post(`${ORDER}/change-status`, payload);
   }
+
+  changeStatusByOrderDate(payload) {
+    return this.post(`${ORDER}/order-date/change-status`, payload);
+  }
+
+  changeStatusByItemDate(payload) {
+    return this.post(`${ORDER}/item-date/change-status`, payload);
+  }
 }
 export default OrderApi;

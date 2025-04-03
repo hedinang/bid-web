@@ -12,13 +12,18 @@ import {
   Select,
   Table,
 } from "antd";
+import viVN from "antd/locale/vi_VN";
+import copy from "copy-to-clipboard";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaCopy, FaInfoCircle } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa6";
 import { FiTrash } from "react-icons/fi";
 import { IoMdRefresh } from "react-icons/io";
-import { IoHammerOutline } from "react-icons/io5";
+import { IoCartOutline, IoHammerOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { GeneralModal } from "../../components/modal/GeneralModal";
@@ -26,11 +31,6 @@ import { role } from "../../config/Constant";
 import { useInfoUser } from "../../store/UserStore";
 import { formatDate, formatDateTime, formatTime } from "../../utils/formatTime";
 import "./style.scss";
-import viVN from "antd/locale/vi_VN";
-import dayjs from "dayjs";
-import "dayjs/locale/vi";
-import updateLocale from "dayjs/plugin/updateLocale";
-import copy from "copy-to-clipboard";
 
 dayjs.locale("vi");
 dayjs.extend(updateLocale);
@@ -237,8 +237,7 @@ const OrderList = () => {
       itemDate: "",
     },
   });
-
-  const [confirmTitle, setConfirmTitle] = useState();
+  const [changeStatusRequest, setChangeStatusRequest] = useState({});
 
   const changePage = (e) => {
     setSearchOrder({
@@ -441,6 +440,38 @@ const OrderList = () => {
         align: "center",
         key: "action",
         render: (e, record) => {
+          if (user?.role !== role.CUSTOMER) {
+            return (
+              <div className="flex gap-[10px] justify-center">
+                <Button
+                  className="bg-[#2a56b9] text-[white]"
+                  icon={<IoCartOutline className="text-[18px]" />}
+                  onClick={() => changeOrderStatus(record, "ORDER")}
+                />
+                <Button
+                  className="bg-[#c9ac12] text-[white]"
+                  onClick={() => changeOrderStatus(record, "BIDDING")}
+                  icon={<IoHammerOutline className="text-[18px]" />}
+                />
+                <Button
+                  className="bg-[#e00d0d] text-[white]"
+                  onClick={() => changeOrderStatus(record, "CANCEL")}
+                  icon={<FiTrash className="text-[18px]" />}
+                />
+                <Button
+                  className="bg-[green] text-[white]"
+                  onClick={() => changeOrderStatus(record, "SUCCESS")}
+                  icon={<FaCheck className="text-[18px]" />}
+                />
+                <Button
+                  className="bg-[grey] text-[white]"
+                  onClick={() => changeOrderStatus(record, "FAILED")}
+                  icon={<FaInfoCircle className="text-[18px]" />}
+                />
+              </div>
+            );
+          }
+
           if (e === "ORDER") {
             if (user?.role === role.CUSTOMER) {
               return (
@@ -560,6 +591,69 @@ const OrderList = () => {
     });
   };
 
+  const confirm = async () => {
+    if (changeStatusRequest?.kind === "ORDER") {
+      await apiFactory.orderApi.changeStatusByOrderDate({
+        ...changeStatusRequest,
+        date: changeStatusRequest?.date
+          ? formatDateTime(
+              changeStatusRequest?.date?.toString(),
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+            )
+          : changeStatusRequest?.date,
+      });
+    } else {
+      await apiFactory.orderApi.changeStatusByItemDate({
+        ...changeStatusRequest,
+        date: changeStatusRequest?.date
+          ? formatDateTime(
+              changeStatusRequest?.date?.toString(),
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+            )
+          : changeStatusRequest?.date,
+      });
+    }
+
+    setChangeStatusRequest({});
+
+    let updatedOrderList;
+
+    if (changeStatusRequest?.targetType === "ORDER") {
+      updatedOrderList = orderList?.map((order) => {
+        if (order?.type !== "ORDER") return order;
+        order.type = "BIDDING";
+        return order;
+      });
+
+      setOrderList([...updatedOrderList]);
+      return;
+    }
+
+    if (changeStatusRequest?.targetType === "BIDDING") {
+      updatedOrderList = orderList?.map((order) => {
+        if (order?.type !== "BIDDING") return order;
+        order.type = "FAILED";
+        return order;
+      });
+
+      setOrderList([...updatedOrderList]);
+      return;
+    }
+
+    if (
+      !changeStatusRequest?.targetType &&
+      changeStatusRequest?.destinationType === "ORDER"
+    ) {
+      updatedOrderList = orderList?.map((order) => {
+        order.type = "ORDER";
+        return order;
+      });
+
+      setOrderList([...updatedOrderList]);
+      return;
+    }
+  };
+
   useEffect(() => {
     onChangeDebounceFilter(searchOrder);
   }, [searchOrder]);
@@ -572,77 +666,122 @@ const OrderList = () => {
         </div>
         {user?.role !== "CUSTOMER" && (
           <>
-            <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
-                  )
-                }
-                disabled={!searchOrder?.search?.orderDate}
-              >
-                Đã đặt theo ngày đặt
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
-                  )
-                }
-                disabled={!searchOrder?.search?.orderDate}
-              >
-                Đấu thất bại theo ngày đặt
-              </Button>
-
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đã đặt!`
-                  )
-                }
-                disabled={!searchOrder?.search?.itemDate}
-              >
-                Đã đặt theo ngày item
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`
-                  )
-                }
-                disabled={!searchOrder?.search?.itemDate}
-              >
-                Đấu thất bại theo ngày item
-              </Button>
-            </div>
-            <div className="font-semibold gap-[10px] pl-[16px] pt-[16px]  flex items-center">
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
-                  )
-                }
-                disabled={!searchOrder?.search?.orderDate}
-              >
-                Khôi phục đã đặt theo ngày đặt
-              </Button>
-              <Button
-                type="primary"
-                onClick={() =>
-                  setConfirmTitle(
-                    `Nếu bạn ấn đồng ý thì tất cả các order đang đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động khôi phục sang trạng thái đã đặt!`
-                  )
-                }
-                disabled={!searchOrder?.search?.itemDate}
-              >
-                Khôi phục đã đặt theo ngày đặt
-              </Button>
-            </div>
+            <Row className="gap-[10px] pl-[16px] pt-[16px]">
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`,
+                      date: searchOrder?.search?.orderDate,
+                      targetType: "ORDER",
+                      destinationType: "BIDDING",
+                      kind: "ORDER",
+                    })
+                  }
+                  disabled={!searchOrder?.search?.orderDate}
+                  className="flex flex-col h-[60px]"
+                >
+                  <div>Chuyển tất cả các item trong</div>
+                  <div>ngày đặt giá từ đợi đặt sang đang đặt</div>
+                </Button>
+              </Col>
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đang đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`,
+                      date: searchOrder?.search?.orderDate,
+                      targetType: "BIDDING",
+                      destinationType: "FAILED",
+                      kind: "ORDER",
+                    })
+                  }
+                  className="flex flex-col h-[60px]"
+                  disabled={!searchOrder?.search?.orderDate}
+                >
+                  <div>Chuyển tất cả các item trong</div>
+                  <div>ngày đặt giá từ đang đặt sang đấu thất bại</div>
+                </Button>
+              </Col>
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì khôi phục tất cả order của user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} về trạng thái đã đặt!`,
+                      date: searchOrder?.search?.orderDate,
+                      destinationType: "ORDER",
+                      kind: "ORDER",
+                    })
+                  }
+                  disabled={!searchOrder?.search?.orderDate}
+                  className="flex flex-col h-[60px]"
+                >
+                  <div>Khôi phục tất cả item trong ngày đặt giá</div>
+                  <div>về trạng thái đợi đặt</div>
+                </Button>
+              </Col>
+            </Row>
+            <Row className="gap-[10px] pl-[16px] pt-[16px]">
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đợi đặt của các bid đấu trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đã đặt!`,
+                      date: searchOrder?.search?.itemDate,
+                      targetType: "ORDER",
+                      destinationType: "BIDDING",
+                      kind: "ITEM",
+                    })
+                  }
+                  disabled={!searchOrder?.search?.itemDate}
+                  className="flex flex-col h-[60px]"
+                >
+                  <div>Chuyển tất cả các item trong</div>
+                  <div>ngày đấu giá từ đợi đặt sang đang đặt</div>
+                </Button>
+              </Col>
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đang đặt của các bid đấu trong ngày ${formatDate(searchOrder?.search?.itemDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`,
+                      date: searchOrder?.search?.itemDate,
+                      targetType: "BIDDING",
+                      destinationType: "FAILED",
+                      kind: "ITEM",
+                    })
+                  }
+                  disabled={!searchOrder?.search?.itemDate}
+                  className="flex flex-col h-[60px]"
+                >
+                  <div>Chuyển tất cả các item trong</div>
+                  <div>ngày đấu giá từ đang đặt sang đấu thất bại</div>
+                </Button>
+              </Col>
+              <Col xs={24} sm={12} md={6} span={3}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    setChangeStatusRequest({
+                      title: `Nếu bạn ấn đồng ý thì khôi phục tất cả order của bid đấu trong ngày ${formatDate(searchOrder?.search?.itemDate)} về trạng thái đã đặt!`,
+                      date: searchOrder?.search?.itemDate,
+                      destinationType: "ORDER",
+                      kind: "ITEM",
+                    })
+                  }
+                  disabled={!searchOrder?.search?.itemDate}
+                  className="flex flex-col h-[60px]"
+                >
+                  <div>Khôi phục tất cả item trong ngày đấu giá</div>
+                  <div>về trạng thái đợi đặt</div>
+                </Button>
+              </Col>
+            </Row>
           </>
         )}
         <Row className="text-[20px] pl-[16px] pt-[16px]">
@@ -1066,11 +1205,12 @@ const OrderList = () => {
           </Modal>
         )}
 
-        {confirmTitle && (
+        {changeStatusRequest?.title && (
           <GeneralModal
-            title={confirmTitle}
-            open={confirmTitle}
-            onCancel={() => setConfirmTitle(null)}
+            title={changeStatusRequest?.title}
+            open={changeStatusRequest?.title}
+            onCancel={() => setChangeStatusRequest({})}
+            onConfirm={confirm}
           />
         )}
       </div>

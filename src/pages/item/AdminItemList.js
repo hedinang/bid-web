@@ -28,10 +28,15 @@ import {
 } from "../../utils/formatTime";
 import "./style.scss";
 
+const parseInt = (numberString) => {
+  return Number(numberString?.replace(/¥/g, "")?.replace(/,/g, ""));
+};
+
 const ItemDetail = ({ item, itemList, setItemList }) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
   const [bidPrice, setBidPrice] = useState(item?.bidPrice);
+
   const { user, languageMap } = useInfoUser();
   const {
     // itemList,
@@ -161,7 +166,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
                 customInput={Input}
                 isAllowed={(values) =>
                   values.floatValue === undefined ||
-                  values.floatValue <= 1000000
+                  values.floatValue <= 10000000
                 }
                 onValueChange={(values, sourceInfo) => {
                   setBidPrice(values?.floatValue);
@@ -176,6 +181,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
                   icon={<IoCartOutline size={20} />}
                   className=""
                   onClick={addToCard}
+                  disabled={!bidPrice || bidPrice < parseInt(item?.startPrice)}
                 />
               )}
               {item?.orderType === "ORDER" && (
