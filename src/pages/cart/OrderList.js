@@ -140,7 +140,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
     <div className="flex flex-col gap-[5px]">
       {user?.role !== role.CUSTOMER && (
         <div className="flex items-center">
-          <div className="w-[100px] font-semibold">Username: </div>
+          <div className="w-[100px] font-semibold">Tên tài khoản: </div>
           <Button
             type="primary"
             onClick={() => {
@@ -162,7 +162,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Item Id: </div>
+        <div className="w-[100px] font-semibold">Mã sản phẩm: </div>
         <div>
           {user?.role === role?.CUSTOMER ? (
             <a
@@ -180,35 +180,39 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Title: </div>
+        <div className="w-[100px] font-semibold">Tên sản phẩm: </div>
         <div className="flex-1">{order?.title}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Category: </div>
+        <div className="w-[100px] font-semibold">Loại: </div>
         <div>{order?.category}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Branch: </div>
+        <div className="w-[100px] font-semibold">Hãng: </div>
         <div>{order?.branch}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Rank: </div>
+        <div className="w-[100px] font-semibold">Chất lượng: </div>
         <div>{order?.rank}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Bid Price: </div>
+        <div className="w-[100px] font-semibold">Giá đặt: </div>
         <div>{order?.bidPrice}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Order date: </div>
+        <div className="w-[100px] font-semibold">Ngày đặt giá: </div>
         <div>{formatTime(order?.updatedAt)}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Status: </div>
+        <div className="w-[100px] font-semibold">Ngày đấu giá: </div>
+        <div>{formatTime(order?.itemDate)}</div>
+      </div>
+      <div className="flex items-center">
+        <div className="w-[100px] font-semibold">Tình trạng: </div>
         <div>{showStatus()}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Action: </div>
+        <div className="w-[100px] font-semibold">Thao tác: </div>
         <div>{showAction()}</div>
       </div>
       <Divider style={{ borderColor: "#7cb305" }} />
@@ -443,31 +447,45 @@ const OrderList = () => {
           if (user?.role !== role.CUSTOMER) {
             return (
               <div className="flex gap-[10px] justify-center">
-                <Button
-                  className="bg-[#2a56b9] text-[white]"
-                  icon={<IoCartOutline className="text-[18px]" />}
-                  onClick={() => changeOrderStatus(record, "ORDER")}
-                />
-                <Button
-                  className="bg-[#c9ac12] text-[white]"
-                  onClick={() => changeOrderStatus(record, "BIDDING")}
-                  icon={<IoHammerOutline className="text-[18px]" />}
-                />
-                <Button
-                  className="bg-[#e00d0d] text-[white]"
-                  onClick={() => changeOrderStatus(record, "CANCEL")}
-                  icon={<FiTrash className="text-[18px]" />}
-                />
-                <Button
-                  className="bg-[green] text-[white]"
-                  onClick={() => changeOrderStatus(record, "SUCCESS")}
-                  icon={<FaCheck className="text-[18px]" />}
-                />
-                <Button
-                  className="bg-[grey] text-[white]"
-                  onClick={() => changeOrderStatus(record, "FAILED")}
-                  icon={<FaInfoCircle className="text-[18px]" />}
-                />
+                {e !== "ORDER" && (
+                  <Button
+                    className="bg-[#2a56b9] text-[white]"
+                    icon={<IoCartOutline className="text-[18px]" />}
+                    onClick={() => changeOrderStatus(record, "ORDER")}
+                  />
+                )}
+
+                {e !== "BIDDING" && (
+                  <Button
+                    className="bg-[#c9ac12] text-[white]"
+                    onClick={() => changeOrderStatus(record, "BIDDING")}
+                    icon={<IoHammerOutline className="text-[18px]" />}
+                  />
+                )}
+
+                {e !== "CANCEL" && (
+                  <Button
+                    className="bg-[#e00d0d] text-[white]"
+                    onClick={() => changeOrderStatus(record, "CANCEL")}
+                    icon={<FiTrash className="text-[18px]" />}
+                  />
+                )}
+
+                {e !== "SUCCESS" && (
+                  <Button
+                    className="bg-[green] text-[white]"
+                    onClick={() => changeOrderStatus(record, "SUCCESS")}
+                    icon={<FaCheck className="text-[18px]" />}
+                  />
+                )}
+
+                {e !== "FAILED" && (
+                  <Button
+                    className="bg-[grey] text-[white]"
+                    onClick={() => changeOrderStatus(record, "FAILED")}
+                    icon={<FaInfoCircle className="text-[18px]" />}
+                  />
+                )}
               </div>
             );
           }
