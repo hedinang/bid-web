@@ -345,7 +345,7 @@ const ItemList = () => {
             <Spin />
           </div>
         ) : (
-          itemList?.map((item) => <ItemDetail item={item} />)
+          itemList?.map((item) => <ItemDetail item={item} key={item?.itemId}/>)
         )}
       </Row>
       <div className="paging-bottom">

@@ -51,6 +51,7 @@ const AdminItemDetail = () => {
       bidId: item?.bidId,
       itemId: item?.itemId,
       bidPrice: bidPrice,
+      orderId: item?.orderId
     });
 
     if (rs?.status === 200) {

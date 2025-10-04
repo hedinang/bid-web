@@ -10,8 +10,8 @@ import {
   Tour,
 } from "antd";
 import Cookies from "js-cookie";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { CiUser } from "react-icons/ci";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { CiMail, CiUser } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
 import { RiAuctionLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -297,33 +297,62 @@ const SideBar = () => {
     ];
 
     if (user?.role !== role.CUSTOMER) {
-      rawColumn?.push({
-        key: "admin-setting",
-        img: (
-          <Tooltip
-            placement="right"
-            title={languageMap?.["admin-setting"] ?? "Danh sách người dùng"}
-            color={"#0091ff"}
-          >
-            <button
-              className="p-[20px] flex items-center"
-              onClick={() => {
-                onChangeSideBar("/user-list");
-                setIsMenuSideBar(false);
-              }}
-              ref={tourStepRef2}
+      rawColumn?.push(
+        {
+          key: "admin-setting",
+          img: (
+            <Tooltip
+              placement="right"
+              title={languageMap?.["admin-setting"] ?? "Danh sách người dùng"}
+              color={"#0091ff"}
             >
-              <CiUser size={25} color={isMobile ? "black" : "#2a56b9"} />
-              {isMobile && (
-                <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
-                  {languageMap?.["admin-setting"] ?? "Admin setting"}
-                </h2>
-              )}
-            </button>
-          </Tooltip>
-        ),
-        navigationItem: "event",
-      });
+              <button
+                className="p-[20px] flex items-center"
+                onClick={() => {
+                  onChangeSideBar("/user-list");
+                  setIsMenuSideBar(false);
+                }}
+                ref={tourStepRef2}
+              >
+                <CiUser size={25} color={isMobile ? "black" : "#2a56b9"} />
+                {isMobile && (
+                  <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
+                    {languageMap?.["admin-setting"] ?? "Admin setting"}
+                  </h2>
+                )}
+              </button>
+            </Tooltip>
+          ),
+          navigationItem: "event",
+        },
+        {
+          key: "mail",
+          img: (
+            <Tooltip
+              placement="right"
+              title={languageMap?.["admin-setting"] ?? "Danh sách email"}
+              color={"#0091ff"}
+            >
+              <button
+                className="p-[20px] flex items-center"
+                onClick={() => {
+                  onChangeSideBar("/mail-list");
+                  setIsMenuSideBar(false);
+                }}
+                ref={tourStepRef2}
+              >
+                <CiMail size={25} color={isMobile ? "black" : "#2a56b9"} />
+                {isMobile && (
+                  <h2 className="text-black text-[16px] font-[600px] mx-[10px]">
+                    {languageMap?.["admin-setting"] ?? "Mail"}
+                  </h2>
+                )}
+              </button>
+            </Tooltip>
+          ),
+          navigationItem: "event",
+        }
+      );
     }
 
     return rawColumn;
