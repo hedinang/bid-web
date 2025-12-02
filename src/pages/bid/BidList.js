@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import winitechLogo from "../../assets/bid-icon.png";
 import { sortBy } from "lodash";
 import { IoShirt } from "react-icons/io5";
-import { formatTime } from "../../utils/formatTime";
+import { extractDay, formatTime } from "../../utils/formatTime";
 
 const BidList = () => {
   const navigate = useNavigate();
@@ -92,6 +92,7 @@ const BidList = () => {
             </div>
             <div className="flex justify-center gap-[10px] items-center">
               <MdOutlineAccessTime size={25} />
+              <div>{extractDay(bid?.openTime)}</div>
               <div>{formatTime(bid?.openTime)}</div>
             </div>
             <div className="flex justify-center items-center gap-[10px]">
@@ -105,9 +106,13 @@ const BidList = () => {
               <div className="flex gap-[30px] justify-center">
                 <div className="flex items-center">Xem trước: </div>
                 <div>
-                  <div>{bid?.startPreviewTime}</div>
+                  <div>
+                    {extractDay(bid?.startPreviewTime)} {bid?.startPreviewTime}
+                  </div>
                   <div>~</div>
-                  <div>{bid?.endPreviewTime}</div>
+                  <div>
+                    {extractDay(bid?.endPreviewTime)} {bid?.endPreviewTime}
+                  </div>
                 </div>
               </div>
             ) : (

@@ -71,3 +71,11 @@ export const formatDateTime = (time, format) => {
 
   return date?.format(format);
 };
+
+export function extractDay(time, locale = "vi-VI") {
+  if (!time) return null;
+
+  return new Intl.DateTimeFormat(locale, { weekday: "long" }).format(
+    new Date(time)
+  );
+}

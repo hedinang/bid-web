@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 import { useInfoUser } from "../../store/UserStore";
 import { role } from "../../config/Constant";
 import { SideBarConversation } from "../../components/sideBar/SideBarConversation";
-import { formatTime } from "../../utils/formatTime";
+import { extractDay, formatTime } from "../../utils/formatTime";
 
 const SummaryBid = ({ bid }) => {
   const { user } = useInfoUser();
@@ -132,6 +132,7 @@ const SummaryBid = ({ bid }) => {
           )}
           <div className="flex justify-center gap-[10px] items-center">
             <MdOutlineAccessTime size={25} />
+            <div>{extractDay(bid?.openTime)}</div>
             <div>{formatTime(bid?.openTime)}</div>
           </div>
           <div className="flex justify-center items-center gap-[10px]">
@@ -150,9 +151,9 @@ const SummaryBid = ({ bid }) => {
             <div className="flex gap-[30px] justify-center">
               <div className="flex items-center">Xem trước: </div>
               <div>
-                <div>{bid?.startPreviewTime}</div>
+                <div>{extractDay(bid?.startPreviewTime)} {bid?.startPreviewTime}</div>
                 <div>~</div>
-                <div>{bid?.endPreviewTime}</div>
+                <div>{extractDay(bid?.endPreviewTime)} {bid?.endPreviewTime}</div>
               </div>
             </div>
           ) : (
