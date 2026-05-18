@@ -1,11 +1,14 @@
-import { Button, Table } from "antd";
-import { debounce } from "lodash";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import {Button, Table} from "antd";
+import {debounce} from "lodash";
+import {useEffect, useState} from "react";
+import {toast} from "react-toastify";
 import apiFactory from "../../api";
-import { CreateMailModal } from "../../components/modal/CreateMailModal";
+import {CreateMailModal} from "../../components/modal/CreateMailModal";
+import {useLayoutContext} from "../../context/LayoutContext";
 
 const MailManagement = () => {
+  const {me, setPageLink} = useLayoutContext();
+
   const [mailSearch, setMailSearch] = useState({
     limit: 30,
     page: 1,
@@ -84,15 +87,19 @@ const MailManagement = () => {
     fetchMails();
   }, [mailSearch]);
 
+  useEffect(() => {
+    setPageLink("MAIL")
+  }, [])
+
   return (
-    <div>
-      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
-        Quản lý mail
-      </div>
-      <div className="p-[16px]">
-        <div className="user-list ">
-          <div className="flex justify-between mb-[10px]">
-            {/* <div className="flex justify-center items-center">
+      <div>
+        <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
+          Quản lý mail
+        </div>
+        <div className="p-[16px]">
+          <div className="user-list ">
+            <div className="flex justify-between mb-[10px]">
+              {/* <div className="flex justify-center items-center">
               <Popover
                 //   content={languageMap?.["as.menu.user.placeHolderSearch"] ?? "Search user code, username, email"}
                 trigger="hover"
@@ -131,59 +138,59 @@ const MailManagement = () => {
                 />
               </Popover>
             </div> */}
-            <div />
-            <Button
-              className="ml-2"
-              type="primary"
-              onClick={onAdd}
-              // style={{ zoom: isMobile && "0.9" }}
-            >
-              Create mail
-            </Button>
-          </div>
-          <div className="">
-            <Table
-              columns={columns}
-              dataSource={mailList}
-              pagination={false}
-              loading={isLoading}
-              size={"middle"}
-              className="max-h-[1000px]"
-              rowClassName={rowClassName}
-              onRow={(record, index) => ({
-                onDoubleClick: (e) => onDoubleClick(record),
-                className: getSelectedColor(record),
-                // ref: index === userList?.length - 1 ? lastRecordRef : null,
-              })}
-              // scroll={
-              //   isMobile
-              //     ? {
-              //         x: 700,
-              //         y: 420,
-              //       }
-              //     : {
-              //         x: 1000,
-              //         y: 700,
-              //       }
-              // }
-            />
+              <div/>
+              <Button
+                  className="ml-2"
+                  type="primary"
+                  onClick={onAdd}
+                  // style={{ zoom: isMobile && "0.9" }}
+              >
+                Create mail
+              </Button>
+            </div>
+            <div className="">
+              <Table
+                  columns={columns}
+                  dataSource={mailList}
+                  pagination={false}
+                  loading={isLoading}
+                  size={"middle"}
+                  className="max-h-[1000px]"
+                  rowClassName={rowClassName}
+                  onRow={(record, index) => ({
+                    onDoubleClick: (e) => onDoubleClick(record),
+                    className: getSelectedColor(record),
+                    // ref: index === userList?.length - 1 ? lastRecordRef : null,
+                  })}
+                  // scroll={
+                  //   isMobile
+                  //     ? {
+                  //         x: 700,
+                  //         y: 420,
+                  //       }
+                  //     : {
+                  //         x: 1000,
+                  //         y: 700,
+                  //       }
+                  // }
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {isOpenUserModal && (
-        <CreateMailModal
-          isModalOpen={isOpenUserModal}
-          cancelModal={cancelCreateModal}
-          title={selectedMail ? "Update mail" : "Create mail"}
-          setUserList={setMailList}
-          userList={mailList}
-          editingMail={selectedMail}
-          isActive={mailSearch?.isActive}
-        />
-      )}
-    </div>
+        {isOpenUserModal && (
+            <CreateMailModal
+                isModalOpen={isOpenUserModal}
+                cancelModal={cancelCreateModal}
+                title={selectedMail ? "Update mail" : "Create mail"}
+                setUserList={setMailList}
+                userList={mailList}
+                editingMail={selectedMail}
+                isActive={mailSearch?.isActive}
+            />
+        )}
+      </div>
   );
 };
 
-export { MailManagement };
+export {MailManagement};

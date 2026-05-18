@@ -21,6 +21,7 @@ export const useLayoutContext = () => {
 
 export const LayoutProvider = ({children}) => {
   const [me, setMe] = useState(null);
+  const [pageLink, setPageLink] = useState(null);
 
   const updateMe = (user) => {
     setMe(user);
@@ -66,8 +67,16 @@ export const LayoutProvider = ({children}) => {
   }, []);
 
   const values = useMemo(
-      () => ({me, setMe, logout, verifiedAccessToken, updateMe}),
-      [me],
+      () => ({
+        me,
+        setMe,
+        logout,
+        verifiedAccessToken,
+        updateMe,
+        pageLink,
+        setPageLink
+      }),
+      [me, pageLink],
   );
 
   return <LayoutContext.Provider value={values}>{children}</LayoutContext.Provider>;

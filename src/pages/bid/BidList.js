@@ -1,21 +1,21 @@
-import { Button, Card, Col, Modal, Row, Spin } from "antd";
+import {Button, Card, Col, Modal, Row, Spin} from "antd";
 import Cookies from "js-cookie";
-import { sortBy } from "lodash";
-import { useEffect, useState } from "react";
-import { IoShirt } from "react-icons/io5";
-import { MdOutlineAccessTime } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import {sortBy} from "lodash";
+import {useEffect, useState} from "react";
+import {IoShirt} from "react-icons/io5";
+import {MdOutlineAccessTime} from "react-icons/md";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 import apiFactory from "../../api";
 import winitechLogo from "../../assets/bid-icon.png";
-import { SideBarConversation } from "../../components/sideBar/SideBarConversation";
-import { role } from "../../config/Constant";
-import { useLayoutContext } from "../../context/LayoutContext";
-import { extractDay, formatTime } from "../../utils/formatTime";
+import {SideBarConversation} from "../../components/sideBar/SideBarConversation";
+import {role} from "../../config/Constant";
+import {useLayoutContext} from "../../context/LayoutContext";
+import {extractDay, formatTime} from "../../utils/formatTime";
 import "./style.scss";
 
-const SummaryBid = ({ bid }) => {
-  const { me } = useLayoutContext();
+const SummaryBid = ({bid}) => {
+  const {me} = useLayoutContext();
   const navigate = useNavigate();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -25,23 +25,23 @@ const SummaryBid = ({ bid }) => {
     switch (bid?.donePage) {
       case Math.ceil(bid?.totalItem / 50):
         return (
-          <Button className="text-[#2d7717] text-[18px]" disabled>
-            Chuẩn bị
-          </Button>
+            <Button className="text-[#2d7717] text-[18px]" disabled>
+              Chuẩn bị
+            </Button>
         );
 
       default:
         return (
-          <Button
-            className="text-[#2d7717] text-[18px]"
-            onClick={() =>
-              navigate(
-                "/inside/bid/item-list/" + bid?.bidId + "/" + bid?.bidStatus,
-              )
-            }
-          >
-            Xem trước
-          </Button>
+            <Button
+                className="text-[#2d7717] text-[18px]"
+                onClick={() =>
+                    navigate(
+                        "/item-list/" + bid?.bidId + "/" + bid?.bidStatus,
+                    )
+                }
+            >
+              Xem trước
+            </Button>
         );
     }
   };
@@ -50,7 +50,7 @@ const SummaryBid = ({ bid }) => {
     const result = await apiFactory.bidApi.syncBid(bid);
     if (result?.status === 200) {
       toast.success(
-        `You are just syncronizing bid: ${bid?.bidId} - ${bid?.bidStatus}`,
+          `You are just syncronizing bid: ${bid?.bidId} - ${bid?.bidStatus}`,
       );
       return;
     }
@@ -64,13 +64,13 @@ const SummaryBid = ({ bid }) => {
     });
     if (result?.status === 200) {
       toast.success(
-        `You stop syncronizing bid: ${bid?.bidId} - ${bid?.bidStatus}`,
+          `You stop syncronizing bid: ${bid?.bidId} - ${bid?.bidStatus}`,
       );
       return;
     }
 
     toast.error(
-      `You stop syncronizing wrong bid: ${bid?.bidId} - ${bid?.bidStatus}`,
+        `You stop syncronizing wrong bid: ${bid?.bidId} - ${bid?.bidStatus}`,
     );
   };
 
@@ -86,92 +86,92 @@ const SummaryBid = ({ bid }) => {
   useEffect(() => {
     if (!bid?.bidStatus) return null;
     setIsUpdating(
-      bid?.donePage !== 0 && Math.ceil(bid?.totalItem / 50) !== bid?.donePage,
+        bid?.donePage !== 0 && Math.ceil(bid?.totalItem / 50) !== bid?.donePage,
     );
 
     setDoneItem(
-      bid?.donePage === 0
-        ? bid?.totalItem
-        : (Math.ceil(bid?.totalItem / 50) - bid?.donePage) * 50,
+        bid?.donePage === 0
+            ? bid?.totalItem
+            : (Math.ceil(bid?.totalItem / 50) - bid?.donePage) * 50,
     );
   }, [bid]);
 
   return (
-    <Col
-      xs={24}
-      sm={12}
-      md={8}
-      lg={6}
-      className="p-[10px]"
-      key={`${bid?.bidId}-${bid?.bidStatus}`}
-    >
-      <Card hoverable>
-        <div className="bid">
-          {isUpdating ? <div className="bid-update">Cập nhật</div> : <></>}
-          <div className="text-[20px] font-semibold">
-            {bid?.bidId} - Thời gian đấu giá
-          </div>
-          {me?.role === "SUPER_ADMIN" && (
-            <div className="flex justify-center gap-[10px]">
-              <Button
-                className="text-[#2d7717] text-[18px]"
-                onClick={stopSyncBid}
-              >
-                stop sync
-              </Button>
-              <Button className="text-[#2d7717] text-[18px]" onClick={syncBid}>
-                sync
-              </Button>
-              <Button
-                className="text-[#2d7717] text-[18px]"
-                onClick={deleteBid}
-              >
-                delete
-              </Button>
+      <Col
+          xs={24}
+          sm={12}
+          md={8}
+          lg={6}
+          className="p-[10px]"
+          key={`${bid?.bidId}-${bid?.bidStatus}`}
+      >
+        <Card hoverable>
+          <div className="bid">
+            {isUpdating ? <div className="bid-update">Cập nhật</div> : <></>}
+            <div className="text-[20px] font-semibold">
+              {bid?.bidId} - Thời gian đấu giá
             </div>
-          )}
-          <div className="flex justify-center gap-[10px] items-center">
-            <MdOutlineAccessTime size={25} />
-            <div>{extractDay(bid?.openTime)}</div>
-            <div>{formatTime(bid?.openTime)}</div>
-          </div>
-          <div className="flex justify-center items-center gap-[10px]">
-            <IoShirt size={20} color="#fccc14" />{" "}
-            {`${doneItem} / ${bid?.totalItem}`}
-          </div>
-          <div className="flex justify-center">
-            <img src={winitechLogo} className="h-[40px]" />
-          </div>
-          {me && me?.role !== role.CUSTOMER && (
-            <a href={bid?.detailUrl} target="_blank" className="text-[blue]">
-              Original link
-            </a>
-          )}
-          {bid?.bidStatus !== "In session" ? (
-            <div className="flex gap-[30px] justify-center">
-              <div className="flex items-center">Xem trước: </div>
-              <div>
-                <div>
-                  {extractDay(bid?.startPreviewTime)} {bid?.startPreviewTime}
+            {me?.role === "SUPER_ADMIN" && (
+                <div className="flex justify-center gap-[10px]">
+                  <Button
+                      className="text-[#2d7717] text-[18px]"
+                      onClick={stopSyncBid}
+                  >
+                    stop sync
+                  </Button>
+                  <Button className="text-[#2d7717] text-[18px]" onClick={syncBid}>
+                    sync
+                  </Button>
+                  <Button
+                      className="text-[#2d7717] text-[18px]"
+                      onClick={deleteBid}
+                  >
+                    delete
+                  </Button>
                 </div>
-                <div>~</div>
-                <div>
-                  {extractDay(bid?.endPreviewTime)} {bid?.endPreviewTime}
-                </div>
-              </div>
+            )}
+            <div className="flex justify-center gap-[10px] items-center">
+              <MdOutlineAccessTime size={25}/>
+              <div>{extractDay(bid?.openTime)}</div>
+              <div>{formatTime(bid?.openTime)}</div>
             </div>
-          ) : (
-            <div className="h-[62px]"></div>
-          )}
-          <div>{getBidStatusButotn(bid)}</div>
-        </div>
-      </Card>
-    </Col>
+            <div className="flex justify-center items-center gap-[10px]">
+              <IoShirt size={20} color="#fccc14"/>{" "}
+              {`${doneItem} / ${bid?.totalItem}`}
+            </div>
+            <div className="flex justify-center">
+              <img src={winitechLogo} className="h-[40px]"/>
+            </div>
+            {me && me?.role !== role.CUSTOMER && (
+                <a href={bid?.detailUrl} target="_blank" className="text-[blue]">
+                  Original link
+                </a>
+            )}
+            {bid?.bidStatus !== "In session" ? (
+                <div className="flex gap-[30px] justify-center">
+                  <div className="flex items-center">Xem trước:</div>
+                  <div>
+                    <div>
+                      {extractDay(bid?.startPreviewTime)} {bid?.startPreviewTime}
+                    </div>
+                    <div>~</div>
+                    <div>
+                      {extractDay(bid?.endPreviewTime)} {bid?.endPreviewTime}
+                    </div>
+                  </div>
+                </div>
+            ) : (
+                <div className="h-[62px]"></div>
+            )}
+            <div>{getBidStatusButotn(bid)}</div>
+          </div>
+        </Card>
+      </Col>
   );
 };
 
 const BidList = () => {
-  const { me } = useLayoutContext();
+  const {me, setPageLink} = useLayoutContext();
   const navigate = useNavigate();
   const [bidList, setBidList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -190,14 +190,14 @@ const BidList = () => {
     setIsLoading(false);
 
     const preparedBidList = result?.data
-      ?.map((e) => {
-        const [datePart, timePart] = e?.openTime?.split(" ");
-        return {
-          ...e,
-          compareTime: new Date(`${datePart}T${timePart}`),
-        };
-      })
-      ?.filter((e) => e?.compareTime > new Date());
+        ?.map((e) => {
+          const [datePart, timePart] = e?.openTime?.split(" ");
+          return {
+            ...e,
+            compareTime: new Date(`${datePart}T${timePart}`),
+          };
+        })
+        ?.filter((e) => e?.compareTime > new Date());
 
     setBidList(sortBy(preparedBidList, "compareTime"));
   };
@@ -232,66 +232,68 @@ const BidList = () => {
   };
 
   useEffect(() => {
+    setPageLink("BID_LIST")
+
     fetchData();
   }, []);
 
   return (
-    <div className="bid-list">
-      <div>
-        <div className="text-[30px] p-[20px] text-center">
-          Tài sản sắp được đấu giá
-        </div>
-        {/* <div className="absolute top-[20px] right-[10px]">
+      <div className="bid-list">
+        <div>
+          <div className="text-[30px] p-[20px] text-center">
+            Tài sản sắp được đấu giá
+          </div>
+          {/* <div className="absolute top-[20px] right-[10px]">
           <Button onClick={logout}>logout</Button>
         </div> */}
-      </div>
-      {me?.role === "SUPER_ADMIN" && (
-        <div className="flex justify-center gap-[10px]">
-          <Button
-            className="text-[#2d7717] text-[18px]"
-            onClick={getThreadList}
-          >
-            Get thread list
-          </Button>
-          <Button className="text-[#2d7717] text-[18px]" onClick={syncBidList}>
-            Get bid list
-          </Button>
         </div>
-      )}
-      <Row>
-        {isLoading ? (
-          <div className="w-full flex justify-center">
-            <Spin />
-          </div>
-        ) : (
-          bidList
-            ?.filter((bid) => bid?.bidStatus)
-            ?.map((bid) => (
-              <SummaryBid bid={bid} key={`${bid?.bidId}-${bid?.bidStatus}`} />
-            ))
+        {me?.role === "SUPER_ADMIN" && (
+            <div className="flex justify-center gap-[10px]">
+              <Button
+                  className="text-[#2d7717] text-[18px]"
+                  onClick={getThreadList}
+              >
+                Get thread list
+              </Button>
+              <Button className="text-[#2d7717] text-[18px]" onClick={syncBidList}>
+                Get bid list
+              </Button>
+            </div>
         )}
-      </Row>
-      <Modal
-        open={isModalOpen}
-        footer={false}
-        closeIcon={true}
-        onCancel={cancelModal}
-        centered
-        // className="preview-image-wrap"
-      >
-        <div>Running thread list: </div>
-        <div>
-          {threadList?.map((th) => (
-            <div key={th}>{th}</div>
-          ))}
-        </div>
-      </Modal>
-      <SideBarConversation
-        // isExitGroup={isExitGroup}
-        isOpen={isMenu}
-        onClose={() => setIsMenu(false)}
-      />
-    </div>
+        <Row>
+          {isLoading ? (
+              <div className="w-full flex justify-center">
+                <Spin/>
+              </div>
+          ) : (
+              bidList
+                  ?.filter((bid) => bid?.bidStatus)
+                  ?.map((bid) => (
+                      <SummaryBid bid={bid} key={`${bid?.bidId}-${bid?.bidStatus}`}/>
+                  ))
+          )}
+        </Row>
+        <Modal
+            open={isModalOpen}
+            footer={false}
+            closeIcon={true}
+            onCancel={cancelModal}
+            centered
+            // className="preview-image-wrap"
+        >
+          <div>Running thread list:</div>
+          <div>
+            {threadList?.map((th) => (
+                <div key={th}>{th}</div>
+            ))}
+          </div>
+        </Modal>
+        <SideBarConversation
+            // isExitGroup={isExitGroup}
+            isOpen={isMenu}
+            onClose={() => setIsMenu(false)}
+        />
+      </div>
   );
 };
-export { BidList };
+export {BidList};

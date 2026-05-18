@@ -1,12 +1,15 @@
-import { Button, Input, Popover, Switch, Table } from "antd";
-import { useEffect, useState } from "react";
-import { FiTrash } from "react-icons/fi";
-import { toast } from "react-toastify";
+import {Button, Input, Popover, Switch, Table} from "antd";
+import {useEffect, useState} from "react";
+import {FiTrash} from "react-icons/fi";
+import {toast} from "react-toastify";
 import apiFactory from "../../api";
-import { CreateUserModal } from "../../components/modal/adminSetting/CreateUserModal";
-import { debounce } from "lodash";
+import {CreateUserModal} from "../../components/modal/adminSetting/CreateUserModal";
+import {debounce} from "lodash";
+import {useLayoutContext} from "../../context/LayoutContext";
 
 const UserManagement = () => {
+  const {me, setPageLink} = useLayoutContext();
+
   const [userSearch, setUserSearch] = useState({
     limit: 30,
     page: 1,
@@ -127,106 +130,110 @@ const UserManagement = () => {
     fetchUsers();
   }, [userSearch]);
 
+  useEffect(() => {
+    setPageLink("USER")
+  }, [])
+
   return (
-    <div>
-      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex items-center justify-center">
-        Quản lý người dùng
-      </div>
-      <div className="p-[16px]">
-        <div className="user-list ">
-          <div className="flex justify-between mb-[10px]">
-            <div className="flex justify-center items-center">
-              <Popover
-                //   content={languageMap?.["as.menu.user.placeHolderSearch"] ?? "Search user code, username, email"}
-                trigger="hover"
+      <div>
+        <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex items-center justify-center">
+          Quản lý người dùng
+        </div>
+        <div className="p-[16px]">
+          <div className="user-list ">
+            <div className="flex justify-between mb-[10px]">
+              <div className="flex justify-center items-center">
+                <Popover
+                    //   content={languageMap?.["as.menu.user.placeHolderSearch"] ?? "Search user code, username, email"}
+                    trigger="hover"
+                >
+                  <Input
+                      className="w-full mr-2"
+                      placeholder={
+                        // languageMap?.["as.menu.user.placeHolderSearch"] ??
+                        "Search username, email"
+                      }
+                      onChange={(e) => debouncedSetUsernameSearch(e)}
+                      allowClear
+                  />
+                </Popover>
+                <Popover
+                    //   content={userSearch?.isActive ? languageMap?.["as.menu.user.btnActive"] ?? "Active" : languageMap?.["as.menu.user.btnInactive"] ?? "Inactive"}
+                    trigger="hover"
+                >
+                  <Switch
+                      value={userSearch?.search?.status === "ACTIVE"}
+                      // style={{ zoom: isMobile && "0.7" }}
+                      className="ml-2 w-[10px]"
+                      onChange={(checked, e) => {
+                        // scrollToTopTable();
+                        setIsLoadMoreData(true);
+                        setUserSearch({
+                          ...userSearch,
+                          search: {
+                            ...userSearch?.search,
+                            status: checked ? "ACTIVE" : "INACTIVE",
+                          },
+                          // limit: 30,
+                          // skip: 0,
+                        });
+                      }}
+                  />
+                </Popover>
+              </div>
+              <Button
+                  className="ml-2"
+                  type="primary"
+                  onClick={onAdd}
+                  // style={{ zoom: isMobile && "0.9" }}
               >
-                <Input
-                  className="w-full mr-2"
-                  placeholder={
-                    // languageMap?.["as.menu.user.placeHolderSearch"] ??
-                    "Search username, email"
-                  }
-                  onChange={(e) => debouncedSetUsernameSearch(e)}
-                  allowClear
-                />
-              </Popover>
-              <Popover
-                //   content={userSearch?.isActive ? languageMap?.["as.menu.user.btnActive"] ?? "Active" : languageMap?.["as.menu.user.btnInactive"] ?? "Inactive"}
-                trigger="hover"
-              >
-                <Switch
-                  value={userSearch?.search?.status === "ACTIVE"}
-                  // style={{ zoom: isMobile && "0.7" }}
-                  className="ml-2 w-[10px]"
-                  onChange={(checked, e) => {
-                    // scrollToTopTable();
-                    setIsLoadMoreData(true);
-                    setUserSearch({
-                      ...userSearch,
-                      search: {
-                        ...userSearch?.search,
-                        status: checked ? "ACTIVE" : "INACTIVE",
-                      },
-                      // limit: 30,
-                      // skip: 0,
-                    });
-                  }}
-                />
-              </Popover>
+                Create User
+              </Button>
             </div>
-            <Button
-              className="ml-2"
-              type="primary"
-              onClick={onAdd}
-              // style={{ zoom: isMobile && "0.9" }}
-            >
-              Create User
-            </Button>
-          </div>
-          <div className="">
-            <Table
-              columns={columns}
-              dataSource={userList}
-              pagination={false}
-              loading={isLoading}
-              size={"middle"}
-              className="max-h-[1000px]"
-              rowClassName={rowClassName}
-              onRow={(record, index) => ({
-                onDoubleClick: (e) => onDoubleClick(record),
-                className: getSelectedColor(record),
-                // ref: index === userList?.length - 1 ? lastRecordRef : null,
-              })}
-              // scroll={
-              //   isMobile
-              //     ? {
-              //         x: 700,
-              //         y: 420,
-              //       }
-              //     : {
-              //         x: 1000,
-              //         y: 700,
-              //       }
-              // }
-            />
+            <div className="">
+              <Table
+                  columns={columns}
+                  dataSource={userList}
+                  pagination={false}
+                  loading={isLoading}
+                  size={"middle"}
+                  className="max-h-[1000px]"
+                  rowClassName={rowClassName}
+                  onRow={(record, index) => ({
+                    onDoubleClick: (e) => onDoubleClick(record),
+                    className: getSelectedColor(record),
+                    // ref: index === userList?.length - 1 ? lastRecordRef : null,
+                  })}
+                  // scroll={
+                  //   isMobile
+                  //     ? {
+                  //         x: 700,
+                  //         y: 420,
+                  //       }
+                  //     : {
+                  //         x: 1000,
+                  //         y: 700,
+                  //       }
+                  // }
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {isOpenUserModal && (
-        <CreateUserModal
-          isModalOpen={isOpenUserModal}
-          cancelModal={cancelCreateModal}
-          title={selectedUser ? "Update user" : "Create User"}
-          setUserList={setUserList}
-          userList={userList}
-          editingUser={selectedUser}
-          setIsOpenModalResetPW={setIsOpenModalResetPW}
-          isActive={userSearch?.isActive}
-        />
-      )}
-    </div>
+        {isOpenUserModal && (
+            <CreateUserModal
+                isModalOpen={isOpenUserModal}
+                cancelModal={cancelCreateModal}
+                title={selectedUser ? "Update user" : "Create User"}
+                setUserList={setUserList}
+                userList={userList}
+                editingUser={selectedUser}
+                setIsOpenModalResetPW={setIsOpenModalResetPW}
+                isActive={userSearch?.isActive}
+            />
+        )}
+      </div>
   );
 };
 
-export { UserManagement };
+export {UserManagement};

@@ -5,9 +5,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import {useParams} from "react-router-dom";
+import {toast} from "react-toastify";
 import apiFactory from "../api";
+import {useLayoutContext} from "./LayoutContext";
 
 const ItemContext = createContext(null);
 
@@ -15,8 +16,8 @@ export const useItemContext = () => {
   return useContext(ItemContext);
 };
 
-export const ItemProvider = ({ children }) => {
-  const { bidId, bidStatus } = useParams();
+export const ItemProvider = ({children}) => {
+  const {bidId, bidStatus} = useParams();
   const [itemList, setItemList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [bid, setBid] = useState();
@@ -29,11 +30,13 @@ export const ItemProvider = ({ children }) => {
 
   const [item, setItem] = useState({});
   const [activeUrl, setActiveUrl] = useState({});
-  const { itemId } = useParams();
+
+
+  const {itemId} = useParams();
 
   const setFullActiveUrl = (url) => {
     setActiveUrl(
-      url?.replace("https://resize.ecoauc.com", "https://assets.ecoauc.com")
+        url?.replace("https://resize.ecoauc.com", "https://assets.ecoauc.com")
     );
   };
 
@@ -47,7 +50,7 @@ export const ItemProvider = ({ children }) => {
       toast.error("can not load bid list");
       return;
     }
-    setIsLoading(false);    
+    setIsLoading(false);
     setItem(result?.data);
     setFullActiveUrl(result?.data?.detailUrls?.[0]);
   };
@@ -141,25 +144,25 @@ export const ItemProvider = ({ children }) => {
   }, [itemId]);
 
   const values = useMemo(
-    () => ({
-      bidId,
-      bidStatus,
-      itemList,
-      bid,
-      item,
-      activeUrl,
-      setActiveUrl,
-      setFullActiveUrl,
-      onChooseBranch,
-      onChooseRank,
-      onChooseCategory,
-      changePage,
-      isLoading,
-      searchItem,
-      setItemList,
-      setItem
-    }),
-    [bidId, bidStatus, itemList, bid, isLoading, searchItem, item, activeUrl]
+      () => ({
+        bidId,
+        bidStatus,
+        itemList,
+        bid,
+        item,
+        activeUrl,
+        setActiveUrl,
+        setFullActiveUrl,
+        onChooseBranch,
+        onChooseRank,
+        onChooseCategory,
+        changePage,
+        isLoading,
+        searchItem,
+        setItemList,
+        setItem
+      }),
+      [bidId, bidStatus, itemList, bid, isLoading, searchItem, item, activeUrl]
   );
 
   return <ItemContext.Provider value={values}>{children}</ItemContext.Provider>;
