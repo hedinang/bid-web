@@ -154,7 +154,7 @@ const ItemDetail = ({item, itemList, setItemList}) => {
                   </a>
               )}
             </div>
-            <div className="text-center h-[44px]">{item?.description}</div>
+            <div className="text-center">{item?.description}</div>
             {me &&
                 me?.role === role.CUSTOMER &&
                 !expiredBidOrder(bid?.openTime) && (
