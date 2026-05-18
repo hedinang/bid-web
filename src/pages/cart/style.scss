@@ -30,4 +30,22 @@
     z-index: 999;
     color: red;
   }
+
+  @media only screen and (min-width: 1200px) {
+    .order-desktop {
+      display: block !important;
+    }
+    .order-mobile {
+      display: none !important;
+    }
+  }
+
+  @media only screen and (max-width: 1200px) {
+    .order-desktop {
+      display: none !important;
+    }
+    .order-mobile {
+      display: block !important;
+    }
+  }
 }

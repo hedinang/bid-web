@@ -11,19 +11,19 @@ import apiFactory from "../../api";
 import ZoomImage from "../../components/img/ZoomImage";
 import { role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
-import { useInfoUser } from "../../store/UserStore";
+import { useLayoutContext } from "../../context/LayoutContext";
 import { expiredBidOrder } from "../../utils/formatTime";
 
 const AdminItemDetail = () => {
   const navigate = useNavigate();
   const { item, activeUrl, bid, setFullActiveUrl, setItem } = useItemContext();
   const [bidPrice, setBidPrice] = useState(0);
-  const { user } = useInfoUser();
+  const { me } = useLayoutContext();
 
   const generateImage = (img) => {
     const fillImg = img.replace(
       "https://resize.ecoauc.com",
-      "https://assets.ecoauc.com"
+      "https://assets.ecoauc.com",
     );
 
     return (
@@ -51,7 +51,7 @@ const AdminItemDetail = () => {
       bidId: item?.bidId,
       itemId: item?.itemId,
       bidPrice: bidPrice,
-      orderId: item?.orderId
+      orderId: item?.orderId,
     });
 
     if (rs?.status === 200) {
@@ -118,6 +118,7 @@ const AdminItemDetail = () => {
 
   return (
     <div className="item-list">
+      <div className="text-[30px] p-[20px] text-center">Chi tiết sản phẩm</div>
       <div className="item-header">
         <div className="flex justify-center text-[20px] p-[5px] gap-[10px]">
           <button onClick={onBackPage}>
@@ -134,7 +135,7 @@ const AdminItemDetail = () => {
           </div>
           {showItemStatus()}
         </div>
-        {user?.role !== role.CUSTOMER && (
+        {me && me?.role !== role.CUSTOMER && (
           <div className="text-center p-[5px]">
             <a href={item?.itemUrl} target="_blank" className="text-[blue]">
               Original link
@@ -145,41 +146,44 @@ const AdminItemDetail = () => {
         <div className="text-center p-[5px] font-semibold">
           {item?.description}
         </div>
-        {user?.role === role.CUSTOMER && !expiredBidOrder(bid?.openTime) && (
-          <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-            <NumericFormat
-              className="w-[150px]"
-              value={bidPrice}
-              prefix="¥"
-              customInput={Input}
-              isAllowed={(values) =>
-                values.floatValue === undefined || values.floatValue <= 1000000
-              }
-              onValueChange={(values, sourceInfo) => {
-                setBidPrice(values?.floatValue);
-              }}
-              disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
-                item?.orderType
+        {me &&
+          me?.role === role.CUSTOMER &&
+          !expiredBidOrder(bid?.openTime) && (
+            <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+              <NumericFormat
+                className="w-[150px]"
+                value={bidPrice}
+                prefix="¥"
+                customInput={Input}
+                isAllowed={(values) =>
+                  values.floatValue === undefined ||
+                  values.floatValue <= 1000000
+                }
+                onValueChange={(values, sourceInfo) => {
+                  setBidPrice(values?.floatValue);
+                }}
+                disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                  item?.orderType,
+                )}
+              />
+              {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
+                <Button
+                  shape="circle"
+                  icon={<IoCartOutline size={20} />}
+                  className=""
+                  onClick={addToCard}
+                />
               )}
-            />
-            {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
-              <Button
-                shape="circle"
-                icon={<IoCartOutline size={20} />}
-                className=""
-                onClick={addToCard}
-              />
-            )}
-            {item?.orderType === "ORDER" && (
-              <Button
-                shape="circle"
-                icon={<MdCancel size={20} />}
-                className=""
-                onClick={onCancel}
-              />
-            )}
-          </div>
-        )}
+              {item?.orderType === "ORDER" && (
+                <Button
+                  shape="circle"
+                  icon={<MdCancel size={20} />}
+                  className=""
+                  onClick={onCancel}
+                />
+              )}
+            </div>
+          )}
       </div>
 
       <div className="content">
@@ -205,7 +209,7 @@ const AdminItemDetail = () => {
                 </div>
                 {showItemStatus()}
               </div>
-              {user?.role !== role.CUSTOMER && (
+              {me && me?.role !== role.CUSTOMER && (
                 <div className="text-center p-[5px]">
                   <a
                     href={item?.itemUrl}
@@ -222,7 +226,8 @@ const AdminItemDetail = () => {
               <div className="text-center p-[5px] font-semibold">
                 {item?.description}
               </div>
-              {user?.role === role.CUSTOMER &&
+              {me &&
+                me?.role === role.CUSTOMER &&
                 !expiredBidOrder(bid?.openTime) && (
                   <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
                     <NumericFormat
@@ -238,11 +243,11 @@ const AdminItemDetail = () => {
                         setBidPrice(values?.floatValue);
                       }}
                       disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
-                        item?.orderType
+                        item?.orderType,
                       )}
                     />
                     {!["BIDDING", "SUCCESS", "FAILED"]?.includes(
-                      item?.orderType
+                      item?.orderType,
                     ) && (
                       <Button
                         shape="circle"

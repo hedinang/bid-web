@@ -129,8 +129,8 @@ const UserManagement = () => {
 
   return (
     <div>
-      <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
-        User
+      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex items-center justify-center">
+        Quản lý người dùng
       </div>
       <div className="p-[16px]">
         <div className="user-list ">

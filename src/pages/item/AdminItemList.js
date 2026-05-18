@@ -18,9 +18,9 @@ import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
-import { role } from "../../config/Constant";
+import { brand, quality, role } from "../../config/Constant";
 import { useItemContext } from "../../context/ItemContext";
-import { useInfoUser } from "../../store/UserStore";
+import { useLayoutContext } from "../../context/LayoutContext";
 import {
   expiredBidOrder,
   extractDay,
@@ -38,19 +38,15 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
   const [activeImg, setActiveImg] = useState();
   const [bidPrice, setBidPrice] = useState(item?.bidPrice);
 
-  const { user, languageMap } = useInfoUser();
-  const {
-    // itemList,
-    bid,
-    // setItemList,
-  } = useItemContext();
+  const { me } = useLayoutContext();
+  const { bid } = useItemContext();
 
   const addToCard = async () => {
     const rs = await apiFactory.orderApi.addToCard({
       bidId: item?.bidId,
       itemId: item?.itemId,
       bidPrice: bidPrice,
-      orderId: item?.orderId
+      orderId: item?.orderId,
     });
 
     if (rs?.status === 200) {
@@ -77,7 +73,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
     if (rs?.status === 200) {
       toast.success("Action successfully");
       const itemIndex = itemList?.findIndex(
-        (e) => e?.orderId === item?.orderId
+        (e) => e?.orderId === item?.orderId,
       );
 
       if (itemIndex > -1) {
@@ -124,8 +120,8 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
     setActiveImg(
       item?.detailUrls?.[0]?.replace(
         "https://resize.ecoauc.com",
-        "https://assets.ecoauc.com"
-      )
+        "https://assets.ecoauc.com",
+      ),
     );
   }, [item]);
 
@@ -152,50 +148,56 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
               </button>
             </div>
             <div className="text-[17px] font-semibold">{item?.title}</div>
-            {user?.role !== role.CUSTOMER && (
+            {me && me?.role !== role.CUSTOMER && (
               <a href={item?.itemUrl} target="_blank" className="text-[blue]">
                 Original link
               </a>
             )}
           </div>
           <div className="text-center h-[44px]">{item?.description}</div>
-          {user?.role === role.CUSTOMER && !expiredBidOrder(bid?.openTime) && (
-            <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
-              <NumericFormat
-                className="w-[150px]"
-                value={bidPrice}
-                prefix="¥"
-                customInput={Input}
-                isAllowed={(values) =>
-                  values.floatValue === undefined ||
-                  values.floatValue <= 10000000
-                }
-                onValueChange={(values, sourceInfo) => {
-                  setBidPrice(values?.floatValue);
-                }}
-                disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
-                  item?.orderType
+          {me &&
+            me?.role === role.CUSTOMER &&
+            !expiredBidOrder(bid?.openTime) && (
+              <div className="text-center p-[5px] font-semibold flex flex-row gap-[10px] justify-center">
+                <NumericFormat
+                  className="w-[150px]"
+                  value={bidPrice}
+                  prefix="¥"
+                  customInput={Input}
+                  isAllowed={(values) =>
+                    values.floatValue === undefined ||
+                    values.floatValue <= 10000000
+                  }
+                  onValueChange={(values, sourceInfo) => {
+                    setBidPrice(values?.floatValue);
+                  }}
+                  disabled={["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                    item?.orderType,
+                  )}
+                />
+                {!["BIDDING", "SUCCESS", "FAILED"]?.includes(
+                  item?.orderType,
+                ) && (
+                  <Button
+                    shape="circle"
+                    icon={<IoCartOutline size={20} />}
+                    className=""
+                    onClick={addToCard}
+                    disabled={
+                      !bidPrice || bidPrice < parseInt(item?.startPrice)
+                    }
+                  />
                 )}
-              />
-              {!["BIDDING", "SUCCESS", "FAILED"]?.includes(item?.orderType) && (
-                <Button
-                  shape="circle"
-                  icon={<IoCartOutline size={20} />}
-                  className=""
-                  onClick={addToCard}
-                  disabled={!bidPrice || bidPrice < parseInt(item?.startPrice)}
-                />
-              )}
-              {item?.orderType === "ORDER" && (
-                <Button
-                  shape="circle"
-                  icon={<MdCancel size={20} />}
-                  className=""
-                  onClick={onCancel}
-                />
-              )}
-            </div>
-          )}
+                {item?.orderType === "ORDER" && (
+                  <Button
+                    shape="circle"
+                    icon={<MdCancel size={20} />}
+                    className=""
+                    onClick={onCancel}
+                  />
+                )}
+              </div>
+            )}
           <div className="flex justify-center gap-[10px] items-center">
             <div>{item?.endTime}</div>
           </div>
@@ -222,7 +224,7 @@ const ItemDetail = ({ item, itemList, setItemList }) => {
             <Button
               className="text-[#2d7717] text-[18px]"
               onClick={() =>
-                navigate(`/inside/bid/item-detail/${item?.itemId}`)
+                navigate(`/item-detail/${item?.itemId}`)
               }
             >
               Xem chi tiết
@@ -255,8 +257,14 @@ const AdminItemList = () => {
           <IoArrowBackOutline size={25} />
         </button>
         <div className="text-center">
-          <div>Phiên đấu giá {extractDay(bid?.openTime)} {formatTime(bid?.openTime)}</div>
-          <div>Đặt giá trước {extractDay(minusFormatTime(bid?.openTime))} {minusFormatTime(bid?.openTime)}</div>
+          <div>
+            Phiên đấu giá {extractDay(bid?.openTime)}{" "}
+            {formatTime(bid?.openTime)}
+          </div>
+          <div>
+            Đặt giá trước {extractDay(minusFormatTime(bid?.openTime))}{" "}
+            {minusFormatTime(bid?.openTime)}
+          </div>
         </div>
       </div>
 
@@ -266,148 +274,7 @@ const AdminItemList = () => {
             placeholder="Chọn hãng"
             allowClear
             className="w-[200px]"
-            options={[
-              { value: "LOUIS VUITTON", label: "LOUIS VUITTON" },
-              { value: "CHANEL", label: "CHANEL" },
-              { value: "HERMES", label: "HERMES" },
-              { value: "GUCCI", label: "GUCCI" },
-              { value: "PRADA", label: "PRADA" },
-              { value: "ROLEX", label: "ROLEX" },
-              { value: "OMEGA", label: "OMEGA" },
-              { value: "TAG Heuer", label: "TAG Heuer" },
-              { value: "Catier", label: "Catier" },
-              { value: "BVLGARI", label: "BVLGARI" },
-              { value: "Tiffany＆Co.", label: "Tiffany＆Co." },
-              { value: "HARRY WINSTON", label: "HARRY WINSTON" },
-              { value: "Van Cleef＆Arpels", label: "Van Cleef＆Arpels" },
-              { value: "A. LANGE & SOHNE", label: "A. LANGE & SOHNE" },
-              { value: "AUDEMARS PIGUET", label: "AUDEMARS PIGUET" },
-              { value: "Baccarat", label: "Baccarat" },
-              { value: "BALENCIAGA", label: "BALENCIAGA" },
-              { value: "BALLY", label: "BALLY" },
-              { value: "BAUME＆MERCIER", label: "BAUME＆MERCIER" },
-              { value: "Bell & Ross", label: "Bell & Ross" },
-              { value: "Berluti", label: "Berluti" },
-              { value: "BOTTEGA VENETA", label: "BOTTEGA VENETA" },
-              { value: "BOUCHERON", label: "BOUCHERON" },
-              { value: "BREGUET", label: "BREGUET" },
-              { value: "BREITLING", label: "BREITLING" },
-              { value: "Buccellati", label: "Buccellati" },
-              { value: "BURBERRY", label: "BURBERRY" },
-              { value: "Carlo Parlati", label: "Carlo Parlati" },
-              { value: "Carrera y Carrera", label: "Carrera y Carrera" },
-              { value: "CASIO", label: "CASIO" },
-              { value: "CAZZANIGA", label: "CAZZANIGA" },
-              { value: "CELINE", label: "CELINE" },
-              { value: "CHARRIOL", label: "CHARRIOL" },
-              { value: "CHAUMET", label: "CHAUMET" },
-              { value: "chloe", label: "chloe" },
-              { value: "Chopard", label: "Chopard" },
-              { value: "Christian Louboutin", label: "Christian Louboutin" },
-              { value: "CHROME HEARTS", label: "CHROME HEARTS" },
-              { value: "CITIZEN", label: "CITIZEN" },
-              { value: "COACH", label: "COACH" },
-              { value: "Cole Haan", label: "Cole Haan" },
-              { value: "COMME des GARCONS", label: "COMME des GARCONS" },
-              { value: "CORUM", label: "CORUM" },
-              { value: "D＆G", label: "D＆G" },
-              { value: "Damiani", label: "Damiani" },
-              { value: "DE BEERS", label: "DE BEERS" },
-              { value: "Dior", label: "Dior" },
-              { value: "DOLCE＆GABBANA", label: "DOLCE＆GABBANA" },
-              { value: "DSQUARED3", label: "DSQUARED3" },
-              { value: "dunhill", label: "dunhill" },
-              { value: "EDOX", label: "EDOX" },
-              { value: "EMILIO PUCCI", label: "EMILIO PUCCI" },
-              { value: "ETRO", label: "ETRO" },
-              { value: "FEDERICO BUCCELLATI", label: "FEDERICO BUCCELLATI" },
-              { value: "Felisi", label: "Felisi" },
-              { value: "FENDI", label: "FENDI" },
-              { value: "FRANCK MULLER", label: "FRANCK MULLER" },
-              { value: "FRED", label: "FRED" },
-              { value: "FREDERIQUE CONSTANT", label: "FREDERIQUE CONSTANT" },
-              { value: "FURLA", label: "FURLA" },
-              { value: "Gaga Milano", label: "Gaga Milano" },
-              { value: "Georg Jensen", label: "Georg Jensen" },
-              { value: "gimel", label: "gimel" },
-              { value: "GIRARD PERREGAUX", label: "GIRARD PERREGAUX" },
-              { value: "GIVENCHY", label: "GIVENCHY" },
-              { value: "GOYARD", label: "GOYARD" },
-              { value: "GRAFF", label: "GRAFF" },
-              { value: "GRAHAM", label: "GRAHAM" },
-              { value: "HUBLOT", label: "HUBLOT" },
-              { value: "IWC", label: "IWC" },
-              { value: "Jacob & CO", label: "Jacob & CO" },
-              { value: "JAEGER LECOULTRE", label: "JAEGER LECOULTRE" },
-              { value: "Jeunet", label: "Jeunet" },
-              { value: "JEWEL STUDIO", label: "JEWEL STUDIO" },
-              { value: "JILSANDER", label: "JILSANDER" },
-              { value: "JIMMY CHOO", label: "JIMMY CHOO" },
-              { value: "Justin Davis", label: "Justin Davis" },
-              { value: "Kashikey", label: "Kashikey" },
-              { value: "Kate Spade", label: "Kate Spade" },
-              { value: "LANVIN", label: "LANVIN" },
-              { value: "LOEWE", label: "LOEWE" },
-              { value: "LONG CHAMP", label: "LONG CHAMP" },
-              { value: "LONGINES", label: "LONGINES" },
-              { value: "MACKINTOSH", label: "MACKINTOSH" },
-              { value: "MARC BY MARC JACOBS", label: "MARC BY MARC JACOBS" },
-              { value: "MARC JACOBS", label: "MARC JACOBS" },
-              { value: "MAUBOUSSIN", label: "MAUBOUSSIN" },
-              { value: "MAURICE LACROIX", label: "MAURICE LACROIX" },
-              { value: "MCM", label: "MCM" },
-              { value: "Meissen", label: "Meissen" },
-              { value: "Michael Kors", label: "Michael Kors" },
-              { value: "MIKIMOTO", label: "MIKIMOTO" },
-              { value: "miu miu", label: "miu miu" },
-              { value: "MONCLER", label: "MONCLER" },
-              { value: "MONTBLANC", label: "MONTBLANC" },
-              { value: "ORIENT", label: "ORIENT" },
-              { value: "Orobianco", label: "Orobianco" },
-              { value: "PANERAI", label: "PANERAI" },
-              { value: "PATEK PHILIPPE", label: "PATEK PHILIPPE" },
-              { value: "PIAGET", label: "PIAGET" },
-              { value: "POLA", label: "POLA" },
-              { value: "POMELLATO", label: "POMELLATO" },
-              { value: "Ponte Vecchio", label: "Ponte Vecchio" },
-              { value: "RADO", label: "RADO" },
-              { value: "RayBan", label: "RayBan" },
-              { value: "REGAL", label: "REGAL" },
-              { value: "RICHARD MILLE", label: "RICHARD MILLE" },
-              { value: "RIMOWA", label: "RIMOWA" },
-              { value: "Ritmo latino", label: "Ritmo latino" },
-              { value: "ROGER DUBUIS", label: "ROGER DUBUIS" },
-              { value: "SAINT LAURENT", label: "SAINT LAURENT" },
-              { value: "Salvatore Ferragamo", label: "Salvatore Ferragamo" },
-              { value: "SEE BY CHLOE", label: "SEE BY CHLOE" },
-              { value: "SEIKO", label: "SEIKO" },
-              { value: "Sergio Rossi", label: "Sergio Rossi" },
-              { value: "SINN", label: "SINN" },
-              { value: "SOUTHERN CROSS", label: "SOUTHERN CROSS" },
-              { value: "SUPREME", label: "SUPREME" },
-              { value: "TASAKI", label: "TASAKI" },
-              { value: "TOD’S", label: "TOD’S" },
-              { value: "Tom Ford", label: "Tom Ford" },
-              { value: "Tory Burch", label: "Tory Burch" },
-              { value: "TUDOR", label: "TUDOR" },
-              { value: "TUMI", label: "TUMI" },
-              { value: "ULYSSE NARDIN", label: "ULYSSE NARDIN" },
-              { value: "UNIVERSAL GENEVE", label: "UNIVERSAL GENEVE" },
-              { value: "UNOAERRE", label: "UNOAERRE" },
-              { value: "VACHERON CONSTANTIN", label: "VACHERON CONSTANTIN" },
-              { value: "VALENTINO", label: "VALENTINO" },
-              { value: "Vendome Aoyama", label: "Vendome Aoyama" },
-              { value: "Verite", label: "Verite" },
-              { value: "VERSACE", label: "VERSACE" },
-              { value: "Waltham", label: "Waltham" },
-              { value: "Yves Saint Laurent", label: "Yves Saint Laurent" },
-              { value: "ZENITH", label: "ZENITH" },
-              { value: "MITSUO KAJI", label: "MITSUO KAJI" },
-              { value: "Historical history", label: "Historical history" },
-              { value: "NOBUKO ISHIKAWA", label: "NOBUKO ISHIKAWA" },
-              { value: "SHUNICHI TAMURA", label: "SHUNICHI TAMURA" },
-              { value: "OTHER", label: "OTHER" },
-            ]}
+            options={brand}
             onChange={onChooseBranch}
           />
         </Col>
@@ -456,27 +323,7 @@ const AdminItemList = () => {
             allowClear
             className="w-[200px]"
             onChange={onChooseRank}
-            options={[
-              { value: "N", label: "N" },
-              { value: "S", label: "S" },
-              { value: "A", label: "A" },
-              { value: "AB", label: "AB" },
-              { value: "B", label: "B" },
-              { value: "BC", label: "BC" },
-              { value: "C", label: "C" },
-              { value: "D", label: "D" },
-              { value: "F", label: "F" },
-              { value: "10", label: "10" },
-              { value: "9", label: "9" },
-              { value: "8", label: "8" },
-              { value: "7", label: "7" },
-              { value: "6", label: "6" },
-              { value: "5", label: "5" },
-              { value: "4", label: "4" },
-              { value: "3", label: "3" },
-              { value: "2", label: "2" },
-              { value: "1", label: "1" },
-            ]}
+            options={quality}
           />
         </Col>
       </Row>

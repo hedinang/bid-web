@@ -86,8 +86,8 @@ const MailManagement = () => {
 
   return (
     <div>
-      <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
-        Mail
+      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
+        Quản lý mail
       </div>
       <div className="p-[16px]">
         <div className="user-list ">

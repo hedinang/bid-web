@@ -7,17 +7,20 @@ import {ToastContainer} from 'react-toastify';
 import {ConfigProvider, theme} from "antd";
 import './styles/style.scss'
 import './styles/table.scss'
+import {LayoutProvider} from "./context/LayoutContext";
 
 function App() {
 
 
-    return (
-        <ConfigProvider theme={theme}>
-            <RouterProvider router={Router}/>
-            <ToastContainer autoClose={1500}/>
-        </ConfigProvider>
+  return (
+      <ConfigProvider theme={theme}>
+        <LayoutProvider>
+          <RouterProvider router={Router}/>
+          <ToastContainer autoClose={1500}/>
+        </LayoutProvider>
+      </ConfigProvider>
 
-    );
+  );
 }
 
 export default App;

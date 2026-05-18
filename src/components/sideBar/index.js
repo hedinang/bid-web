@@ -17,7 +17,7 @@ import { RiAuctionLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import apiFactory from "../../api";
 // import { closeAuthSocket, closeChatSocket } from "../../api/webSocket";
-import { role, windowNames } from "../../config/Constant";
+import { role } from "../../config/Constant";
 import { useSideBarStore } from "../../store/SideBarStore";
 import { useInfoUser } from "../../store/UserStore";
 import { getAvatar, getColor, getColorFromInitial } from "../../utils/Utils";
@@ -70,45 +70,6 @@ const SideBar = () => {
       target: () => tourStepRef2?.current,
     },
   ].filter(Boolean);
-
-  const handleCloseTour = async () => {
-    if (isClosingTour) return;
-
-    setIsClosingTour(true);
-    try {
-      const rs = await apiFactory.userScreenApi.updateScreen({
-        screenName: windowNames.SIDEBAR_CHAT,
-      });
-
-      if (rs?.status === 200) {
-        setIsOpenTour(false);
-        updateTour({
-          ...tour,
-          SIDEBAR_CHAT: {
-            ...tour?.[windowNames.SIDEBAR_CHAT],
-            isViewed: false,
-          },
-          nextScreen: tour?.[windowNames.SIDEBAR_CHAT]?.nextScreen || null,
-          step: tour?.["step"] + 1,
-        });
-      }
-    } catch (error) {}
-
-    setIsClosingTour(false);
-  };
-
-  // const logout = async () => {
-  //   await apiFactory.userApi.logout({
-  //     fcmToken: Cookies.get("fcm_token"),
-  //     token: Cookies.get("access_token"),
-  //   });
-  //   switchIsProfileDetail();
-  //   Cookies.remove("access_token");
-  //   Cookies.remove("access_token", { domain: "winivina.iptime.org" });
-  //   Cookies.remove("access_token", { domain: "msgauth.winitech.com" });
-  //   updateUser(null);
-  //   window.location.href = REACT_APP_AUTHENTICATION_WEB + "/login";
-  // };
 
   const logout = async () => {
     await apiFactory.userApi.logout();
@@ -403,17 +364,6 @@ const SideBar = () => {
     setIsMenuSideBar(false);
   };
 
-  useEffect(() => {
-    if (
-      tour?.[windowNames.SIDEBAR_CHAT]?.isViewed &&
-      tourStepRef0 &&
-      (tour?.nextScreen === null ||
-        tour?.nextScreen === windowNames.SIDEBAR_CHAT)
-    ) {
-      setIsOpenTour(true);
-    }
-  }, [tour?.["step"]]);
-
   const renderLayoutSider = () => {
     const resultComponent = (
       <Layout.Sider
@@ -568,14 +518,6 @@ const SideBar = () => {
         <ProfileModal
           closeModal={closeProfilerModal}
           isModalOpen={isModalProfileOpen}
-        />
-      )}
-      {isOpenTour && (
-        <Tour
-          open={isOpenTour}
-          onClose={handleCloseTour}
-          steps={stepsTour}
-          placement={"right"}
         />
       )}
     </>

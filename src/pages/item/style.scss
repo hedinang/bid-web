@@ -29,11 +29,12 @@
   .content {
     display: flex;
     justify-content: space-between;
+    background: white;
+    padding: 15px 15px;
   }
 
   .content-left {
     width: 40%;
-    padding: 10px;
   }
 
   .content-right {
@@ -51,7 +52,6 @@
 
     .content-left {
       width: 100%;
-      padding: 10px;
     }
 
     .content-right {
@@ -61,7 +61,7 @@
     .content {
       display: flex;
       flex-direction: column;
-      // justify-content: space-between;
+      gap: 20px;
     }
   }
 

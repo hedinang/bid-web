@@ -1,4 +1,4 @@
-import { format, subHours } from "date-fns";
+import {format, subHours} from "date-fns";
 import moment from "moment-timezone";
 
 export const formatLastTime = (lastTime) => {
@@ -47,8 +47,8 @@ export const minusFormatTime = (time) => {
   const prefixTime = time?.split(" ")?.[1];
 
   return format(
-    subHours(new Date(time), prefixTime === "10:00:00" ? 8 : 3),
-    "HH:mm dd/MM/yyyy"
+      subHours(new Date(time), prefixTime === "10:00:00" ? 8 : 3),
+      "HH:mm dd/MM/yyyy"
   );
 };
 
@@ -75,7 +75,25 @@ export const formatDateTime = (time, format) => {
 export function extractDay(time, locale = "vi-VI") {
   if (!time) return null;
 
-  return new Intl.DateTimeFormat(locale, { weekday: "long" }).format(
-    new Date(time)
-  );
+  let date;
+
+  // format: 18/05/2026 02:00
+  if (time.includes("/")) {
+    const [datePart, timePart] = time.split(" ");
+    const [day, month, year] = datePart.split("/");
+
+    date = new Date(`${year}-${month}-${day}T${timePart || "00:00"}`);
+  } else {
+    // format chuẩn ISO
+    date = new Date(time);
+  }
+
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date:", time);
+    return null;
+  }
+
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+  }).format(date);
 }

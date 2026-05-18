@@ -61,7 +61,7 @@ export default class BaseApi {
                 if (errorResponse && errorResponse.status === 405) {
                     localStorage.clear();
                     Cookies.remove("access_token");
-                    window.location.href = "/login";
+                    // window.location.href = "/login";
                     toast.error('Authentication Error');
                     return
                 }

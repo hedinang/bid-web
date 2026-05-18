@@ -152,6 +152,7 @@ const getAvatar = (user) => {
     Cookies.get("access_token");
   return url;
 };
+
 export {
   verifiedAccessToken,
   showFileName,
@@ -160,4 +161,5 @@ export {
   getColorFromInitial,
   getColor,
   getAvatar,
+  isTokenExpired
 };

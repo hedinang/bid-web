@@ -27,8 +27,8 @@ import { IoCartOutline, IoHammerOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import apiFactory from "../../api";
 import { GeneralModal } from "../../components/modal/GeneralModal";
-import { role } from "../../config/Constant";
-import { useInfoUser } from "../../store/UserStore";
+import { brand, quality, role } from "../../config/Constant";
+import { useLayoutContext } from "../../context/LayoutContext";
 import { formatDate, formatDateTime, formatTime } from "../../utils/formatTime";
 import "./style.scss";
 
@@ -44,7 +44,7 @@ dayjs.updateLocale("vi", {
 const ROOL_WEB = process.env.REACT_APP_WEB || "https://stjtrading.com/";
 
 const Order = ({ order, changeOrderStatus, setClientDetail }) => {
-  const { user } = useInfoUser();
+  const { me } = useLayoutContext();
 
   const showStatus = () => {
     if (order?.type === "ORDER")
@@ -85,7 +85,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
 
   const showAction = () => {
     if (order?.type === "ORDER") {
-      if (user?.role === role.CUSTOMER) {
+      if (me?.role === role.CUSTOMER) {
         return (
           <Button
             className="bg-[#e00d0d] text-[white]"
@@ -105,7 +105,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
     }
 
     if (order?.type === "CANCEL") {
-      if (user?.role === role.CUSTOMER) {
+      if (me?.role === role.CUSTOMER) {
         return (
           <Button
             className="bg-[green] text-[white]"
@@ -117,7 +117,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
     }
 
     if (order?.type === "BIDDING") {
-      if (user?.role !== role.CUSTOMER) {
+      if (me?.role !== role.CUSTOMER) {
         return (
           <div className="flex gap-[10px] justify-center">
             <Button
@@ -138,21 +138,21 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
 
   return (
     <div className="flex flex-col gap-[5px]">
-      {user?.role !== role.CUSTOMER && (
+      {me?.role !== role.CUSTOMER && (
         <div className="flex items-center">
-          <div className="w-[100px] font-semibold">Tên tài khoản: </div>
+          <div className="w-[120px] font-semibold">Tên tài khoản: </div>
           <Button
             type="primary"
             onClick={() => {
               setClientDetail(order);
             }}
           >
-            {order?.username}
+            {order?.mename}
           </Button>
         </div>
       )}
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold"></div>
+        <div className="w-[120px] font-semibold"></div>
         <div className="flex justify-center">
           <button>
             <Image.PreviewGroup items={order?.detailUrls}>
@@ -162,9 +162,9 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Mã sản phẩm: </div>
+        <div className="w-[120px] font-semibold">Mã sản phẩm: </div>
         <div>
-          {user?.role === role?.CUSTOMER ? (
+          {me?.role === role?.CUSTOMER ? (
             <a
               href={ROOL_WEB + "/inside/bid/item-detail/" + order?.itemId}
               target="_blank"
@@ -180,39 +180,39 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Tên sản phẩm: </div>
+        <div className="w-[120px] font-semibold">Tên sản phẩm: </div>
         <div className="flex-1">{order?.title}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Loại: </div>
+        <div className="w-[120px] font-semibold">Loại: </div>
         <div>{order?.category}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Hãng: </div>
+        <div className="w-[120px] font-semibold">Hãng: </div>
         <div>{order?.branch}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Chất lượng: </div>
+        <div className="w-[120px] font-semibold">Chất lượng: </div>
         <div>{order?.rank}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Giá đặt: </div>
+        <div className="w-[120px] font-semibold">Giá đặt: </div>
         <div>{order?.bidPrice}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Ngày đặt giá: </div>
+        <div className="w-[120px] font-semibold">Ngày đặt giá: </div>
         <div>{formatTime(order?.updatedAt)}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Ngày đấu giá: </div>
+        <div className="w-[120px] font-semibold">Ngày đấu giá: </div>
         <div>{formatTime(order?.itemDate)}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Tình trạng: </div>
+        <div className="w-[120px] font-semibold">Tình trạng: </div>
         <div>{showStatus()}</div>
       </div>
       <div className="flex items-center">
-        <div className="w-[100px] font-semibold">Thao tác: </div>
+        <div className="w-[120px] font-semibold">Thao tác: </div>
         <div>{showAction()}</div>
       </div>
       <Divider style={{ borderColor: "#7cb305" }} />
@@ -221,7 +221,7 @@ const Order = ({ order, changeOrderStatus, setClientDetail }) => {
 };
 
 const OrderList = () => {
-  const { user } = useInfoUser();
+  const { me } = useLayoutContext();
   const [isLoading, setIsLoading] = useState(false);
   const [clientDetail, setClientDetail] = useState(null);
   const [orderList, setOrderList] = useState([]);
@@ -230,7 +230,7 @@ const OrderList = () => {
     limit: 15,
     page: 1,
     search: {
-      username: "",
+      mename: "",
       itemId: "",
       itemName: "",
       category: "",
@@ -272,13 +272,13 @@ const OrderList = () => {
         orderDate: query?.search?.orderDate
           ? formatDateTime(
               query?.search?.orderDate.toString(),
-              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]",
             )
           : query?.search?.orderDate,
         itemDate: query?.search?.itemDate
           ? formatDateTime(
               query?.search?.itemDate.toString(),
-              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]",
             )
           : query?.search?.itemDate,
       },
@@ -322,7 +322,7 @@ const OrderList = () => {
         align: "center",
         key: "itemId",
         render: (e, record) => {
-          return user?.role === role?.CUSTOMER ? (
+          return me?.role === role?.CUSTOMER ? (
             <div>
               <a
                 href={ROOL_WEB + "/inside/bid/item-detail/" + e}
@@ -444,7 +444,7 @@ const OrderList = () => {
         align: "center",
         key: "action",
         render: (e, record) => {
-          if (user?.role !== role.CUSTOMER) {
+          if (me?.role !== role.CUSTOMER) {
             return (
               <div className="flex gap-[10px] justify-center">
                 {e !== "ORDER" && (
@@ -491,7 +491,7 @@ const OrderList = () => {
           }
 
           if (e === "ORDER") {
-            if (user?.role === role.CUSTOMER) {
+            if (me?.role === role.CUSTOMER) {
               return (
                 <Button
                   className="bg-[#e00d0d] text-[white]"
@@ -511,7 +511,7 @@ const OrderList = () => {
           }
 
           if (e === "CANCEL") {
-            if (user?.role === role.CUSTOMER) {
+            if (me?.role === role.CUSTOMER) {
               return (
                 <Button
                   className="bg-[green] text-[white]"
@@ -523,7 +523,7 @@ const OrderList = () => {
           }
 
           if (e === "BIDDING") {
-            if (user?.role !== role.CUSTOMER) {
+            if (me?.role !== role.CUSTOMER) {
               return (
                 <div className="flex gap-[10px] justify-center">
                   <Button
@@ -544,11 +544,11 @@ const OrderList = () => {
       },
     ];
 
-    if (user?.role !== role.CUSTOMER) {
+    if (me && me?.role !== role.CUSTOMER) {
       rawColumn = [
         {
           title: "Tên tài khoản",
-          dataIndex: "username",
+          dataIndex: "name",
           align: "center",
           key: "deptCd",
           render: (text, record) => (
@@ -567,7 +567,7 @@ const OrderList = () => {
     }
 
     return rawColumn;
-  }, [user?.role, orderList]);
+  }, [me?.role, orderList]);
 
   const changeOrderStatus = async (record, type) => {
     const rs = await apiFactory.orderApi.changeStatus({
@@ -578,7 +578,7 @@ const OrderList = () => {
     if (rs?.status === 200) {
       toast.success("Action successfully");
       const orderIndex = orderList?.findIndex(
-        (order) => order?.orderId === record?.orderId
+        (order) => order?.orderId === record?.orderId,
       );
 
       if (orderIndex > -1) {
@@ -596,7 +596,7 @@ const OrderList = () => {
     debounce((searchOrder) => {
       fetchOrders(searchOrder);
     }, 500),
-    []
+    [],
   );
 
   const onChangeFilter = (key, value) => {
@@ -616,7 +616,7 @@ const OrderList = () => {
         date: changeStatusRequest?.date
           ? formatDateTime(
               changeStatusRequest?.date?.toString(),
-              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]",
             )
           : changeStatusRequest?.date,
       });
@@ -626,7 +626,7 @@ const OrderList = () => {
         date: changeStatusRequest?.date
           ? formatDateTime(
               changeStatusRequest?.date?.toString(),
-              "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+              "YYYY-MM-DDTHH:mm:ss.SSS[Z]",
             )
           : changeStatusRequest?.date,
       });
@@ -679,18 +679,18 @@ const OrderList = () => {
   return (
     <ConfigProvider locale={viVN}>
       <div className="order-list">
-        <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex items-center">
-          Giỏ hàng
+        <div className="font-semibold text-[20px] pl-[16px] pt-[16px]  flex justify-center">
+          Đơn hàng
         </div>
-        {user?.role !== "CUSTOMER" && (
+        {me?.role !== "CUSTOMER" && (
           <>
-            <Row className="gap-[10px] pl-[16px] pt-[16px]">
-              <Col xs={24} sm={12} md={6} span={3}>
+            <Row className="px-[16px]">
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
                     setChangeStatusRequest({
-                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đợi đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`,
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đợi đặt của các me đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đã đặt!`,
                       date: searchOrder?.search?.orderDate,
                       targetType: "ORDER",
                       destinationType: "BIDDING",
@@ -704,12 +704,12 @@ const OrderList = () => {
                   <div>ngày đặt giá từ đợi đặt sang đang đặt</div>
                 </Button>
               </Col>
-              <Col xs={24} sm={12} md={6} span={3}>
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
                     setChangeStatusRequest({
-                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đang đặt của các user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`,
+                      title: `Nếu bạn ấn đồng ý thì tất cả các order ở trạng thái đang đặt của các me đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} sẽ tự động chuyển sang trạng thái đấu thất bại!`,
                       date: searchOrder?.search?.orderDate,
                       targetType: "BIDDING",
                       destinationType: "FAILED",
@@ -723,12 +723,12 @@ const OrderList = () => {
                   <div>ngày đặt giá từ đang đặt sang đấu thất bại</div>
                 </Button>
               </Col>
-              <Col xs={24} sm={12} md={6} span={3}>
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
                     setChangeStatusRequest({
-                      title: `Nếu bạn ấn đồng ý thì khôi phục tất cả order của user đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} về trạng thái đã đặt!`,
+                      title: `Nếu bạn ấn đồng ý thì khôi phục tất cả order của me đặt trong ngày ${formatDate(searchOrder?.search?.orderDate)} về trạng thái đã đặt!`,
                       date: searchOrder?.search?.orderDate,
                       destinationType: "ORDER",
                       kind: "ORDER",
@@ -742,8 +742,8 @@ const OrderList = () => {
                 </Button>
               </Col>
             </Row>
-            <Row className="gap-[10px] pl-[16px] pt-[16px]">
-              <Col xs={24} sm={12} md={6} span={3}>
+            <Row className="px-[16px]">
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
@@ -762,7 +762,7 @@ const OrderList = () => {
                   <div>ngày đấu giá từ đợi đặt sang đang đặt</div>
                 </Button>
               </Col>
-              <Col xs={24} sm={12} md={6} span={3}>
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
@@ -781,7 +781,7 @@ const OrderList = () => {
                   <div>ngày đấu giá từ đang đặt sang đấu thất bại</div>
                 </Button>
               </Col>
-              <Col xs={24} sm={12} md={6} span={3}>
+              <Col xs={24} sm={12} md={12} lg={8} className="py-[16px]">
                 <Button
                   type="primary"
                   onClick={() =>
@@ -803,7 +803,7 @@ const OrderList = () => {
           </>
         )}
         <Row className="text-[20px] pl-[16px] pt-[16px]">
-          {user?.role !== "CUSTOMER" && (
+          {me?.role !== "CUSTOMER" && (
             <Col
               xs={24}
               sm={12}
@@ -811,12 +811,12 @@ const OrderList = () => {
               span={3}
               className="flex flex-col gap-[10px]"
             >
-              <div>Mã user</div>
+              <div>Mã me</div>
               <Input
-                placeholder="Tìm kiếm mã user"
+                placeholder="Tìm kiếm mã me"
                 className="w-[200px]"
-                value={searchOrder?.search?.username}
-                onChange={(e) => onChangeFilter("username", e?.target?.value)}
+                value={searchOrder?.search?.mename}
+                onChange={(e) => onChangeFilter("mename", e?.target?.value)}
                 allowClear
               />
             </Col>
@@ -901,148 +901,7 @@ const OrderList = () => {
               className="w-[200px]"
               value={searchOrder?.search?.branch}
               onChange={(e) => onChangeFilter("branch", e)}
-              options={[
-                { value: "LOUIS VUITTON", label: "LOUIS VUITTON" },
-                { value: "CHANEL", label: "CHANEL" },
-                { value: "HERMES", label: "HERMES" },
-                { value: "GUCCI", label: "GUCCI" },
-                { value: "PRADA", label: "PRADA" },
-                { value: "ROLEX", label: "ROLEX" },
-                { value: "OMEGA", label: "OMEGA" },
-                { value: "TAG Heuer", label: "TAG Heuer" },
-                { value: "Catier", label: "Catier" },
-                { value: "BVLGARI", label: "BVLGARI" },
-                { value: "Tiffany＆Co.", label: "Tiffany＆Co." },
-                { value: "HARRY WINSTON", label: "HARRY WINSTON" },
-                { value: "Van Cleef＆Arpels", label: "Van Cleef＆Arpels" },
-                { value: "A. LANGE & SOHNE", label: "A. LANGE & SOHNE" },
-                { value: "AUDEMARS PIGUET", label: "AUDEMARS PIGUET" },
-                { value: "Baccarat", label: "Baccarat" },
-                { value: "BALENCIAGA", label: "BALENCIAGA" },
-                { value: "BALLY", label: "BALLY" },
-                { value: "BAUME＆MERCIER", label: "BAUME＆MERCIER" },
-                { value: "Bell & Ross", label: "Bell & Ross" },
-                { value: "Berluti", label: "Berluti" },
-                { value: "BOTTEGA VENETA", label: "BOTTEGA VENETA" },
-                { value: "BOUCHERON", label: "BOUCHERON" },
-                { value: "BREGUET", label: "BREGUET" },
-                { value: "BREITLING", label: "BREITLING" },
-                { value: "Buccellati", label: "Buccellati" },
-                { value: "BURBERRY", label: "BURBERRY" },
-                { value: "Carlo Parlati", label: "Carlo Parlati" },
-                { value: "Carrera y Carrera", label: "Carrera y Carrera" },
-                { value: "CASIO", label: "CASIO" },
-                { value: "CAZZANIGA", label: "CAZZANIGA" },
-                { value: "CELINE", label: "CELINE" },
-                { value: "CHARRIOL", label: "CHARRIOL" },
-                { value: "CHAUMET", label: "CHAUMET" },
-                { value: "chloe", label: "chloe" },
-                { value: "Chopard", label: "Chopard" },
-                { value: "Christian Louboutin", label: "Christian Louboutin" },
-                { value: "CHROME HEARTS", label: "CHROME HEARTS" },
-                { value: "CITIZEN", label: "CITIZEN" },
-                { value: "COACH", label: "COACH" },
-                { value: "Cole Haan", label: "Cole Haan" },
-                { value: "COMME des GARCONS", label: "COMME des GARCONS" },
-                { value: "CORUM", label: "CORUM" },
-                { value: "D＆G", label: "D＆G" },
-                { value: "Damiani", label: "Damiani" },
-                { value: "DE BEERS", label: "DE BEERS" },
-                { value: "Dior", label: "Dior" },
-                { value: "DOLCE＆GABBANA", label: "DOLCE＆GABBANA" },
-                { value: "DSQUARED3", label: "DSQUARED3" },
-                { value: "dunhill", label: "dunhill" },
-                { value: "EDOX", label: "EDOX" },
-                { value: "EMILIO PUCCI", label: "EMILIO PUCCI" },
-                { value: "ETRO", label: "ETRO" },
-                { value: "FEDERICO BUCCELLATI", label: "FEDERICO BUCCELLATI" },
-                { value: "Felisi", label: "Felisi" },
-                { value: "FENDI", label: "FENDI" },
-                { value: "FRANCK MULLER", label: "FRANCK MULLER" },
-                { value: "FRED", label: "FRED" },
-                { value: "FREDERIQUE CONSTANT", label: "FREDERIQUE CONSTANT" },
-                { value: "FURLA", label: "FURLA" },
-                { value: "Gaga Milano", label: "Gaga Milano" },
-                { value: "Georg Jensen", label: "Georg Jensen" },
-                { value: "gimel", label: "gimel" },
-                { value: "GIRARD PERREGAUX", label: "GIRARD PERREGAUX" },
-                { value: "GIVENCHY", label: "GIVENCHY" },
-                { value: "GOYARD", label: "GOYARD" },
-                { value: "GRAFF", label: "GRAFF" },
-                { value: "GRAHAM", label: "GRAHAM" },
-                { value: "HUBLOT", label: "HUBLOT" },
-                { value: "IWC", label: "IWC" },
-                { value: "Jacob & CO", label: "Jacob & CO" },
-                { value: "JAEGER LECOULTRE", label: "JAEGER LECOULTRE" },
-                { value: "Jeunet", label: "Jeunet" },
-                { value: "JEWEL STUDIO", label: "JEWEL STUDIO" },
-                { value: "JILSANDER", label: "JILSANDER" },
-                { value: "JIMMY CHOO", label: "JIMMY CHOO" },
-                { value: "Justin Davis", label: "Justin Davis" },
-                { value: "Kashikey", label: "Kashikey" },
-                { value: "Kate Spade", label: "Kate Spade" },
-                { value: "LANVIN", label: "LANVIN" },
-                { value: "LOEWE", label: "LOEWE" },
-                { value: "LONG CHAMP", label: "LONG CHAMP" },
-                { value: "LONGINES", label: "LONGINES" },
-                { value: "MACKINTOSH", label: "MACKINTOSH" },
-                { value: "MARC BY MARC JACOBS", label: "MARC BY MARC JACOBS" },
-                { value: "MARC JACOBS", label: "MARC JACOBS" },
-                { value: "MAUBOUSSIN", label: "MAUBOUSSIN" },
-                { value: "MAURICE LACROIX", label: "MAURICE LACROIX" },
-                { value: "MCM", label: "MCM" },
-                { value: "Meissen", label: "Meissen" },
-                { value: "Michael Kors", label: "Michael Kors" },
-                { value: "MIKIMOTO", label: "MIKIMOTO" },
-                { value: "miu miu", label: "miu miu" },
-                { value: "MONCLER", label: "MONCLER" },
-                { value: "MONTBLANC", label: "MONTBLANC" },
-                { value: "ORIENT", label: "ORIENT" },
-                { value: "Orobianco", label: "Orobianco" },
-                { value: "PANERAI", label: "PANERAI" },
-                { value: "PATEK PHILIPPE", label: "PATEK PHILIPPE" },
-                { value: "PIAGET", label: "PIAGET" },
-                { value: "POLA", label: "POLA" },
-                { value: "POMELLATO", label: "POMELLATO" },
-                { value: "Ponte Vecchio", label: "Ponte Vecchio" },
-                { value: "RADO", label: "RADO" },
-                { value: "RayBan", label: "RayBan" },
-                { value: "REGAL", label: "REGAL" },
-                { value: "RICHARD MILLE", label: "RICHARD MILLE" },
-                { value: "RIMOWA", label: "RIMOWA" },
-                { value: "Ritmo latino", label: "Ritmo latino" },
-                { value: "ROGER DUBUIS", label: "ROGER DUBUIS" },
-                { value: "SAINT LAURENT", label: "SAINT LAURENT" },
-                { value: "Salvatore Ferragamo", label: "Salvatore Ferragamo" },
-                { value: "SEE BY CHLOE", label: "SEE BY CHLOE" },
-                { value: "SEIKO", label: "SEIKO" },
-                { value: "Sergio Rossi", label: "Sergio Rossi" },
-                { value: "SINN", label: "SINN" },
-                { value: "SOUTHERN CROSS", label: "SOUTHERN CROSS" },
-                { value: "SUPREME", label: "SUPREME" },
-                { value: "TASAKI", label: "TASAKI" },
-                { value: "TOD’S", label: "TOD’S" },
-                { value: "Tom Ford", label: "Tom Ford" },
-                { value: "Tory Burch", label: "Tory Burch" },
-                { value: "TUDOR", label: "TUDOR" },
-                { value: "TUMI", label: "TUMI" },
-                { value: "ULYSSE NARDIN", label: "ULYSSE NARDIN" },
-                { value: "UNIVERSAL GENEVE", label: "UNIVERSAL GENEVE" },
-                { value: "UNOAERRE", label: "UNOAERRE" },
-                { value: "VACHERON CONSTANTIN", label: "VACHERON CONSTANTIN" },
-                { value: "VALENTINO", label: "VALENTINO" },
-                { value: "Vendome Aoyama", label: "Vendome Aoyama" },
-                { value: "Verite", label: "Verite" },
-                { value: "VERSACE", label: "VERSACE" },
-                { value: "Waltham", label: "Waltham" },
-                { value: "Yves Saint Laurent", label: "Yves Saint Laurent" },
-                { value: "ZENITH", label: "ZENITH" },
-                { value: "MITSUO KAJI", label: "MITSUO KAJI" },
-                { value: "Historical history", label: "Historical history" },
-                { value: "NOBUKO ISHIKAWA", label: "NOBUKO ISHIKAWA" },
-                { value: "SHUNICHI TAMURA", label: "SHUNICHI TAMURA" },
-                { value: "OTHER", label: "OTHER" },
-              ]}
+              options={brand}
             />
           </Col>
           <Col
@@ -1059,27 +918,7 @@ const OrderList = () => {
               className="w-[200px]"
               value={searchOrder?.search?.rank}
               onChange={(e) => onChangeFilter("rank", e)}
-              options={[
-                { value: "N", label: "N" },
-                { value: "S", label: "S" },
-                { value: "A", label: "A" },
-                { value: "AB", label: "AB" },
-                { value: "B", label: "B" },
-                { value: "BC", label: "BC" },
-                { value: "C", label: "C" },
-                { value: "D", label: "D" },
-                { value: "F", label: "F" },
-                { value: "10", label: "10" },
-                { value: "9", label: "9" },
-                { value: "8", label: "8" },
-                { value: "7", label: "7" },
-                { value: "6", label: "6" },
-                { value: "5", label: "5" },
-                { value: "4", label: "4" },
-                { value: "3", label: "3" },
-                { value: "2", label: "2" },
-                { value: "1", label: "1" },
-              ]}
+              options={quality}
             />
           </Col>
           <Col
@@ -1119,8 +958,6 @@ const OrderList = () => {
               placeholder="Ngày đặt"
               value={searchOrder?.search?.orderDate}
               onChange={(date, dateString) => onChangeFilter("orderDate", date)}
-
-              // disabled
             />
           </Col>
           <Col
@@ -1136,42 +973,22 @@ const OrderList = () => {
               placeholder="Ngày sản phẩm"
               value={searchOrder?.search?.itemDate}
               onChange={(date, dateString) => onChangeFilter("itemDate", date)}
-              // disabled
             />
           </Col>
         </Row>
 
-        <div className="desktop p-[16px] mb-[40px]">
+        <div className="order-desktop p-[16px] mb-[40px]">
           <Table
-            // className="custom-table"
             size="small"
             columns={columns}
             dataSource={orderList}
             loading={isLoading}
             bordered
-            // pagination={{
-            //   current: searchOrder?.page,
-            //   pageSize: searchOrder?.limit,
-            //   total: totalOrder,
-            // }}
             pagination={false}
-
-            // onRow={(record, rowIndex) => {
-            //   return {
-            //     onClick: () => handleRowClick(record, rowIndex),
-            //   };
-            // }}
-            // rowClassName={rowClassName}
-            // rowKey={rowKey}
-            // rowSelection={rowSelection}
-            // pagination={false}
-            // scroll={{
-            //   scrollToFirstRowOnChange: true,
-            // }}
           />
         </div>
 
-        <div className="mobile mt-[15px] mx-[10px] mb-[50px]">
+        <div className="order-mobile mt-[15px] mx-[10px] mb-[50px]">
           {orderList?.map((order) => (
             <Order
               order={order}
@@ -1203,10 +1020,8 @@ const OrderList = () => {
             // className="preview-image-wrap"
           >
             <div className="flex">
-              <div className="text-[16px] font-semibold">Username: </div>
-              <div className="text-[16px] mx-[5px]">
-                {clientDetail?.username}
-              </div>
+              <div className="text-[16px] font-semibold">mename: </div>
+              <div className="text-[16px] mx-[5px]">{clientDetail?.mename}</div>
             </div>
             <div className="flex">
               <div className="text-[16px] font-semibold">Name: </div>
