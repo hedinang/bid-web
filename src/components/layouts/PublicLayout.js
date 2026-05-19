@@ -12,7 +12,7 @@ export const PublicLayout = ({children}) => {
 
   useEffect(() => {
     if (!me && !["BID_LIST", "ITEM_LIST", "ITEM_DETAIL"].includes(pageLink)) {
-      navigate("/bid-list");
+      navigate("/");
     }
   }, [me])
 

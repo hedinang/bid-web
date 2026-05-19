@@ -1,14 +1,14 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { PublicLayout } from "../components/layouts/PublicLayout";
-import { ItemProvider } from "../context/ItemContext";
-import { BidList } from "../pages/bid/BidList";
-import { OrderList } from "../pages/cart/OrderList";
-import { AdminItemDetail } from "../pages/item/AdminItemDetail";
-import { AdminItemList } from "../pages/item/AdminItemList";
+import {createBrowserRouter, Navigate} from "react-router-dom";
+import {PublicLayout} from "../components/layouts/PublicLayout";
+import {ItemProvider} from "../context/ItemContext";
+import {BidList} from "../pages/bid/BidList";
+import {OrderList} from "../pages/cart/OrderList";
+import {AdminItemDetail} from "../pages/item/AdminItemDetail";
+import {AdminItemList} from "../pages/item/AdminItemList";
 import Login from "../pages/login";
-import { MailManagement } from "../pages/mail/MailManagement";
-import { UserManagement } from "../pages/user/UserManagement";
+import {MailManagement} from "../pages/mail/MailManagement";
+import {UserManagement} from "../pages/user/UserManagement";
 
 const router = createBrowserRouter([
   // {
@@ -21,54 +21,53 @@ const router = createBrowserRouter([
   // },
   {
     path: "*",
-    element: <Navigate to="/bid-list" />,
+    element: <Navigate to="/"/>,
   },
   {
-    // path: "/",
-    element: <PublicLayout />,
+    element: <PublicLayout/>,
     children: [
       {
-        path: "/bid-list",
-        element: <BidList />,
+        path: "/",
+        element: <BidList/>,
       },
       {
         path: "/item-list/:bidId/:bidStatus",
         element: (
-          <ItemProvider>
-            <AdminItemList />
-          </ItemProvider>
+            <ItemProvider>
+              <AdminItemList/>
+            </ItemProvider>
         ),
       },
       {
         path: "/item-detail/:itemId",
         element: (
-          <ItemProvider>
-            <AdminItemDetail />
-          </ItemProvider>
+            <ItemProvider>
+              <AdminItemDetail/>
+            </ItemProvider>
         ),
       },
       {
         path: "/user-list",
         element: (
-          <ItemProvider>
-            <UserManagement />
-          </ItemProvider>
+            <ItemProvider>
+              <UserManagement/>
+            </ItemProvider>
         ),
       },
       {
         path: "/mail-list",
         element: (
-          <ItemProvider>
-            <MailManagement />
-          </ItemProvider>
+            <ItemProvider>
+              <MailManagement/>
+            </ItemProvider>
         ),
       },
       {
         path: "/cart",
         element: (
-          <ItemProvider>
-            <OrderList />
-          </ItemProvider>
+            <ItemProvider>
+              <OrderList/>
+            </ItemProvider>
         ),
       },
     ],

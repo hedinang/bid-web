@@ -817,12 +817,12 @@ const OrderList = () => {
                     span={3}
                     className="flex flex-col gap-[10px]"
                 >
-                  <div>Mã me</div>
+                  <div>Mã username</div>
                   <Input
-                      placeholder="Tìm kiếm mã me"
+                      placeholder="Tìm kiếm mã username"
                       className="w-[200px]"
-                      value={searchOrder?.search?.mename}
-                      onChange={(e) => onChangeFilter("mename", e?.target?.value)}
+                      value={searchOrder?.search?.username}
+                      onChange={(e) => onChangeFilter("username", e?.target?.value)}
                       allowClear
                   />
                 </Col>
