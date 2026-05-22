@@ -190,7 +190,7 @@ const UserManagement = () => {
                 Create User
               </Button>
             </div>
-            <div className="">
+            <div className="min-h-[645px]">
               <Table
                   columns={columns}
                   dataSource={userList}

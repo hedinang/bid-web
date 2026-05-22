@@ -148,7 +148,7 @@ const MailManagement = () => {
                 Create mail
               </Button>
             </div>
-            <div className="">
+            <div className="min-h-[645px]">
               <Table
                   columns={columns}
                   dataSource={mailList}

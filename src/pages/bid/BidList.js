@@ -105,7 +105,7 @@ const SummaryBid = ({bid}) => {
           className="p-[10px]"
           key={`${bid?.bidId}-${bid?.bidStatus}`}
       >
-        <Card hoverable>
+        <Card>
           <div className="bid">
             {isUpdating ? <div className="bid-update">Cập nhật</div> : <></>}
             <div className="text-[20px] font-semibold">
@@ -260,7 +260,7 @@ const BidList = () => {
               </Button>
             </div>
         )}
-        <Row>
+        <Row className="min-h-[680px]">
           {isLoading ? (
               <div className="w-full flex justify-center">
                 <Spin/>

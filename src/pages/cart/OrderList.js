@@ -983,7 +983,7 @@ const OrderList = () => {
             </Col>
           </Row>
 
-          <div className="order-desktop p-[16px] mb-[40px]">
+          <div className="order-desktop p-[16px] mb-[40px] min-h-[535px]">
             <Table
                 size="small"
                 columns={columns}
