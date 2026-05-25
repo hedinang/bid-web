@@ -8,6 +8,7 @@ import {ConfigProvider, theme} from "antd";
 import './styles/style.scss'
 import './styles/table.scss'
 import {LayoutProvider} from "./context/LayoutContext";
+import {SendingProvider} from "./context/global/SendingProvider";
 
 function App() {
 
@@ -15,8 +16,10 @@ function App() {
   return (
       <ConfigProvider theme={theme}>
         <LayoutProvider>
-          <RouterProvider router={Router}/>
-          <ToastContainer autoClose={1500}/>
+          <SendingProvider>
+            <RouterProvider router={Router}/>
+            <ToastContainer autoClose={1500}/>
+          </SendingProvider>
         </LayoutProvider>
       </ConfigProvider>
 

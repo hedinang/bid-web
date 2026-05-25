@@ -100,9 +100,10 @@ export default class BaseApi {
      * @param params {
      * @return The return type is a Promise of an AxiosResponse.
      */
-    get(path, params) {
+    get(path, params, config = {}) {
         return this.$axiosInstance.get(path, {
             params,
+            ...config,
         });
     }
 

@@ -17,12 +17,16 @@ class UserApi extends BaseApi {
   getByEmail(param) {
     return this.post(`${USER}/find`, param);
   }
-  upload(file) {
-    return this.post(`${USER}/upload`, file);
+  upload(request) {
+    return this.post(`${USER}/upload-profile-image`, request);
   }
 
   saveMe(param) {
     return this.post(`${USER}/save-me`, param);
+  }
+
+  update(param) {
+    return this.post(`${USER}/update`, param);
   }
 
   storeUser(param) {

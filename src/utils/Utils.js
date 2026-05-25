@@ -1,8 +1,9 @@
-import { Tooltip } from "antd";
+import {Tooltip} from "antd";
 import Cookies from "js-cookie";
 import React from "react";
 import apiFactory from "../api";
 import jwtDecode from "jwt-decode";
+import imageCompression from "browser-image-compression";
 
 const verifiedAccessToken = async (updateUser) => {
   const accessToken = Cookies.get("access_token");
@@ -44,9 +45,9 @@ const showFileName = (shortName) => {
 
   if (shortNameLength > 10) {
     return (
-      <Tooltip placement="top" title={shortName}>
-        {"..." + shortName.substr(shortName.length - 10, shortName.length - 1)}
-      </Tooltip>
+        <Tooltip placement="top" title={shortName}>
+          {"..." + shortName.substr(shortName.length - 10, shortName.length - 1)}
+        </Tooltip>
     );
   } else {
     return shortName;
@@ -58,9 +59,9 @@ const showName = (shortName) => {
 
   if (shortNameLength > 30) {
     return (
-      <Tooltip placement="top" title={shortName}>
-        {shortName.substr(0, 30) + "..."}
-      </Tooltip>
+        <Tooltip placement="top" title={shortName}>
+          {shortName.substr(0, 30) + "..."}
+        </Tooltip>
     );
   } else {
     return shortName;
@@ -70,9 +71,9 @@ const showName = (shortName) => {
 const formatContent = (part) => {
   let lines = part?.split("\n");
   return lines?.map((line, lineIndex) => (
-    <span key={lineIndex}>
-      {lineIndex !== 0 && <br />}
-      <span>{line}</span>
+      <span key={lineIndex}>
+      {lineIndex !== 0 && <br/>}
+        <span>{line}</span>
     </span>
   ));
 };
@@ -84,15 +85,15 @@ const urlIfy = (content) => {
   return parts?.map((part, index) => {
     if (part?.match(urlRegex)) {
       return (
-        <a
-          href={part}
-          className="url"
-          target="_blank"
-          rel="noreferrer"
-          key={index}
-        >
-          {part}
-        </a>
+          <a
+              href={part}
+              className="url"
+              target="_blank"
+              rel="noreferrer"
+              key={index}
+          >
+            {part}
+          </a>
       );
     } else {
       let formattedContent = formatContent(part);
@@ -120,6 +121,7 @@ function getColorFromInitial(initial) {
   };
   return colors[initial?.toUpperCase()] || "#fde3cf";
 }
+
 function getColor(initial) {
   const colors = {
     ㄱ: "#E74C3C",
@@ -144,13 +146,63 @@ const fileStore = process.env.REACT_APP_FILE_STORE || "http://10.1.1.230:8000";
 const getAvatar = (user) => {
   if (!user?.avatar) return null;
   const url =
-    fileStore +
-    "/user/" +
-    user.userId +
-    user.avatar +
-    "?token=" +
-    Cookies.get("access_token");
+      fileStore +
+      "/user/" +
+      user.userId +
+      user.avatar +
+      "?token=" +
+      Cookies.get("access_token");
   return url;
+};
+
+const getImageDimensions = (fileOrBlob) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+
+    img.onload = () => {
+      resolve({width: img.width, height: img.height});
+      URL.revokeObjectURL(img.src);
+    };
+
+    img.onerror = () => {
+      resolve({width: 0, height: 0});
+      URL.revokeObjectURL(img.src);
+    };
+
+    img.src = URL.createObjectURL(fileOrBlob);
+  });
+};
+
+export const compressImage = async (
+    file,
+    maxWidthOrHeight = 500,
+    maxSizeMB = 0.5,
+) => {
+  if (!file) {
+    console.error("Không tìm thấy file để nén!");
+    return null;
+  }
+
+  const options = {
+    maxSizeMB: maxSizeMB,
+    maxWidthOrHeight: maxWidthOrHeight,
+    useWebWorker: true,
+    fileType: "image/jpeg",
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+
+    const dimensions = await getImageDimensions(compressedFile);
+
+    compressedFile.width = dimensions.width;
+    compressedFile.height = dimensions.height;
+
+    return compressedFile;
+  } catch (error) {
+    console.error("Lỗi trong quá trình nén ảnh:", error);
+    return null;
+  }
 };
 
 export {

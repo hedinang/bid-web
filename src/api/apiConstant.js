@@ -6,3 +6,4 @@ export const USER = "/api/user";
 export const ADMIN = "/api/bid";
 export const ITEM = "/api/item";
 export const MAIL = "/api/mail";
+export const RESOURCE = "/api/resource";

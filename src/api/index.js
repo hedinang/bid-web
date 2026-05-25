@@ -4,6 +4,7 @@ import ItemApi from "./ItemApi";
 import MailApi from "./mailApi";
 import OrderApi from "./orderApi";
 import UserApi from "./userApi";
+import ResourceApi from "./resourceApi";
 
 const apiFactory = {
   authApi: new AuthApi(),
@@ -12,6 +13,7 @@ const apiFactory = {
   itemApi: new ItemApi(),
   orderApi: new OrderApi(),
   mailApi: new MailApi(),
+  resourceApi: new ResourceApi(),
 };
 
 export default apiFactory;
