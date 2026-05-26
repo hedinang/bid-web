@@ -10,6 +10,7 @@ import apiFactory from "../../api";
 import {toast} from "react-toastify";
 import {useSendingContext} from "../../context/global/SendingProvider";
 import {LoadingOutlined} from "@ant-design/icons";
+import {MdDelete} from "react-icons/md";
 
 const ProfileModal = ({isModalOpen, closeModal}) => {
   const {me, logout, setMe} = useLayoutContext();
@@ -74,6 +75,17 @@ const ProfileModal = ({isModalOpen, closeModal}) => {
       setIsLoading(false);
     }
   };
+
+  const removeAvatar = async () => {
+    const res = await apiFactory.userApi.upload({
+      avatar: null,
+    });
+
+    if (res?.status === 200) {
+      toast.success("Cập nhật avatar thành công")
+      setMe(prev => ({...prev, avatar: null}));
+    }
+  }
 
   const genderAvatar = useMemo(() => {
     return (
@@ -152,8 +164,8 @@ const ProfileModal = ({isModalOpen, closeModal}) => {
             <div className="mt-3 font-semibold w-[130px]">
               Ảnh đại diện:
             </div>
-            <div className="mt-3 flex">
-              <div className="relative avatarWrapper inline-block ">
+            <div className="mt-3 flex gap-[20px]">
+              <div className="relative">
                 {genderAvatar}
 
                 <ImgCrop rotationSlider>
@@ -173,7 +185,13 @@ const ProfileModal = ({isModalOpen, closeModal}) => {
                     </button>
                   </Upload>
                 </ImgCrop>
+
               </div>
+              {me?.avatar && (
+                  <button onClick={removeAvatar}>
+                    <MdDelete size={20} color="#ef4444"/>
+                  </button>
+              )}
             </div>
           </div>
 

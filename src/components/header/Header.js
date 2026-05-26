@@ -57,7 +57,7 @@ const MeDropdown = ({}) => {
                     color: "white",
                   }
               }
-              size={50}
+              size={40}
               onClick={() => setIsPreview(true)}
               src={imageUrl}
           >
