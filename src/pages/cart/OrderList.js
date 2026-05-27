@@ -147,7 +147,7 @@ const Order = ({order, changeOrderStatus, setClientDetail}) => {
                     setClientDetail(order);
                   }}
               >
-                {order?.mename}
+                {order?.name}
               </Button>
             </div>
         )}
@@ -230,7 +230,7 @@ const OrderList = () => {
     limit: 15,
     page: 1,
     search: {
-      mename: "",
+      name: "",
       itemId: "",
       itemName: "",
       category: "",
@@ -1026,11 +1026,7 @@ const OrderList = () => {
                   // className="preview-image-wrap"
               >
                 <div className="flex">
-                  <div className="text-[16px] font-semibold">mename:</div>
-                  <div className="text-[16px] mx-[5px]">{clientDetail?.mename}</div>
-                </div>
-                <div className="flex">
-                  <div className="text-[16px] font-semibold">Name:</div>
+                  <div className="text-[16px] font-semibold">Tên:</div>
                   <div className="text-[16px] mx-[5px]">{clientDetail?.name}</div>
                 </div>
                 <div className="flex">
@@ -1038,7 +1034,7 @@ const OrderList = () => {
                   <div className="text-[16px] mx-[5px]">{clientDetail?.email}</div>
                 </div>
                 <div className="flex">
-                  <div className="text-[16px] font-semibold">Phone:</div>
+                  <div className="text-[16px] font-semibold">Số điện thoại:</div>
                   <div className="text-[16px] mx-[5px]">{clientDetail?.phone}</div>
                 </div>
               </Modal>
