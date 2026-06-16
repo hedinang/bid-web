@@ -284,8 +284,8 @@ const AdminItemDetail = () => {
                 <div>{item?.startPrice}</div>
               </div>
               <div className="flex p-[5px]">
-                <div className="w-[200px] font-semibold">Branch</div>
-                <div>{item?.branch}</div>
+                <div className="w-[200px] font-semibold">Brand</div>
+                <div>{item?.brand}</div>
               </div>
               <div className="flex p-[5px]">
                 <div className="w-[200px] font-semibold">Category</div>

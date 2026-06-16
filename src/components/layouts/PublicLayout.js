@@ -11,9 +11,9 @@ export const PublicLayout = ({children}) => {
   const {me, pageLink} = useLayoutContext()
 
   useEffect(() => {
-    if (!me && !["BID_LIST", "ITEM_LIST", "ITEM_DETAIL"].includes(pageLink)) {
-      navigate("/");
-    }
+    // if (!me && !["BID_LIST", "ITEM_LIST", "ITEM_DETAIL"].includes(pageLink)) {
+    //   navigate("/");
+    // }
   }, [me])
 
   return (

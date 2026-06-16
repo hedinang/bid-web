@@ -1,6 +1,5 @@
-import {useState, useEffect, useCallback} from "react";
+import {useCallback, useEffect, useState} from "react";
 import apiFactory from "../api";
-import {openNotificationError} from "../utils/Utils";
 import {toast} from "react-toastify";
 
 export const useImageLoader = (resourceId) => {

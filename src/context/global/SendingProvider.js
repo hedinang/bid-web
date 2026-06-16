@@ -22,7 +22,7 @@ export const SendingProvider = ({children}) => {
     const start = uploadingIndex * CHUNK_SIZE;
     const end = Math.min(file?.size, start + CHUNK_SIZE);
 
-    const chunk = file.slice(start, end);
+    const chunk = file?.slice(start, end);
 
     const resourceRequest = {
       requestUuid: file?.uid,

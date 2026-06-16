@@ -59,7 +59,7 @@ const SettingsModal = ({onCancel, open}) => {
         newPassword,
       };
 
-      const result = await apiFactory.authApi.changePassword(request);
+      const result = await apiFactory.userApi.changePassword(request);
       if (!result) return;
 
       if (result.status === 200) {

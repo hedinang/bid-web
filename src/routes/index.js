@@ -9,6 +9,7 @@ import {AdminItemList} from "../pages/item/AdminItemList";
 import Login from "../pages/login";
 import {MailManagement} from "../pages/mail/MailManagement";
 import {UserManagement} from "../pages/user/UserManagement";
+import {AutoItemList} from "../pages/item/AutoItemList";
 
 const router = createBrowserRouter([
   // {
@@ -68,6 +69,12 @@ const router = createBrowserRouter([
             <ItemProvider>
               <OrderList/>
             </ItemProvider>
+        ),
+      },
+      {
+        path: "/auto-item",
+        element: (
+            <AutoItemList/>
         ),
       },
     ],

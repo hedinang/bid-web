@@ -2,28 +2,17 @@ import {ADMIN, AUTHEN} from './apiConstant';
 import BaseApi from './baseApi';
 
 class AuthApi extends BaseApi {
-    login(body) {
-        return this.post(AUTHEN + "/login", body);
-    }
+  login(body) {
+    return this.post("free" + AUTHEN + "login", body);
+  }
 
-    register(body) {
-        return this.post(AUTHEN + "/register", body);
-    }
+  // logout() {
+  //   return this.post(`${AUTHEN}/logout`, {},)
+  // }
 
-    getMe(token) {
-        return this.post(`${ADMIN}/me`, {}, {
-            headers: {
-                Authorization: 'Bearer ' + token //the token is a variable which holds the token
-            }
-        })
-    }
-    logout() {
-        return this.post(`${AUTHEN}/logout`, {},)
-    }
-
-    changePassword(body) {
-        return this.post(AUTHEN + "/change-password", body);
-      }
+  // changePassword(body) {
+  //   return this.post(AUTHEN + "/change-password", body);
+  // }
 }
 
 export default AuthApi;

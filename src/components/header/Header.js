@@ -160,10 +160,10 @@ export const Header = () => {
           allowClear
       />
 
-      <div className="flex items-center gap-[1px]">
-        <MdPhone size={18}/>
-        <div>0982992628</div>
-      </div>
+      {/*<div className="flex items-center gap-[1px]">*/}
+      {/*  <MdPhone size={18}/>*/}
+      {/*  <div>0982992628</div>*/}
+      {/*</div>*/}
       {me ? (<MeDropdown/>) : (<button
           className="flex items-center gap-[1px]"
           onClick={() => setIsOpenLogin(true)}
@@ -197,6 +197,9 @@ export const Header = () => {
         </button>
         <button onClick={() => navigate("/mail-list")}>
           Danh sách email
+        </button>
+        <button onClick={() => navigate("/auto-item")}>
+          Tự động đặt giá
         </button>
       </>)}
     </div>

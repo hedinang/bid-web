@@ -1,40 +1,42 @@
 import BaseApi from "./baseApi";
-import { USER } from "./apiConstant";
+import {AUTHEN, USER} from "./apiConstant";
 
 class UserApi extends BaseApi {
   getMe() {
-    return this.get(`${USER}/getMe`);
+    return this.get("secure" + USER + "getMe");
   }
 
   logout() {
-    return this.get(`${USER}/logout`);
+    return this.get("secure" + USER + "logout");
   }
 
   listPerson(param) {
-    return this.post(`${USER}/list`, param);
+    return this.post("secure" + USER + "list", param);
   }
 
-  getByEmail(param) {
-    return this.post(`${USER}/find`, param);
-  }
   upload(request) {
-    return this.post(`${USER}/upload-profile-image`, request);
+    return this.post("secure" + USER + "upload-profile-image", request);
   }
 
   saveMe(param) {
-    return this.post(`${USER}/save-me`, param);
+    return this.post("secure" + USER + "save-me", param);
   }
 
   update(param) {
-    return this.post(`${USER}/update`, param);
+    return this.post("secure" + USER + "update", param);
   }
 
   storeUser(param) {
-    return this.post(`${USER}/store-user`, param);
+    return this.post("secure" + USER + "store-user", param);
   }
 
   resetPassword(param) {
-    return this.post(`${USER}/reset-password/${param}`);
+    return this.post("secure" + USER + `reset-password/${param}`);
+  }
+
+  changePassword(body) {
+    return this.post("secure" + USER + "change-password", body);
   }
 }
+
 export default UserApi;
