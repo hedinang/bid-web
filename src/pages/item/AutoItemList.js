@@ -14,7 +14,7 @@ const AutoItemList = () => {
   const {uploadFile} = useSendingContext()
 
   const [autoItemSearch, setAutoItemSearch] = useState({
-    limit: 30, page: 1, search: {},
+    limit: 30, page: 0, search: {},
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -35,13 +35,21 @@ const AutoItemList = () => {
     title: "max price", dataIndex: "maxPrice", key: "maxPrice",
   },];
 
+  const [pagination, setPagination] = useState({
+    pageSize: 15,
+    total: 0,
+    current: 1,
+  });
+
   const rowClassName = (record) => {
     return record?.isNew ? "bg-[#ffe678]" : "";
   };
 
-  const fetchAutoItem = async () => {
+  const initAutoItem = async () => {
     setIsLoading(true);
-    const result = await apiFactory.autoItemApi.list(autoItemSearch);
+    const result = await apiFactory.autoItemApi.list({
+      limit: pagination?.pageSize, page: pagination?.current, search: {},
+    });
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
@@ -50,6 +58,27 @@ const AutoItemList = () => {
 
     setIsLoading(false);
     setAutoItemList(result?.data?.items);
+    setPagination(prev => {
+      return {...prev, total: result?.data?.totalItems};
+    })
+  };
+
+  const fetchMoreAutoItem = async (page) => {
+    setIsLoading(true);
+    const result = await apiFactory.autoItemApi.list({
+      limit: pagination?.pageSize, page: page, search: {},
+    });
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setIsLoading(false);
+    setAutoItemList(result?.data?.items);
+    setPagination(prev => {
+      return {...prev, total: result?.data?.totalItems};
+    })
   };
 
 
@@ -80,8 +109,17 @@ const AutoItemList = () => {
     toast.success("Import file thành công")
   };
 
+  const handlePageChange = async ({current}) => {
+    setPagination((prev) => ({
+      ...prev,
+      current: current,
+    }));
+
+    await fetchMoreAutoItem(current)
+  }
+
   useEffect(() => {
-    fetchAutoItem();
+    initAutoItem();
   }, [autoItemSearch]);
 
   useEffect(() => {
@@ -119,6 +157,9 @@ const AutoItemList = () => {
                       // onDoubleClick: (e) => onDoubleClick(record),
                       className: getSelectedColor(record), // ref: index === userList?.length - 1 ? lastRecordRef : null,
                     })}
+                    pagination={pagination}
+                    onChange={handlePageChange}
+
                 />
               </div>
             </div>
