@@ -1,4 +1,4 @@
-import {AUTO_ITEM, MAIL} from "./apiConstant";
+import {AUTO_ITEM} from "./apiConstant";
 import BaseApi from "./baseApi";
 
 class AutoItemApi extends BaseApi {
@@ -8,6 +8,18 @@ class AutoItemApi extends BaseApi {
 
   list(param) {
     return this.post("secure" + AUTO_ITEM + "list", param);
+  }
+
+  checkScan() {
+    return this.get("secure" + AUTO_ITEM + "check-scan");
+  }
+
+  scan(param) {
+    return this.post("secure" + AUTO_ITEM + "scan", param);
+  }
+
+  stopScan() {
+    return this.post("secure" + AUTO_ITEM + "stop-scan");
   }
 }
 

@@ -1,4 +1,4 @@
-import {Button, Table, Upload} from "antd";
+import {Button, InputNumber, Table, Upload} from "antd";
 import {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import apiFactory from "../../api";
@@ -8,6 +8,8 @@ import {useSendingContext} from "../../context/global/SendingProvider";
 import {v4 as uuidv4} from "uuid";
 import {AutoItemPanel} from "../../components/panel/AutoItemPanel";
 import {IoMenu} from "react-icons/io5";
+import {MdSchedule} from "react-icons/md";
+import {formatDateTime} from "../../utils/formatTime";
 
 const AutoItemList = () => {
   const {me, setPageLink} = useLayoutContext();
@@ -16,6 +18,9 @@ const AutoItemList = () => {
   const [autoItemSearch, setAutoItemSearch] = useState({
     limit: 30, page: 0, search: {},
   });
+  const [scheduled, setScheduled] = useState(null)
+  const [scanTime, setScanTime] = useState(null)
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMail, setSelectedMail] = useState(null);
@@ -36,9 +41,7 @@ const AutoItemList = () => {
   },];
 
   const [pagination, setPagination] = useState({
-    pageSize: 15,
-    total: 0,
-    current: 1,
+    pageSize: 15, total: 0, current: 1,
   });
 
   const rowClassName = (record) => {
@@ -61,6 +64,17 @@ const AutoItemList = () => {
     setPagination(prev => {
       return {...prev, total: result?.data?.totalItems};
     })
+  };
+
+  const checkScan = async () => {
+    const result = await apiFactory.autoItemApi.checkScan();
+
+    if (result?.status !== 200) {
+      toast.error("can not load bid list");
+      return;
+    }
+
+    setScheduled(result?.data)
   };
 
   const fetchMoreAutoItem = async (page) => {
@@ -111,11 +125,28 @@ const AutoItemList = () => {
 
   const handlePageChange = async ({current}) => {
     setPagination((prev) => ({
-      ...prev,
-      current: current,
+      ...prev, current: current,
     }));
 
     await fetchMoreAutoItem(current)
+  }
+
+  const onSchedule = async () => {
+    // store on db
+    const result = await apiFactory.autoItemApi.scan({
+      maxRunningMinutes: scanTime
+    })
+    setScheduled(result?.data);
+    setScanTime(null)
+  }
+
+  const unSchedule = async () => {
+    const result = await apiFactory.autoItemApi.stopScan()
+    setScheduled(null);
+  }
+
+  const onChangeScanTime = (value) => {
+    setScanTime(value);
   }
 
   useEffect(() => {
@@ -124,57 +155,72 @@ const AutoItemList = () => {
 
   useEffect(() => {
     setPageLink("MAIL")
+    checkScan()
   }, [])
 
   return (<div className="overflow-hidden flex flex-row justify-between items-start">
-        <div className="flex-1">
-          <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
-            Quản lý tự động đặt giá
-          </div>
-          <div className="p-[16px]">
-            <div className="user-list ">
-              <div className="flex justify-between mb-[10px]">
-                <div/>
-                <Upload
-                    showUploadList={false}
-                    listType="picture"
-                    onChange={handleChange}
-                >
-                  <Button type="primary" icon={<UploadOutlined/>}>
-                    Upload csv
-                  </Button>
-                </Upload>
+    <div className="flex-1">
+      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
+        Quản lý tự động đặt giá
+      </div>
+      <div className="p-[16px]">
+        <div className="user-list ">
+          <div className="flex justify-between mb-[10px] gap-[10px]">
+            {scheduled ? <div className="flex gap-[10px] items-center">
+              <div className="flex gap-[3px] text-[#e51d21]">
+                <div>Scan trong vòng {scheduled?.maxRunningMinutes} phút và kết thúc lúc</div>
+                <div>
+                  {formatDateTime(scheduled?.endTime, "HH:mm DD-MM-YYYY",)}
+                </div>
               </div>
-              <div className="min-h-[645px]">
-                <Table
-                    columns={columns}
-                    dataSource={autoItemList}
-                    loading={isLoading}
-                    size={"middle"}
-                    className="max-h-[1000px]"
-                    rowClassName={rowClassName}
-                    onRow={(record, index) => ({
-                      // onDoubleClick: (e) => onDoubleClick(record),
-                      className: getSelectedColor(record), // ref: index === userList?.length - 1 ? lastRecordRef : null,
-                    })}
-                    pagination={pagination}
-                    onChange={handlePageChange}
-
-                />
+              <Button onClick={unSchedule}>Dừng</Button>
+            </div> : <div/>}
+            <div className="flex gap-[10px]">
+              <div className="flex">
+                <InputNumber placeholder="Thời gian scan theo phút" min={1} className="w-[200px]"
+                             value={scanTime} onChange={onChangeScanTime}/>
+                <Button onClick={onSchedule}>
+                  <MdSchedule size={20}/>
+                </Button>
               </div>
+              <Upload
+                  showUploadList={false}
+                  listType="picture"
+                  onChange={handleChange}
+              >
+                <Button type="primary" icon={<UploadOutlined/>}>
+                  Upload csv
+                </Button>
+              </Upload>
             </div>
+          </div>
+          <div className="min-h-[645px]">
+            <Table
+                columns={columns}
+                dataSource={autoItemList}
+                loading={isLoading}
+                size={"middle"}
+                className="max-h-[1000px]"
+                rowClassName={rowClassName}
+                onRow={(record, index) => ({
+                  // onDoubleClick: (e) => onDoubleClick(record),
+                  className: getSelectedColor(record), // ref: index === userList?.length - 1 ? lastRecordRef : null,
+                })}
+                pagination={pagination}
+                onChange={handlePageChange}
+
+            />
           </div>
         </div>
-        {openPanel ?
-            <AutoItemPanel closePanel={() => setOpenPanel(false)}/> :
-            <div className="w-[80px] flex justify-center mt-[10px]">
-              <button onClick={() => setOpenPanel(true)}>
-                <IoMenu size={25} color="#2a56b9"/>
-              </button>
-            </div>
-        }
       </div>
-  );
+    </div>
+    {openPanel ? <AutoItemPanel closePanel={() => setOpenPanel(false)}/> :
+        <div className="w-[80px] flex justify-center mt-[10px]">
+          <button onClick={() => setOpenPanel(true)}>
+            <IoMenu size={25} color="#2a56b9"/>
+          </button>
+        </div>}
+  </div>);
 };
 
 export {AutoItemList};
