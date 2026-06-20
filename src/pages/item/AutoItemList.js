@@ -10,6 +10,8 @@ import {AutoItemPanel} from "../../components/panel/AutoItemPanel";
 import {IoMenu} from "react-icons/io5";
 import {MdSchedule} from "react-icons/md";
 import {formatDateTime} from "../../utils/formatTime";
+import {CreateUserModal} from "../../components/modal/adminSetting/CreateUserModal";
+import {EditAutoItemModal} from "../../components/modal/EditAutoItemModal";
 
 const AutoItemList = () => {
   const {me, setPageLink} = useLayoutContext();
@@ -26,6 +28,8 @@ const AutoItemList = () => {
   const [selectedMail, setSelectedMail] = useState(null);
   const [autoItemList, setAutoItemList] = useState([]);
   const [openPanel, setOpenPanel] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selectedAutoItem, setSelectedAutoItem] = useState(null);
   const columns = [{
     title: "item id", dataIndex: "itemId", key: "itemId", width: 500,
   }, {
@@ -149,6 +153,15 @@ const AutoItemList = () => {
     setScanTime(value);
   }
 
+  const onDoubleClick = (record) => {
+    setSelectedAutoItem(record)
+    setIsOpenModal(true);
+  };
+
+  const cancelModal = () => {
+    setIsOpenModal(false)
+  }
+
   useEffect(() => {
     initAutoItem();
   }, [autoItemSearch]);
@@ -203,7 +216,7 @@ const AutoItemList = () => {
                 className="max-h-[1000px]"
                 rowClassName={rowClassName}
                 onRow={(record, index) => ({
-                  // onDoubleClick: (e) => onDoubleClick(record),
+                  onDoubleClick: (e) => onDoubleClick(record),
                   className: getSelectedColor(record), // ref: index === userList?.length - 1 ? lastRecordRef : null,
                 })}
                 pagination={pagination}
@@ -220,6 +233,16 @@ const AutoItemList = () => {
             <IoMenu size={25} color="#2a56b9"/>
           </button>
         </div>}
+    {isOpenModal && (
+        <EditAutoItemModal
+            isModalOpen={isOpenModal}
+            cancelModal={cancelModal}
+            title="Edit auto item"
+            record={selectedAutoItem}
+            setAutoItemList={setAutoItemList}
+            initAutoItem={initAutoItem}
+        />
+    )}
   </div>);
 };
 
