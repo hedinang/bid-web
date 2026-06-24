@@ -14,6 +14,10 @@ class AutoItemApi extends BaseApi {
     return this.post("secure" + AUTO_ITEM + `delete/${param}`, param);
   }
 
+  deleteAll(param) {
+    return this.post("secure" + AUTO_ITEM + `delete/all`);
+  }
+
   edit(param) {
     return this.post("secure" + AUTO_ITEM + "edit", param);
   }

@@ -1,5 +1,5 @@
 import {Button, InputNumber, Table, Upload} from "antd";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import apiFactory from "../../api";
 import {useLayoutContext} from "../../context/LayoutContext";
@@ -10,8 +10,9 @@ import {AutoItemPanel} from "../../components/panel/AutoItemPanel";
 import {IoMenu} from "react-icons/io5";
 import {MdSchedule} from "react-icons/md";
 import {formatDateTime} from "../../utils/formatTime";
-import {CreateUserModal} from "../../components/modal/adminSetting/CreateUserModal";
 import {EditAutoItemModal} from "../../components/modal/EditAutoItemModal";
+import {ImBin} from "react-icons/im";
+import {GeneralModal} from "../../components/modal/GeneralModal";
 
 const AutoItemList = () => {
   const {me, setPageLink} = useLayoutContext();
@@ -30,6 +31,7 @@ const AutoItemList = () => {
   const [openPanel, setOpenPanel] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedAutoItem, setSelectedAutoItem] = useState(null);
+  const [isOpenModalConfirmDelete, setIsOpenModalConfirmDelete] = useState(false);
   const columns = [{
     title: "item id", dataIndex: "itemId", key: "itemId", width: 500,
   }, {
@@ -162,6 +164,16 @@ const AutoItemList = () => {
     setIsOpenModal(false)
   }
 
+  const handleConfirmDelete = async () => {
+    setIsLoading(true);
+    await apiFactory.autoItemApi.deleteAll()
+    setScheduled(null);
+    setIsLoading(false);
+    setAutoItemList([]);
+    setPagination({pageSize: 15, total: 0, current: 1,})
+    setIsOpenModalConfirmDelete(false)
+  }
+
   useEffect(() => {
     initAutoItem();
   }, [autoItemSearch]);
@@ -205,6 +217,10 @@ const AutoItemList = () => {
                   Upload csv
                 </Button>
               </Upload>
+              <Button type="primary" className="bg-[red]" icon={<ImBin/>}
+                      onClick={() => setIsOpenModalConfirmDelete(true)}>
+                Xóa hết
+              </Button>
             </div>
           </div>
           <div className="min-h-[645px]">
@@ -241,6 +257,15 @@ const AutoItemList = () => {
             record={selectedAutoItem}
             setAutoItemList={setAutoItemList}
             initAutoItem={initAutoItem}
+        />
+    )}
+
+    {isOpenModalConfirmDelete && (
+        <GeneralModal
+            title="Bạn có chắc chắn xóa không"
+            onCancel={() => setIsOpenModalConfirmDelete(false)}
+            open={isOpenModalConfirmDelete}
+            onConfirm={handleConfirmDelete}
         />
     )}
   </div>);

@@ -47,6 +47,7 @@ export const LayoutProvider = ({children}) => {
           return false;
         }
       } catch (error) {
+        Cookies.remove("access_token");
         return false;
       }
     }
