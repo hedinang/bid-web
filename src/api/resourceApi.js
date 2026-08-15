@@ -1,5 +1,6 @@
-import {RESOURCE} from "./apiConstant";
+import { RESOURCE, STORAGE } from "./apiConstant";
 import BaseApi from "./baseApi";
+import axios from "axios";
 
 class ResourceApi extends BaseApi {
   constructor() {
@@ -38,6 +39,30 @@ class ResourceApi extends BaseApi {
       onDownloadProgress,
       signal,
       headers,
+    });
+  }
+
+  createMultipart(body) {
+    return this.post("free" + STORAGE + "create-multipart", body);
+  }
+
+  createPartUrl(body) {
+    return this.post("free" + STORAGE + "create-part-url", body);
+  }
+
+  complete(body) {
+    return this.post("free" + STORAGE + "complete", body);
+  }
+
+  abort(body) {
+    return this.post("free" + STORAGE + "abort", body);
+  }
+
+  uploadFile(presignedUrl, file, config) {
+    return axios.put(presignedUrl, file, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
     });
   }
 }

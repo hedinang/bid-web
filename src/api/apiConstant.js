@@ -7,3 +7,4 @@ export const ITEM = "/item/";
 export const AUTO_ITEM = "/auto-item/";
 export const MAIL = "/mail/";
 export const RESOURCE = "/resource/";
+export const STORAGE = "/storage/";

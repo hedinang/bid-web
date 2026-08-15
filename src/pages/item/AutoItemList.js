@@ -1,29 +1,30 @@
-import {Button, InputNumber, Table, Upload} from "antd";
-import React, {useEffect, useState} from "react";
-import {toast} from "react-toastify";
+import { Button, InputNumber, Table, Upload } from "antd";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import apiFactory from "../../api";
-import {useLayoutContext} from "../../context/LayoutContext";
-import {UploadOutlined} from "@ant-design/icons";
-import {useSendingContext} from "../../context/global/SendingProvider";
-import {v4 as uuidv4} from "uuid";
-import {AutoItemPanel} from "../../components/panel/AutoItemPanel";
-import {IoMenu} from "react-icons/io5";
-import {MdSchedule} from "react-icons/md";
-import {formatDateTime} from "../../utils/formatTime";
-import {EditAutoItemModal} from "../../components/modal/EditAutoItemModal";
-import {ImBin} from "react-icons/im";
-import {GeneralModal} from "../../components/modal/GeneralModal";
+import { useLayoutContext } from "../../context/LayoutContext";
+import { UploadOutlined } from "@ant-design/icons";
+import { useSendingContext } from "../../context/global/SendingProvider";
+import { v4 as uuidv4 } from "uuid";
+import { AutoItemPanel } from "../../components/panel/AutoItemPanel";
+import { IoMenu } from "react-icons/io5";
+import { MdSchedule } from "react-icons/md";
+import { formatDateTime } from "../../utils/formatTime";
+import { EditAutoItemModal } from "../../components/modal/EditAutoItemModal";
+import { ImBin } from "react-icons/im";
+import { GeneralModal } from "../../components/modal/GeneralModal";
 
 const AutoItemList = () => {
-  const {me, setPageLink} = useLayoutContext();
-  const {uploadFile} = useSendingContext()
+  const { me, setPageLink } = useLayoutContext();
+  const { uploadFile } = useSendingContext();
 
   const [autoItemSearch, setAutoItemSearch] = useState({
-    limit: 30, page: 0, search: {},
+    limit: 30,
+    page: 0,
+    search: {},
   });
-  const [scheduled, setScheduled] = useState(null)
-  const [scanTime, setScanTime] = useState(null)
-
+  const [scheduled, setScheduled] = useState(null);
+  const [scanTime, setScanTime] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMail, setSelectedMail] = useState(null);
@@ -31,23 +32,46 @@ const AutoItemList = () => {
   const [openPanel, setOpenPanel] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedAutoItem, setSelectedAutoItem] = useState(null);
-  const [isOpenModalConfirmDelete, setIsOpenModalConfirmDelete] = useState(false);
-  const columns = [{
-    title: "item id", dataIndex: "itemId", key: "itemId", width: 500,
-  }, {
-    title: "item number", dataIndex: "itemNumber", key: "itemNumber",
-  }, {
-    title: "item name", dataIndex: "itemName", key: "itemName",
-  }, {
-    title: "rank", dataIndex: "rank", key: "rank",
-  }, {
-    title: "pre bidding price", dataIndex: "preBiddingPrice", key: "preBiddingPrice",
-  }, {
-    title: "max price", dataIndex: "maxPrice", key: "maxPrice",
-  },];
+  const [isOpenModalConfirmDelete, setIsOpenModalConfirmDelete] =
+    useState(false);
+  const columns = [
+    {
+      title: "item id",
+      dataIndex: "itemId",
+      key: "itemId",
+      width: 500,
+    },
+    {
+      title: "item number",
+      dataIndex: "itemNumber",
+      key: "itemNumber",
+    },
+    {
+      title: "item name",
+      dataIndex: "itemName",
+      key: "itemName",
+    },
+    {
+      title: "rank",
+      dataIndex: "rank",
+      key: "rank",
+    },
+    {
+      title: "pre bidding price",
+      dataIndex: "preBiddingPrice",
+      key: "preBiddingPrice",
+    },
+    {
+      title: "max price",
+      dataIndex: "maxPrice",
+      key: "maxPrice",
+    },
+  ];
 
   const [pagination, setPagination] = useState({
-    pageSize: 15, total: 0, current: 1,
+    pageSize: 15,
+    total: 0,
+    current: 1,
   });
 
   const rowClassName = (record) => {
@@ -57,7 +81,9 @@ const AutoItemList = () => {
   const initAutoItem = async () => {
     setIsLoading(true);
     const result = await apiFactory.autoItemApi.list({
-      limit: pagination?.pageSize, page: pagination?.current, search: {},
+      limit: pagination?.pageSize,
+      page: pagination?.current,
+      search: {},
     });
 
     if (result?.status !== 200) {
@@ -67,9 +93,9 @@ const AutoItemList = () => {
 
     setIsLoading(false);
     setAutoItemList(result?.data?.items);
-    setPagination(prev => {
-      return {...prev, total: result?.data?.totalItems};
-    })
+    setPagination((prev) => {
+      return { ...prev, total: result?.data?.totalItems };
+    });
   };
 
   const checkScan = async () => {
@@ -80,13 +106,15 @@ const AutoItemList = () => {
       return;
     }
 
-    setScheduled(result?.data)
+    setScheduled(result?.data);
   };
 
   const fetchMoreAutoItem = async (page) => {
     setIsLoading(true);
     const result = await apiFactory.autoItemApi.list({
-      limit: pagination?.pageSize, page: page, search: {},
+      limit: pagination?.pageSize,
+      page: page,
+      search: {},
     });
 
     if (result?.status !== 200) {
@@ -96,11 +124,10 @@ const AutoItemList = () => {
 
     setIsLoading(false);
     setAutoItemList(result?.data?.items);
-    setPagination(prev => {
-      return {...prev, total: result?.data?.totalItems};
-    })
+    setPagination((prev) => {
+      return { ...prev, total: result?.data?.totalItems };
+    });
   };
-
 
   const getSelectedColor = (record) => {
     if (record?.userId === selectedMail?.userId) return "bg-red";
@@ -109,8 +136,11 @@ const AutoItemList = () => {
   const handleChange = async (event) => {
     const originFile = event?.file?.originFileObj;
 
-    if (originFile?.webkitRelativePath && originFile.webkitRelativePath.includes("/")) {
-      toast.error("You can not send folder")
+    if (
+      originFile?.webkitRelativePath &&
+      originFile.webkitRelativePath.includes("/")
+    ) {
+      toast.error("You can not send folder");
       return;
     }
 
@@ -126,105 +156,155 @@ const AutoItemList = () => {
       resourceId: uploadRes?.data?.resourceId,
     });
 
-    toast.success("Import file thành công")
+    toast.success("Import file thành công");
   };
 
-  const handlePageChange = async ({current}) => {
+  const handleChange2 = async (event) => {
+    const originFile = event?.file?.originFileObj;
+
+    if (
+      originFile?.webkitRelativePath &&
+      originFile.webkitRelativePath.includes("/")
+    ) {
+      toast.error("You can not send folder");
+      return;
+    }
+
+    if (event?.file?.size > 300000) {
+      toast.error("File size exceeds the 1GB limit");
+      return;
+    }
+
+    const preresigned = await apiFactory.resourceApi.preparePreresignedUrl({
+      fileName: originFile.name,
+      contentType: originFile.type || "application/octet-stream",
+      fileSize: originFile.size,
+    });
+
+    originFile.uid = uuidv4();
+    const uploadRes = await uploadFile(originFile, "FILE", null);
+
+    const res = await apiFactory.autoItemApi.importCSV({
+      resourceId: uploadRes?.data?.resourceId,
+    });
+
+    toast.success("Import file thành công");
+  };
+
+  const handlePageChange = async ({ current }) => {
     setPagination((prev) => ({
-      ...prev, current: current,
+      ...prev,
+      current: current,
     }));
 
-    await fetchMoreAutoItem(current)
-  }
+    await fetchMoreAutoItem(current);
+  };
 
   const onSchedule = async () => {
     // store on db
     const result = await apiFactory.autoItemApi.scan({
-      maxRunningMinutes: scanTime
-    })
+      maxRunningMinutes: scanTime,
+    });
     setScheduled(result?.data);
-    setScanTime(null)
-  }
+    setScanTime(null);
+  };
 
   const unSchedule = async () => {
-    const result = await apiFactory.autoItemApi.stopScan()
+    const result = await apiFactory.autoItemApi.stopScan();
     setScheduled(null);
-  }
+  };
 
   const onChangeScanTime = (value) => {
     setScanTime(value);
-  }
+  };
 
   const onDoubleClick = (record) => {
-    setSelectedAutoItem(record)
+    setSelectedAutoItem(record);
     setIsOpenModal(true);
   };
 
   const cancelModal = () => {
-    setIsOpenModal(false)
-  }
+    setIsOpenModal(false);
+  };
 
   const handleConfirmDelete = async () => {
     setIsLoading(true);
-    await apiFactory.autoItemApi.deleteAll()
+    await apiFactory.autoItemApi.deleteAll();
     setScheduled(null);
     setIsLoading(false);
     setAutoItemList([]);
-    setPagination({pageSize: 15, total: 0, current: 1,})
-    setIsOpenModalConfirmDelete(false)
-  }
+    setPagination({ pageSize: 15, total: 0, current: 1 });
+    setIsOpenModalConfirmDelete(false);
+  };
 
   useEffect(() => {
     initAutoItem();
   }, [autoItemSearch]);
 
   useEffect(() => {
-    setPageLink("MAIL")
-    checkScan()
-  }, [])
+    setPageLink("MAIL");
+    checkScan();
+  }, []);
 
-  return (<div className="overflow-hidden flex flex-row justify-between items-start">
-    <div className="flex-1">
-      <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
-        Quản lý tự động đặt giá
-      </div>
-      <div className="p-[16px]">
-        <div className="user-list ">
-          <div className="flex justify-between mb-[10px] gap-[10px]">
-            {scheduled ? <div className="flex gap-[10px] items-center">
-              <div className="flex gap-[3px] text-[#e51d21]">
-                <div>Scan trong vòng {scheduled?.maxRunningMinutes} phút và kết thúc lúc</div>
-                <div>
-                  {formatDateTime(scheduled?.endTime, "HH:mm DD-MM-YYYY",)}
+  return (
+    <div className="overflow-hidden flex flex-row justify-between items-start">
+      <div className="flex-1">
+        <div className="font-semibold text-[20px] pl-[16px] pt-[16px] flex justify-center">
+          Quản lý tự động đặt giá
+        </div>
+        <div className="p-[16px]">
+          <div className="user-list ">
+            <div className="flex justify-between mb-[10px] gap-[10px]">
+              {scheduled ? (
+                <div className="flex gap-[10px] items-center">
+                  <div className="flex gap-[3px] text-[#e51d21]">
+                    <div>
+                      Scan trong vòng {scheduled?.maxRunningMinutes} phút và kết
+                      thúc lúc
+                    </div>
+                    <div>
+                      {formatDateTime(scheduled?.endTime, "HH:mm DD-MM-YYYY")}
+                    </div>
+                  </div>
+                  <Button onClick={unSchedule}>Dừng</Button>
                 </div>
-              </div>
-              <Button onClick={unSchedule}>Dừng</Button>
-            </div> : <div/>}
-            <div className="flex gap-[10px]">
-              <div className="flex">
-                <InputNumber placeholder="Thời gian scan theo phút" min={1} className="w-[200px]"
-                             value={scanTime} onChange={onChangeScanTime}/>
-                <Button onClick={onSchedule}>
-                  <MdSchedule size={20}/>
-                </Button>
-              </div>
-              <Upload
+              ) : (
+                <div />
+              )}
+              <div className="flex gap-[10px]">
+                <div className="flex">
+                  <InputNumber
+                    placeholder="Thời gian scan theo phút"
+                    min={1}
+                    className="w-[200px]"
+                    value={scanTime}
+                    onChange={onChangeScanTime}
+                  />
+                  <Button onClick={onSchedule}>
+                    <MdSchedule size={20} />
+                  </Button>
+                </div>
+                <Upload
                   showUploadList={false}
                   listType="picture"
                   onChange={handleChange}
-              >
-                <Button type="primary" icon={<UploadOutlined/>}>
-                  Upload csv
+                >
+                  <Button type="primary" icon={<UploadOutlined />}>
+                    Upload csv
+                  </Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  className="bg-[red]"
+                  icon={<ImBin />}
+                  onClick={() => setIsOpenModalConfirmDelete(true)}
+                >
+                  Xóa hết
                 </Button>
-              </Upload>
-              <Button type="primary" className="bg-[red]" icon={<ImBin/>}
-                      onClick={() => setIsOpenModalConfirmDelete(true)}>
-                Xóa hết
-              </Button>
+              </div>
             </div>
-          </div>
-          <div className="min-h-[645px]">
-            <Table
+            <div className="min-h-[645px]">
+              <Table
                 columns={columns}
                 dataSource={autoItemList}
                 loading={isLoading}
@@ -237,38 +317,41 @@ const AutoItemList = () => {
                 })}
                 pagination={pagination}
                 onChange={handlePageChange}
-
-            />
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    {openPanel ? <AutoItemPanel closePanel={() => setOpenPanel(false)}/> :
+      {openPanel ? (
+        <AutoItemPanel closePanel={() => setOpenPanel(false)} />
+      ) : (
         <div className="w-[80px] flex justify-center mt-[10px]">
           <button onClick={() => setOpenPanel(true)}>
-            <IoMenu size={25} color="#2a56b9"/>
+            <IoMenu size={25} color="#2a56b9" />
           </button>
-        </div>}
-    {isOpenModal && (
+        </div>
+      )}
+      {isOpenModal && (
         <EditAutoItemModal
-            isModalOpen={isOpenModal}
-            cancelModal={cancelModal}
-            title="Edit auto item"
-            record={selectedAutoItem}
-            setAutoItemList={setAutoItemList}
-            initAutoItem={initAutoItem}
+          isModalOpen={isOpenModal}
+          cancelModal={cancelModal}
+          title="Edit auto item"
+          record={selectedAutoItem}
+          setAutoItemList={setAutoItemList}
+          initAutoItem={initAutoItem}
         />
-    )}
+      )}
 
-    {isOpenModalConfirmDelete && (
+      {isOpenModalConfirmDelete && (
         <GeneralModal
-            title="Bạn có chắc chắn xóa không"
-            onCancel={() => setIsOpenModalConfirmDelete(false)}
-            open={isOpenModalConfirmDelete}
-            onConfirm={handleConfirmDelete}
+          title="Bạn có chắc chắn xóa không"
+          onCancel={() => setIsOpenModalConfirmDelete(false)}
+          open={isOpenModalConfirmDelete}
+          onConfirm={handleConfirmDelete}
         />
-    )}
-  </div>);
+      )}
+    </div>
+  );
 };
 
-export {AutoItemList};
+export { AutoItemList };
