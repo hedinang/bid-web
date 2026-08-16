@@ -24,6 +24,7 @@ export const ItemProvider = ({children}) => {
   const [searchItem, setSearchItem] = useState({
     limit: 24,
     page: 1,
+    totalItems: 0,
     searchBranch: "",
     searchRank: "",
   });
@@ -70,16 +71,10 @@ export const ItemProvider = ({children}) => {
       return;
     }
     setIsLoading(false);
-    setItemList(result?.data);
-    // setItemList(
-    //   result?.data?.map((e) => {
-    //     e?.detailUrl?.map((f) => {
-    //       f.replace("https://resize.ecoauc.com", "https://assets.ecoauc.com");
-    //       return f;
-    //     });
-    //     return e;
-    //   })
-    // );
+    setItemList(result?.data?.items);
+    setSearchItem(prev => {
+      return {...prev, totalItems: result?.data?.totalItems}
+    })
   };
 
   const fetchBid = async () => {
@@ -118,7 +113,6 @@ export const ItemProvider = ({children}) => {
   const onChooseCategory = (e) => {
     setSearchItem({
       ...searchItem,
-      limit: 50,
       page: 1,
       searchCategory: e,
     });
@@ -137,7 +131,7 @@ export const ItemProvider = ({children}) => {
 
   useEffect(() => {
     fetchItemList();
-  }, [bidId, searchItem]);
+  }, [bidId, searchItem?.limit, searchItem?.page, searchItem?.searchBranch, searchItem?.searchRank, searchItem?.searchCategory]);
 
   useEffect(() => {
     fetchItemDetail();

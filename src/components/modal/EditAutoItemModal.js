@@ -2,6 +2,7 @@ import {Button, InputNumber, Modal} from "antd";
 import React, {useState} from "react";
 import {GeneralModal} from "./GeneralModal";
 import apiFactory from "../../api";
+import {formatter} from "../../utils/Utils";
 
 const EditAutoItemModal = ({
                              isModalOpen,
@@ -11,12 +12,6 @@ const EditAutoItemModal = ({
                              setAutoItemList,
                              initAutoItem
                            }) => {
-
-  const formatter = value => {
-    const [start, end] = `${value}`.split('.') || [];
-    const v = `${start}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return `${end ? `${v}.${end}` : `${v}`}`;
-  };
 
   const [maxPrice, setMaxPrice] = useState()
   const [isOpenModalConfirmSave, setIsOpenModalConfirmSave] = useState(null);

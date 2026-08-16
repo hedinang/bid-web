@@ -10,9 +10,9 @@ import Login from "../pages/login";
 import {MailManagement} from "../pages/mail/MailManagement";
 import {UserManagement} from "../pages/user/UserManagement";
 import {AutoItemList} from "../pages/item/AutoItemList";
+import {Tool} from "../pages/tool/Tool";
 
-const router = createBrowserRouter([
-  // {
+const router = createBrowserRouter([// {
   //   path: "login",
   //   element: <Login />,
   // },
@@ -21,63 +21,34 @@ const router = createBrowserRouter([
   //   element: <Registration />,
   // },
   {
-    path: "*",
-    element: <Navigate to="/"/>,
-  },
-  {
-    element: <PublicLayout/>,
-    children: [
-      {
-        path: "/",
-        element: <BidList/>,
-      },
-      {
-        path: "/item-list/:bidId/:bidStatus",
-        element: (
-            <ItemProvider>
-              <AdminItemList/>
-            </ItemProvider>
-        ),
-      },
-      {
-        path: "/item-detail/:itemId",
-        element: (
-            <ItemProvider>
-              <AdminItemDetail/>
-            </ItemProvider>
-        ),
-      },
-      {
-        path: "/user-list",
-        element: (
-            <ItemProvider>
-              <UserManagement/>
-            </ItemProvider>
-        ),
-      },
-      {
-        path: "/mail-list",
-        element: (
-            <ItemProvider>
-              <MailManagement/>
-            </ItemProvider>
-        ),
-      },
-      {
-        path: "/cart",
-        element: (
-            <ItemProvider>
-              <OrderList/>
-            </ItemProvider>
-        ),
-      },
-      {
-        path: "/auto-item",
-        element: (
-            <AutoItemList/>
-        ),
-      },
-    ],
-  },
-]);
+    path: "*", element: <Navigate to="/"/>,
+  }, {
+    element: <PublicLayout/>, children: [{
+      path: "/", element: <BidList/>,
+    }, {
+      path: "/item-list/:bidId/:bidStatus", element: (<ItemProvider>
+            <AdminItemList/>
+          </ItemProvider>),
+    }, {
+      path: "/tool", element: (<Tool/>),
+    }, {
+      path: "/item-detail/:itemId", element: (<ItemProvider>
+            <AdminItemDetail/>
+          </ItemProvider>),
+    }, {
+      path: "/user-list", element: (<ItemProvider>
+            <UserManagement/>
+          </ItemProvider>),
+    }, {
+      path: "/mail-list", element: (<ItemProvider>
+            <MailManagement/>
+          </ItemProvider>),
+    }, {
+      path: "/cart", element: (<ItemProvider>
+            <OrderList/>
+          </ItemProvider>),
+    }, {
+      path: "/auto-item", element: (<AutoItemList/>),
+    },],
+  },]);
 export default router;

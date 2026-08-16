@@ -258,7 +258,7 @@ const AdminItemList = () => {
 
   return (
       <div className="item-list">
-        <div className="flex justify-center text-[30px] p-[20px] gap-[10px]">
+        <div className="flex justify-center text-[30px] p-[20px] gap-[20px]">
           <button onClick={() => navigate("/inside/bid/bid-list")}>
             <IoArrowBackOutline size={25}/>
           </button>
@@ -273,8 +273,10 @@ const AdminItemList = () => {
             </div>
           </div>
         </div>
-
-        <Row className="flex items-center">
+        <div className="flex items-center text-[16px] text-[#2a56b9] font-semibold">
+          {searchItem?.totalItems} sản phẩm theo tiêu chí
+        </div>
+        <div><Row className="flex items-center">
           <Col xs={24} md={8} className="p-[10px]">
             <Select
                 placeholder="Chọn hãng"
@@ -332,7 +334,7 @@ const AdminItemList = () => {
                 options={quality}
             />
           </Col>
-        </Row>
+        </Row></div>
         <Row>
           {isLoading ? (
               <div className="w-full flex justify-center">
@@ -352,7 +354,7 @@ const AdminItemList = () => {
         <div className="paging-bottom">
           <Pagination
               current={searchItem?.page}
-              total={bid?.totalItem}
+              total={searchItem?.totalItems}
               pageSize={searchItem?.limit}
               className="paging"
               showSizeChanger={false}

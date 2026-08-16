@@ -205,6 +205,12 @@ export const compressImage = async (
   }
 };
 
+const formatter = value => {
+  const [start, end] = `${value}`.split('.') || [];
+  const v = `${start}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return `${end ? `${v}.${end}` : `${v}`}`;
+};
+
 export {
   verifiedAccessToken,
   showFileName,
@@ -213,5 +219,6 @@ export {
   getColorFromInitial,
   getColor,
   getAvatar,
-  isTokenExpired
+  isTokenExpired,
+  formatter
 };

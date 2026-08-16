@@ -190,8 +190,10 @@ export const Header = () => {
     <div className="desktop-topbar-2">
       <button onClick={() => navigate("/nation-list")}>Trang chủ</button>
       {me && <button onClick={() => navigate("/cart")}>Đơn hàng</button>}
-      <div>Chính sách</div>
       {["ADMIN", "SUPER_ADMIN"].includes(me?.role) && (<>
+        <button onClick={() => navigate("/tool")}>
+          Công cụ
+        </button>
         <button onClick={() => navigate("/user-list")}>
           Danh sách người dùng
         </button>
