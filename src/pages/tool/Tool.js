@@ -1,100 +1,90 @@
-import {sortBy} from "lodash";
-import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
-import apiFactory from "../../api";
-import {useLayoutContext} from "../../context/LayoutContext";
+import React, {useState} from "react";
 import "./style.scss";
-import {Input, InputNumber} from "antd";
+import {Button, InputNumber} from "antd";
 import {formatter} from "../../utils/Utils";
+import {GeneralModal} from "../../components/modal/GeneralModal";
+import apiFactory from "../../api";
+import {toast} from "react-toastify";
 
 const Tool = () => {
-  const {me, setPageLink} = useLayoutContext();
-  const navigate = useNavigate();
-  const [bidList, setBidList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [threadList, setThreadList] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMenu, setIsMenu] = useState(false);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    const result = await apiFactory.bidApi.list();
+  const [orderBidId, setOrderBidId] = useState(null);
+  const [bidBidId, setBidBidId] = useState(null);
 
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
+  const [openBidModalConfirm, setOpenBidModalConfirm] = useState(false);
+  const [openOrderModalConfirm, setOpenOrderModalConfirm] = useState(false);
+
+
+  const onChangeOrderBidId = (e) => {
+    setOrderBidId(e);
+  }
+
+  const onChangeBidBidId = (e) => {
+    setBidBidId(e);
+  }
+
+
+  const removeBid = async () => {
+    const result = await apiFactory.bidApi.deleteLteBid({bidId: bidBidId})
+    if (result?.status === 200) {
+      toast.success("Xóa thành công")
+      setBidBidId(null)
+      setOpenBidModalConfirm(false);
     }
-    setIsLoading(false);
+  }
 
-    const preparedBidList = result?.data
-        ?.map((e) => {
-          const [datePart, timePart] = e?.openTime?.split(" ");
-          return {
-            ...e,
-            compareTime: new Date(`${datePart}T${timePart}`),
-          };
-        })
-        ?.filter((e) => e?.compareTime > new Date());
+  const removeOrder = async () => {
+    const result = await apiFactory.orderApi.deleteLteBid({bidId: orderBidId})
 
-    setBidList(sortBy(preparedBidList, "compareTime"));
-  };
-
-  const syncBidList = async () => {
-    setIsLoading(true);
-    const result = await apiFactory.bidApi.syncBidList();
-
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
+    if (result?.status === 200) {
+      toast.success("Xóa thành công")
+      setOrderBidId(null)
+      setOpenOrderModalConfirm(false);
     }
-    setIsLoading(false);
-  };
-
-  const getThreadList = async () => {
-    setIsLoading(true);
-    const result = await apiFactory.bidApi.getThreadList();
-
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
-    }
-
-    setThreadList(result?.data);
-    setIsModalOpen(true);
-    setIsLoading(false);
-  };
-
-  const cancelModal = () => {
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    setPageLink("BID_LIST")
-
-    fetchData();
-  }, []);
+  }
 
   return (
       <div className="flex flex-col gap-[10px] p-[20px]">
-        <div className="flex gap-[10px]">
+        <div className="flex gap-[20px] items-center">
           <div className="w-[400px]">Xóa dữ liệu phiên đấu giá nhỏ hơn</div>
-          <InputNumber placeholder="Nhập giá trị max price muốn thay đổi" className="w-[200px]"
-              // value={maxPrice}
+          <InputNumber placeholder="vd: 1542" className="w-[200px]"
+                       value={bidBidId}
                        formatter={formatter}
                        parser={value => value?.replace(/\$\s?|(,*)/g, '')}
-              // onChange={onChangeMaxPrice}
+                       onChange={onChangeBidBidId}
           />
+          <Button onClick={() => setOpenBidModalConfirm(true)}>Xóa</Button>
         </div>
-        <div className="flex gap-[10px]">
+        <div className="flex gap-[20px] items-center">
           <div className="w-[400px]">Xóa dữ liệu đơn đặt hàng có phiên đấu giá nhỏ hơn</div>
-          <InputNumber placeholder="Nhập giá trị max price muốn thay đổi" className="w-[200px]"
-              // value={maxPrice}
+          <InputNumber placeholder="vd: 1542" className="w-[200px]"
+                       value={orderBidId}
                        formatter={formatter}
                        parser={value => value?.replace(/\$\s?|(,*)/g, '')}
-              // onChange={onChangeMaxPrice}
+                       onChange={onChangeOrderBidId}
           />
+          <Button onClick={() => setOpenOrderModalConfirm(true)}>Xóa</Button>
         </div>
+        {openBidModalConfirm && (
+            <GeneralModal
+                open={openBidModalConfirm}
+                onCancel={() => setOpenBidModalConfirm(false)}
+                content={"Xác nhận xóa dữ liệu"}
+                title={"Xác nhận xóa bid"}
+                onConfirm={removeBid}
+            />
+        )}
+
+        {openOrderModalConfirm && (
+            <GeneralModal
+                open={openOrderModalConfirm}
+                onCancel={() => setOpenOrderModalConfirm(false)}
+                content={"Xác nhận xóa dữ liệu"}
+                title={"Xác nhận xóa order"}
+                onConfirm={removeOrder}
+            />
+        )}
       </div>
   );
 };

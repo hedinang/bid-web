@@ -21,6 +21,10 @@ class OrderApi extends BaseApi {
   changeStatusByItemDate(payload) {
     return this.post("secure" + ORDER + "item-date/change-status", payload);
   }
+
+  deleteLteBid(payload){
+    return this.post("secure" + ORDER + "delete-lte-order", payload);
+  }
 }
 
 export default OrderApi;

@@ -1,5 +1,5 @@
 import BaseApi from "./baseApi";
-import {BID} from "./apiConstant";
+import {BID, ORDER} from "./apiConstant";
 
 class BidApi extends BaseApi {
   list() {
@@ -28,6 +28,10 @@ class BidApi extends BaseApi {
 
   getThreadList() {
     return this.post("secure" + BID + "thread/list");
+  }
+
+  deleteLteBid(payload){
+    return this.post("secure" + BID + "delete-lte-bid", payload);
   }
 }
 
