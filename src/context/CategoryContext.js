@@ -3,23 +3,24 @@ import {useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import apiFactory from "../api";
 
-const ItemContext = createContext(null);
+const CategoryContext = createContext(null);
 
-export const useItemContext = () => {
-  return useContext(ItemContext);
+export const useCategoryContext = () => {
+  return useContext(CategoryContext);
 };
 
-export const ItemProvider = ({children}) => {
-  const {bidId, bidStatus} = useParams();
+export const CategoryProvider = ({children}) => {
+  const {category} = useParams();
+
   const [itemList, setItemList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [bid, setBid] = useState();
   const [searchItem, setSearchItem] = useState({
     limit: 24,
     page: 1,
     totalItems: 0,
     searchBranch: "",
     searchRank: "",
+    searchCategory: category,
   });
 
   const [item, setItem] = useState({});
@@ -51,13 +52,9 @@ export const ItemProvider = ({children}) => {
 
   const fetchItemList = async () => {
     setIsLoading(true);
-    if (!bidId) return;
+    if (!category) return;
 
-    const result = await apiFactory.itemApi.list({
-      ...searchItem,
-      bidId,
-      bidStatus,
-    });
+    const result = await apiFactory.itemApi.list(searchItem);
 
     if (result?.status !== 200) {
       toast.error("can not load bid list");
@@ -68,21 +65,6 @@ export const ItemProvider = ({children}) => {
     setSearchItem(prev => {
       return {...prev, totalItems: result?.data?.totalItems}
     })
-  };
-
-  const fetchBid = async () => {
-    if (!bidId) return;
-    const result = await apiFactory.bidApi.getBid({
-      bidId,
-      bidStatus,
-    });
-
-    if (result?.status !== 200) {
-      toast.error("can not load bid list");
-      return;
-    }
-
-    setBid(result?.data);
   };
 
   const onChooseBranch = (e) => {
@@ -119,12 +101,8 @@ export const ItemProvider = ({children}) => {
   };
 
   useEffect(() => {
-    fetchBid();
-  }, [bidId]);
-
-  useEffect(() => {
     fetchItemList();
-  }, [bidId, searchItem?.limit, searchItem?.page, searchItem?.searchBranch, searchItem?.searchRank, searchItem?.searchCategory]);
+  }, [searchItem?.limit, searchItem?.page, searchItem?.searchBranch, searchItem?.searchRank, searchItem?.searchCategory]);
 
   useEffect(() => {
     fetchItemDetail();
@@ -132,10 +110,8 @@ export const ItemProvider = ({children}) => {
 
   const values = useMemo(
       () => ({
-        bidId,
-        bidStatus,
+        category,
         itemList,
-        bid,
         item,
         activeUrl,
         setActiveUrl,
@@ -149,8 +125,8 @@ export const ItemProvider = ({children}) => {
         setItemList,
         setItem
       }),
-      [bidId, bidStatus, itemList, bid, isLoading, searchItem, item, activeUrl]
+      [category, itemList, isLoading, searchItem, item, activeUrl]
   );
 
-  return <ItemContext.Provider value={values}>{children}</ItemContext.Provider>;
+  return <CategoryContext.Provider value={values}>{children}</CategoryContext.Provider>;
 };

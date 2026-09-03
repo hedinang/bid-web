@@ -15,6 +15,7 @@ import {GiWhiteBook} from "react-icons/gi";
 import {FaUser} from "react-icons/fa";
 import {useImageLoader} from "../../hooks/ImageLoader";
 import {getColorFromInitial} from "../../utils/Utils";
+import {TbCategoryFilled} from "react-icons/tb";
 
 const MeDropdown = ({}) => {
   const {me, logout} = useLayoutContext();
@@ -188,7 +189,8 @@ export const Header = () => {
     </div>
 
     <div className="desktop-topbar-2">
-      <button onClick={() => navigate("/nation-list")}>Trang chủ</button>
+      <button onClick={() => navigate("/")}>Trang chủ</button>
+      <button onClick={() => navigate("/category")}>Phân loại</button>
       {me && <button onClick={() => navigate("/cart")}>Đơn hàng</button>}
       {["ADMIN", "SUPER_ADMIN"].includes(me?.role) && (<>
         <button onClick={() => navigate("/tool")}>
@@ -207,7 +209,8 @@ export const Header = () => {
     </div>
 
     <div className="mobile-topbar-2">
-      <button onClick={() => navigate("/nation-list")}><IoMdHome color="#46ac40" size={40}/></button>
+      <button onClick={() => navigate("/")}><IoMdHome color="#46ac40" size={40}/></button>
+      <button onClick={() => navigate("/category")}><TbCategoryFilled color="#46ac40" size={40}/></button>
       {me && <button onClick={() => navigate("/cart")}><IoCartSharp size={40} color="#2a56c9"/></button>}
       <div><GiWhiteBook size={32} color="#fccc14"/></div>
       {["ADMIN", "SUPER_ADMIN"].includes(me?.role) && (<>

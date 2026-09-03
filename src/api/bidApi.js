@@ -30,8 +30,12 @@ class BidApi extends BaseApi {
     return this.post("secure" + BID + "thread/list");
   }
 
-  deleteLteBid(payload){
+  deleteLteBid(payload) {
     return this.post("secure" + BID + "delete-lte-bid", payload);
+  }
+
+  getCategoryList() {
+    return this.post("free" + BID + "category-list");
   }
 }
 
