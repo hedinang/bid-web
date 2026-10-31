@@ -37,6 +37,10 @@ class BidApi extends BaseApi {
   getCategoryList() {
     return this.post("free" + BID + "category-list");
   }
+
+  getDates() {
+    return this.post("free" + BID + "dates");
+  }
 }
 
 export default BidApi;

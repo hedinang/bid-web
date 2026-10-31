@@ -19,7 +19,7 @@ const parseInt = (numberString) => {
   return Number(numberString?.replace(/¥/g, "")?.replace(/,/g, ""));
 };
 
-const ItemDetail = ({item, itemList, setItemList}) => {
+const ItemDetail = ({item, itemList, setItemList, columnSpan}) => {
   const navigate = useNavigate();
   const [activeImg, setActiveImg] = useState();
   const [bidPrice, setBidPrice] = useState(item?.bidPrice);
@@ -114,8 +114,8 @@ const ItemDetail = ({item, itemList, setItemList}) => {
       <Col
           xs={24}
           sm={24}
-          md={12}
-          xl={8}
+          md={columnSpan}
+          xl={columnSpan}
           className="p-[10px]"
           key={item?.itemId + item?.title}
       >
@@ -249,9 +249,11 @@ const ItemCategoryList = () => {
     searchItem,
     onChooseBranch,
     onChooseRank,
+    onChooseDate,
     onChooseCategory,
     changePage,
     setItemList,
+    dates
   } = useCategoryContext();
 
   const {setPageLink} = useLayoutContext()
@@ -275,8 +277,17 @@ const ItemCategoryList = () => {
         <div className="flex items-center text-[16px] text-[#2a56b9] font-semibold">
           {searchItem?.totalItems} sản phẩm theo tiêu chí
         </div>
-        <div><Row className="flex items-center">
-          <Col xs={24} md={12} className="p-[10px]">
+        <Row className="flex items-center">
+          <Col xs={24} md={8} className="p-[10px]">
+            <Select
+                placeholder="Chọn ngày"
+                allowClear
+                className="w-[200px]"
+                options={dates}
+                onChange={onChooseDate}
+            />
+          </Col>
+          <Col xs={24} md={8} className="p-[10px]">
             <Select
                 placeholder="Chọn hãng"
                 allowClear
@@ -285,7 +296,7 @@ const ItemCategoryList = () => {
                 onChange={onChooseBranch}
             />
           </Col>
-          <Col xs={24} md={12} className="p-[10px]">
+          <Col xs={24} md={8} className="p-[10px]">
             <Select
                 placeholder="Chọn chất lượng"
                 allowClear
@@ -294,7 +305,7 @@ const ItemCategoryList = () => {
                 options={quality}
             />
           </Col>
-        </Row></div>
+        </Row>
         <Row>
           {isLoading ? (
               <div className="w-full flex justify-center">
@@ -307,6 +318,7 @@ const ItemCategoryList = () => {
                       key={item}
                       itemList={itemList}
                       setItemList={setItemList}
+                      columnSpan={itemList.length === 1 ? 24 : itemList.length === 2 ? 12 : 8}
                   />
               ))
           )}

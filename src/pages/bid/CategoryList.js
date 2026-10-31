@@ -62,8 +62,6 @@ const SummaryCategory = ({category}) => {
 }
 
 const CategoryList = () => {
-  const {me, setPageLink} = useLayoutContext();
-  const navigate = useNavigate();
   const [categoryList, setCategoryList] = useState([
     {
       name: "Jewelry",
@@ -82,6 +80,11 @@ const CategoryList = () => {
     },
     {
       name: "Smoking device",
+      totalItem: 20,
+      uploadedCount: 10
+    },
+    {
+      name: "WATCH",
       totalItem: 20,
       uploadedCount: 10
     }]);
