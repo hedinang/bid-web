@@ -89,12 +89,31 @@
     border-style: solid !important;
   }
 
-  .paging a {
+  .paging .ant-pagination-item {
+    background-color: #5984db;
+    border-color: #5984db;
+  }
+
+  .paging .ant-pagination-item a {
     color: white;
   }
 
+  .paging .ant-pagination-item-active {
+    background-color: white;
+    border-color: #5984db;
+  }
+
   .paging .ant-pagination-item-active a {
-    color: black;
+    color: #5984db;
+  }
+
+  .paging .ant-pagination-item:not(.ant-pagination-item-active):hover {
+    background-color: #5984db;
+    border-color: #5984db;
+  }
+
+  .paging .ant-pagination-item:not(.ant-pagination-item-active):hover a {
+    color: white;
   }
 
   .paging .ant-pagination-item-link {

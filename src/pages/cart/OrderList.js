@@ -180,6 +180,10 @@ const Order = ({order, changeOrderStatus, setClientDetail}) => {
           </div>
         </div>
         <div className="flex items-center">
+          <div className="w-[120px] font-semibold">Phiên đấu giá:</div>
+          <div>{order?.bidId}</div>
+        </div>
+        <div className="flex items-center">
           <div className="w-[120px] font-semibold">Tên sản phẩm:</div>
           <div className="flex-1">{order?.title}</div>
         </div>
@@ -189,7 +193,7 @@ const Order = ({order, changeOrderStatus, setClientDetail}) => {
         </div>
         <div className="flex items-center">
           <div className="w-[120px] font-semibold">Hãng:</div>
-          <div>{order?.branch}</div>
+          <div>{order?.brand}</div>
         </div>
         <div className="flex items-center">
           <div className="w-[120px] font-semibold">Chất lượng:</div>
@@ -348,6 +352,12 @@ const OrderList = () => {
         },
       },
       {
+        title: "Phiên đấu giá",
+        dataIndex: "bidId",
+        align: "center",
+        key: "bidId",
+      },
+      {
         title: "Tên sản phẩm",
         dataIndex: "title",
         align: "center",
@@ -362,7 +372,7 @@ const OrderList = () => {
       },
       {
         title: "Hãng",
-        dataIndex: "branch",
+        dataIndex: "brand",
         align: "center",
         key: "opStatCd",
         width: "140px",
